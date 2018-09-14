@@ -37,4 +37,9 @@ informacion sobre eventos relevantes, tambien podran publicar dudas y calificar 
   - La pagina tendrá una seccion de preguntas populares, las cuales tendrá las preguntas con mayor calificacion con su respectiva mejor respuesta.
   - El apartado de maestros permite calificar maestros para saber con quien agendar y dejar comentarios sobre como lleva la clase. 
   - En la categoria de avisos se publicaran semanalmente, o cuando sea necesario los eventos mas importantes de nuestro CU, al igual que no hay clases, talleres, etc.
- 
+
+## Requeriminetos no funcionales
+
+- La pagina web estará disponible a todas horas cualquier dia.
+- Certificado SSL
+- Modelo MVC
