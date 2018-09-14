@@ -5,8 +5,21 @@ const app = express();
 
 
 
-app.get('/forum/post')
+app.get('/forum/post',(req,res) => {
 
+});
+app.get('/forum/post/:postId',(req,res) =>{
+
+});
+app.get('/forum/post/:postId',(req,res) =>{
+
+});
+app.get('/forum/post/:postId/comment/', (req,res) =>{});
+app.get('/forum/post/:postId/comment/:commentId', (req,res) =>{});
+app.get('/forum/post/:postId/comment/', (req,res) =>{});
+
+app.post('/forum/post',(req,res) =>{});
+app.put('/forum/post/:postId')
 // app.get('/users', (req, res) => {
 //   const users = [
 //     {
