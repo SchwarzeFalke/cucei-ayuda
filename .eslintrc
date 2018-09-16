@@ -5,6 +5,7 @@
 
 
 
+
 {
   "extends": "airbnb-base",
     "rules": {
