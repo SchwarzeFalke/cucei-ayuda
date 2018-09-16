@@ -1,0 +1,33 @@
+{
+  "name": "cucei-ayuda",
+  "version": "0.0.1",
+  "decription": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SchwarzeFalke/cucei-ayuda.git"
+  },
+  "author": "Tyler Ruiz <ruiztyler97@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.1",
+    "eslinter": "^3.2.1",
+    "nodemon": "^1.18.4"
+  },
+  "description": "API",
+  "bugs": {
+    "url": "https://github.com/SchwarzeFalke/cucei-ayuda/issues"
+  },
+  "homepage": "https://github.com/SchwarzeFalke/cucei-ayuda#readme"
+}
