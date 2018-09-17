@@ -23,21 +23,168 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
  * GET /forum/news/:newsId/comments/:commentsId
  */
 app.get('/forum/posts',(req,res) => {
-
+  const posts = [
+    {
+      id: 111,
+      text:'Como se agenda?',
+      likes: 1,
+      userId: 4575,
+      published: 14/10/12
+    },
+    {
+      id: 111,
+      text:'Como se agenda?',
+      likes: 1,
+      userId: 4575,
+      publishedAt: 14/10/12
+    },
+  ];
 });
-app.get('/forum/posts/:postsId',(req,res) =>{});
-app.get('/forum/posts/:postsId/comments', (req,res) =>{});
-app.get('/forum/posts/:postsId/comments/:commentsId', (req,res) =>{});
+app.get('/forum/posts/:postsId',(req,res) =>{
+  const post = {
+      id: req.params.postId,
+      text:'Como se agenda?',
+      likes: 1,
+      userId: 4575,
+      publishedAt: 14/10/12
+  }
+});
+app.get('/forum/posts/:postsId/comments', (req,res) =>{
+  const comments = [
+    {
+      id: 123,
+      text: "No es tu muro prro :v",
+      likes: 1,
+      postId:123,
+      userId: 1233;
+      publishedAt: 14/10/12
+    },
+    {
+      id: 123,
+      text: "No es tu muro prro :v",
+      likes: 1,
+      postId:123,
+      userId: 1233,
+      publishedAt: 14/10/12
+    },
+  ]
+});
+app.get('/forum/posts/:postsId/comments/:commentsId', (req,res) =>{
+  const comment = {
+    id: req.params.commentsId,
+    text: "No es tu muro prro :v",
+    likes: 1,
+    postId:123,
+    userId: 1233,
+    publishedAt: 14/10/12
+  }
+});
+app.get('/forum/teachers/',(req,res) =>{
+  const teachers = [
+    {
+      id: 123,
+      name: "El mugres",
+      followers: 10,
+      publishedAt: 14/10/12
+    },
+    {
+      id: 123,
+      name: "El mugres",
+      followers: 10,
+      publishedAt: 14/10/12
+    },
+  ]
+});
+app.get('/forum/teachers/:teachersId',(req,res) =>{
+  const teacher = {
+    id: req.params.teachersId,
+    positive: 1,
+    negative: 2,
+    name: "El mugres",
+    followers: 10
+  }
+});
+app.get('/forum/teachers/:teachersId/comments',(req,res) =>{
+  const comments = [
+    {
+      id: 123,
+      text: "fdsafasdfas",
+      teacherId: 111,
+      userId: 1213,
+      likes: 1,
+      publishedAt: 14/10/12
+    },
+  ]
+});
+app.get('/forum/teachers/:teachersId/comments/:commentsId',(req,res) =>{
+  const comment = {
+    id: req.params.commentsId,
+    text: "fdsafasdfas",
+    userId: 1213,
+    teacherId: 111,
+    likes: 1,
+    publishedAt: 14/10/12
+  }
+});
 
-app.get('/forum/teachers/',(req,res) =>{});
-app.get('/forum/teachers/:teachersId',(req,res) =>{});
-app.get('/forum/teachers/:teachersId/comments',(req,res) =>{});
-app.get('/forum/teachers/:teachersId/comments/:commentsId',(req,res) =>{});
-
-app.get('/forum/news/',(req,res)  =>{});
-app.get('/forum/news/:newsId',(req,res)  =>{});
-app.get('/forum/news/:newsId/comments',(req,res) =>{});
-app.get('/forum/news/:newsId/comments/:commentsId',(req,res) =>{});
+app.get('/forum/news',(req,res)  =>{
+  const news = [
+    {
+      id: 11,
+      title: "dsafas",
+      text: "dsafasdf",
+      image: "fsfasdfas.jpg",
+      publishedAt: "14/10/12",
+      publishedBy: "12321"
+    },
+    {
+      id: 11,
+      title: "dsafas",
+      text: "dsafasdf",
+      image: "fsfasdfas.jpg",
+      publishedAt: "14/10/12",
+      publishedBy: "12321"
+    }
+  ]
+});
+app.get('/forum/news/:newsId',(req,res)  =>{
+  const new = {
+    id: 11,
+    title: "dsafas",
+    text: "dsafasdf",
+    image: "fsfasdfas.jpg",
+    publishedAt: "14/10/12",
+    publishedBy: "12321"
+  }
+});
+app.get('/forum/news/:newsId/comments',(req,res) =>{
+  const comments = [
+    {
+      id: 11,
+      userId:123,
+      likes:1,
+      text: "dsafasdf",
+      publishedAt: "14/10/12",
+    },
+    {
+      id: 11,
+      userId:123,
+      likes:1,
+      text: "dsafasdf",
+      publishedAt: "14/10/12",
+    }
+  ]
+});
+app.get('/forum/news/:newsId/comments/:commentsId',(req,res) =>{
+  const comment = {
+      id: 11,
+      newsId:
+      userId:123,
+      likes:1,
+      text: "dsafasdf",
+      publishedAt: "14/10/12",
+    }
+});
 
 /**
  * This are all the GET methods for the forum page.
@@ -72,45 +219,17 @@ app.post('/forum/posts/:postsId/comments', (req,res) =>{});
  */
 app.post('/forum/teachers/',(req,res) =>{});
 /**
- * Create a new comment
+ * comment a teacher
  */
 app.post('/forum/teachers/:teachersId/comments',(req,res) =>{});
-
+/**
+ * Create a news
+ */
 app.post('/forum/news/',(req,res) =>{});
-
+/**
+ * Comment a news
+ */
 app.post('/forum/news/:newsId/comments',(req,res) =>{});
 
-
-// app.get('/users', (req, res) => {
-//   const users = [
-//     {
-//       'id': 1,
-//       'name': 'Carlos',
-//       'middle-name': 'Adonis',
-//       'last-name':  'Vara'
-//     },
-//     {
-//       'id': 5,
-//       'name': 'Carlos',
-//       'middle-name': 'Adonis',
-//       'last-name':  'Vara'
-//     },
-//     {
-//       'id': 3,
-//       'name': 'Carlos',
-//       'middle-name': 'Adonis',
-//       'last-name':  'Vara'
-//     },
-//   ]
-//   res.send(users);
-// });
-//
-// app.get('/users/userId', (req, res) => {
-//   const user = {
-//     'id': req.params.userId,
-//     'name': 'Carlos'
-//   }
-//   res.send(user);
-// });
 
 app.listen(3000, () => console.log('My cute app is running on port 3000!'));
