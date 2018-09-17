@@ -501,30 +501,87 @@ app.get('/forum/news/:newsId/comments/:commentsId',(req,res) =>{
 /**
  * Create a post
  */
-app.post('/forum/posts',(req,res) => {});
+app.post('/forum/posts',(req,res) => {
+  const json = {
+    response: 'New post created successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación',
+    },
+  };
+});
 
 /**
  * Create a comment on a post
  */
-app.post('/forum/posts/:postsId/comments', (req,res) =>{});
+app.post('/forum/posts/:postsId/comments', (req,res) =>{
+  const json = {
+    response: 'New comment created successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación',
+    },
+  };
+});
 
 /**
  * Create a new teacher
  */
-app.post('/forum/teachers/',(req,res) =>{});
+app.post('/forum/teachers/',(req,res) =>{
+  const json = {
+    response: 'New teacher created successfully!',
+    data: {
+      id: 4345,
+      name: 'fdsaf',
+    },
+  };
+});
 
 /**
  * comment a teacher
  */
-app.post('/forum/teachers/:teachersId/comments',(req,res) =>{});
+app.post('/forum/teachers/:teachersId/comments',(req,res) =>{
+  const json = {
+    response: 'New comment created successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación',
+    },
+  };
+});
 
 /**
  * Create a news
  */
-app.post('/forum/news/',(req,res) =>{});
+app.post('/forum/news/',(req,res) =>{
+  const json = {
+    response: 'News created successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación',
+    },
+  };
+});
 /**
  * Comment a news
  */
-app.post('/forum/news/:newsId/comments',(req,res) =>{});
+app.post('/forum/news/:newsId/comments',(req,res) =>{
+  const json = {
+    response: 'New comment created successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación',
+    },
+  };
+});
+
+
+app.delete('/forum/posts/:postsId', (req,res) =>{});
+app.delete('/forum/posts/:postsId/comments/:commentsId', (req,res) =>{});
+app.delete('/forum/teachers/:teachersId',(req,res)=>{ });
+app.delete('/forum/teachers/:teachersId/comments/:commentsId',(req,res)=>{ });
+app.delete('/forum/news/:newsId',(req,res)=>{ });
+app.delete('/forum/news/:newsId/comments/:commentsId',(req,res)=>{ });
+
 
 app.listen(3000, () => console.log('My cute app is running on port 3000!'));
