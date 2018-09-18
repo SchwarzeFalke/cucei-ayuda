@@ -382,13 +382,19 @@ app.get('/forum/teachers/',(req,res) =>{
     {
       id: 123,
       name: "El mugres",
-      followers: 10,
+      subject: "algoritmia",
+      department: "ingenieria",
+      positive: 1,
+      negative: 2,
       publishedAt: 14/10/12
     },
     {
       id: 123,
       name: "El mugres",
-      followers: 10,
+      subject: "algoritmia",
+      department: "ingenieria",
+      positive: 1,
+      negative: 2,
       publishedAt: 14/10/12
     },
   ]
@@ -399,6 +405,8 @@ app.get('/forum/teachers/:teachersId',(req,res) =>{
     positive: 1,
     negative: 2,
     name: "El mugres",
+    subject: "algoritmia",
+    department: "ingenieria"
     followers: 10
   }
 });
@@ -527,11 +535,13 @@ app.post('/forum/posts/:postsId/comments', (req,res) =>{
 /**
  * Create a new teacher
  */
-app.post('/forum/teachers/',(req,res) =>{
+app.post('/forum/teachers',(req,res) =>{
   const json = {
     response: 'New teacher created successfully!',
     data: {
       id: 4345,
+      subject: "algoritmia",
+      department: "ingenieria"
       name: 'fdsaf',
     },
   };
@@ -574,7 +584,95 @@ app.post('/forum/news/:newsId/comments',(req,res) =>{
     },
   };
 });
+/**
+ * This are all the PUT methods for the forum page.
 
+ * PUT /forum/posts
+ * PUT /forum/posts/:postsId/comments
+
+ * PUT /forum/teachers
+ * PUT /forum/teachers/:teachersId/comments
+
+ * PUT /forum/news
+ * PUT /forum/news/:newsId/comments
+ */
+
+app.put('/forum/posts',(req,res) => {
+  const json = {
+    response: 'New post created successfully!',
+    data: {
+      id: 4345,
+      text: 'modificado',
+      modifiedAt: 14/12/18
+    },
+  };
+});
+
+app.put('/forum/posts/:postsId/comments', (req,res) =>{
+  const json = {
+    response: 'New comment created successfully!',
+    data: {
+      id: 4345,
+      text: 'modificado',
+      modifiedAt: 14/12/18
+    },
+  };
+});
+
+/**
+ * Create a new teacher
+ */
+app.put('/forum/teachers',(req,res) =>{
+  const json = {
+    response: 'New teacher created successfully!',
+    data: {
+      id: 4345,
+      name: 'new name',
+      subject: "algoritmia",
+      department: "ingenieria",
+      modifiedAt: 14/12/18
+    },
+  };
+});
+
+/**
+ * comment a teacher
+ */
+app.put('/forum/teachers/:teachersId/comments',(req,res) =>{
+  const json = {
+    response: 'Modified successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación modificado',
+      modifiedAt: 14/12/18
+    },
+  };
+});
+
+/**
+ * Create a news
+ */
+app.put('/forum/news/',(req,res) =>{
+  const json = {
+    response: 'modified successfully!',
+    data: {
+      id: 4345,
+      text: 'Contenido de la publicación modificado',
+      modifiedAt: 14/12/18
+    },
+  };
+});
+
+app.put('/forum/news/:newsId/comments',(req,res) =>{
+  const json = {
+    response: 'modified successfully!',
+    data: {
+      id: 4345,
+      text: 'Coenido modificado',
+      modifiedAt: 14/12/18
+    }
+  };
+});
 
 app.delete('/forum/posts/:postsId', (req,res) =>{});
 app.delete('/forum/posts/:postsId/comments/:commentsId', (req,res) =>{});
