@@ -11,6 +11,7 @@ const app = express();
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+
 /**
  * The next block code reffers to all GET methods of USERS resource, which
  * includes the next resources:
