@@ -48,6 +48,29 @@ app.get('/map/:madId', (req, res) => {
   res.send(map);
 });
 
+app.post('/map', (req, res) => {
+	const json = {
+	response: 'New edifice created!'
+	data: {
+		id: req.body.id,
+		edificicio: req.body.edificio,
+		aulas: req.body.aulas,
+	 },
+	};
+	res.sed(json);
+});
+
+app.put('/map/:mapid', (req,res) => {
+	const json = {
+	response = 'Edifice modified successfully!',
+	data: {
+		id: 890,
+		text: 'Edificio modificado',
+		modifiedAt: 19/09/12,
+	 },
+	};
+});
+
 
 app.listen(3000,  () => {
   console.log('Example app listening on port 3000!');
