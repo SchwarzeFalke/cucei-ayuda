@@ -1,7 +1,8 @@
 const { Router } = require('express');
+const {PostCtrl} = require('../controllers');
 
+const postCtrl = PostCtrl();
 const router = Router();
-
 
 /**
  * This are all the GET methods for the forum page.
@@ -21,36 +22,8 @@ const router = Router();
  * GET /forum/news/:newsId/comments/:commentsId
 
  */
-router.get('/posts',(req,res) => {
-  const posts = [
-    {
-      id: 111,
-      text:'Como se agenda?',
-      likes: 1,
-      userId: 4575,
-      published: 14/10/12,
-    },
-    {
-      id: 111,
-      text:'Como se agenda?',
-      likes: 1,
-      userId: 4575,
-      publishedAt: 14/10/12,
-    },
-  ];
-  res.send(posts);
-});
-router.get('/posts/:postsId',(req,res) =>{
-  const post = {
-      id: req.params.postId,
-      text:'Como se agenda?',
-      likes: 1,
-      userId: 4575,
-      publishedAt: '14/10/12',
-  };
-  res.send(post);
-
-});
+router.get('/posts', postCtrl.getAll) ;
+router.get('/posts/:postsId', postCtrl.get);
 router.get('/posts/:postsId/comments', (req,res) =>{
   const comments = [
     {
@@ -84,25 +57,24 @@ router.get('/posts/:postsId/comments/:commentsId', (req,res) =>{
   res.send(comment);
 
 });
-router.get('/teachers/',(req,res) =>{
+router.get('/teachers',(req,res) =>{
   const teachers = [
     {
       id: 123,
       name: 'El mugres',
       subject: 'algoritmia',
       department: 'ingenieria',
-      positive: 1,
-      negative: 2,
-      publishedAt: 14/10/12,
+
+
     },
     {
       id: 123,
       name: 'El mugres',
       subject: 'algoritmia',
       department: 'ingenieria',
-      positive: 1,
-      negative: 2,
-      publishedAt: 14/10/12,
+      rating:5,
+
+
     },
   ];
   res.send(teachers);
