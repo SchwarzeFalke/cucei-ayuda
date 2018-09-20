@@ -17,6 +17,7 @@
     "body-parser": "^1.18.3"
   },
   "devDependencies": {
+    "dotenv": "^6.0.0",
     "eslint": "^5.5.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
@@ -25,10 +26,5 @@
     "eslinter": "^3.2.1",
     "nodemon": "^1.18.4"
   },
-  "description": "API",
-  "bugs": {
-    "url": "https://github.com/SchwarzeFalke/cucei-ayuda/issues"
-  },
-  "homepage": "https://github.com/SchwarzeFalke/cucei-ayuda#readme"
-  }
+  "description": "API"
 }
