@@ -26,7 +26,7 @@ class PostCtrl{
   }
 
   getAll(req,res){
-    const json{
+    const json = {
       data:this.data,
       total_count: this.data.lenght,
       per_page:10,
@@ -50,7 +50,7 @@ class PostCtrl{
     };
 
     this.data.push(data);
-    res.status(201).send)(data);
+    res.status(201).send(data);
   }
 
 }

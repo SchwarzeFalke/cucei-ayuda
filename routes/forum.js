@@ -1,7 +1,6 @@
 const { Router } = require('express');
-const {PostCtrl} = require('../controllers');
+const { postCtrl } = require('../controllers');
 
-const postCtrl = PostCtrl();
 const router = Router();
 
 /**
