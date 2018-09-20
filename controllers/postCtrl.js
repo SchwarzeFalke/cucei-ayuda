@@ -6,14 +6,14 @@ class PostCtrl{
          text:'Como se agenda?',
          likes: 1,
          userId: 4575,
-         published: 14/10/12,
+         published: "14/10/12",
        },
        {
          id: 111,
          text:'Como se agenda?',
          likes: 1,
          userId: 4575,
-         publishedAt: 14/10/12,
+         publishedAt: "14/10/12",
        },
      ];
      this.getAll = this.getAll.bind(this);
