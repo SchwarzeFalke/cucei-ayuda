@@ -2,7 +2,7 @@
   "name": "cucei-ayuda",
   "version": "0.0.1",
   "decription": "",
-  "main": "app.js",
+  "main": "router.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
