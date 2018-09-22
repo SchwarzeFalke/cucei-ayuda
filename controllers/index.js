@@ -6,3 +6,4 @@
  */
 
 exports.usersCtrl = require('./users');
+exports.postCtrl = require('./postCtrl');
