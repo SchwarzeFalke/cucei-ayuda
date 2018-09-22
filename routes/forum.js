@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { postCtrl } = require('../controllers');
-
+const middlewares = require('../middlewares/forum')
 const router = Router();
 
 /**
