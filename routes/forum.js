@@ -395,7 +395,6 @@ router.delete('/posts/:postsId', (req,res) =>{});
 router.delete('/posts/:postsId/comments/:commentsId', (req,res) =>{});
 router.delete('/teachers/:teachersId',(req,res)=>{ });
 router.delete('/teachers/:teachersId/comments/:commentsId',(req,res)=>{ });
-router.delete('/news/:newsId',(req,res)=>{ });
-router.delete('/news/:newsId/comments/:commentsId',(req,res)=>{ });
+router.delete('/topics/:topicId',(req,res)=>{ });
 
 module.exports = router;

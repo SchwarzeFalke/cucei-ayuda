@@ -1,8 +1,6 @@
-class Post{
-  constructor(...args){
-    this.id = id;
-    this.text = 
-    this.likes =
-    this.comments =
+class Post {
+  constructor(...args) {
+    this.id = args.id;
+    this.text = args.text;
   }
 }
