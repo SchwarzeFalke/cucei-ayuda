@@ -1,13 +1,15 @@
 /**
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
- * @Last modified by:   root
- * @Last modified time: 2018-09-19T03:13:28-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-09-21T22:00:33-05:00
  */
 
 const { Router } = require('express');
 
-const middleWares = require('../middlewares');
+// const middleWares = require('../middlewares');
+
+const { usersCtrl } = require('../controllers');
 
 const router = Router();
 
@@ -29,81 +31,13 @@ const router = Router();
  * GET users/
  * @type {Array} Return all users from database
  */
-router.get('/', middleWares.addDate, (req, res) => {
-  const users = [
-    {
-      id: 1,
-      name: 'Carlos',
-      middleName: 'Adonis',
-      lastName: 'Vara',
-      email: 'autor.cvp303@gmail.com',
-    },
-    {
-      id: 2,
-      name: 'Joaquin',
-      middleName: 'Loera',
-      lastName: 'Santos',
-      email: 'san_lojo@gmail.com',
-    },
-    {
-      id: 3,
-      name: 'Ana',
-      middleName: 'Jimena',
-      lastName: 'Sánchez',
-      email: 'jimimi@hotmail.com',
-    },
-    {
-      id: 4,
-      name: 'Karla',
-      middleName: 'Rocío',
-      lastName: 'Saenz',
-      email: 'le_kasaz@gmail.com',
-    },
-    {
-      id: 5,
-      name: 'Felipe',
-      middleName: 'Gerardo',
-      lastName: 'Pérez',
-      email: 'gusi_guz03@gmail.com',
-    },
-    {
-      id: 6,
-      name: 'Angela',
-      middleName: 'Cecilia',
-      lastName: 'Fernández',
-      email: 'ccff_angi@outlook.com',
-    },
-    {
-      id: 7,
-      name: 'Gustavo',
-      middleName: 'Enrique',
-      lastName: 'Giménez',
-      email: 'chaco4567@gmail.com',
-    },
-  ];
-  const json = {
-    response: 'Ok',
-    data: users,
-    dateData: req.body,
-    total: 2,
-  };
-  res.send(json);
-});
+router.get('/', usersCtrl.getAll);
 
 /**
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', (req, res) => {
-  const user = {
-    id: req.params.userId,
-    name: `UsuarioNombre${req.params.userId}`,
-    middlname: `UsuarioSegNombre${req.params.userId}`,
-    lastname: `UsuarioApellido${req.params.userId}`,
-    email: `usuario${req.params.userId}@correo.com.mx`,
-  };
-  res.send(user);
-});
+router.get('/:userId', usersCtrl.get);
 
 /**
  * GET users/userId/map
@@ -253,20 +187,7 @@ router.get('/:userId/posts/:postId', (req, res) => {
  * @type {Object} Create a new user by given name, middle name, last name, email
  * and a password. Returns an ok response.
  */
-router.post('/', (req, res) => {
-  const json = {
-    response: 'New user created successfully!',
-    data: {
-      id: 982,
-      name: req.body.name,
-      middleName: req.body.middleName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-    },
-  };
-  res.send(json);
-});
+router.post('/', usersCtrl.insert);
 
 /**
  * POST /users/userId/schedule
@@ -306,5 +227,7 @@ router.post('/:userId/posts', (req, res) => {
   };
   res.send(json);
 });
+
+router.delete('/:userId', usersCtrl.del);
 
 module.exports = router;

@@ -1,10 +1,18 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-09-19T21:30:50-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-09-20T02:17:11-05:00
+ */
+
+
 /*
  * Definition of schedule routing
  */
 
 const { Router } = require('express');
 
-const middleWares = require('../middlewares');
+// const middleWares = require('../middlewares');
 
 const router = Router();
 
@@ -15,9 +23,8 @@ const router = Router();
   * GET /schedule/:scheduleId/subjects
   */
 
-
 // GET /schedule  Returns all schedules
-router.get('/schedule', (req, res) => {
+router.get('/', (req, res) => {
   const schedules = [
     [
       {
@@ -50,7 +57,7 @@ router.get('/schedule', (req, res) => {
 });
 
 // GET /schedule/:scheduleId    returns specific schedule
-router.get('/schedule/:scheduleId', (req, res) => {
+router.get('/:scheduleId', (req, res) => {
   const schedule = {
     scheduleId: req.params.scheduleId,
     schedule: [
@@ -85,7 +92,7 @@ router.get('/schedule/:scheduleId', (req, res) => {
 
 // GET /schedule/:scheduleId/subjects
 // Returns all subjects of a method
-router.get('/schedule/:scheduleId/subjects', (req, res) => {
+router.get('/:scheduleId/subjects', (req, res) => {
   const subjects = {
     id: req.params.scheduleId,
     subjects: [
@@ -109,7 +116,7 @@ router.get('/schedule/:scheduleId/subjects', (req, res) => {
 });
 
 // POST /schedule
-router.post('/schedule', (req, res) => {
+router.post('/', (req, res) => {
   const schedule = [
     {
       Id: req.body.id1,
@@ -140,7 +147,7 @@ router.post('/schedule', (req, res) => {
 });
 
 // PUT /schedule/:scheduleId
-router.put('/schedule/:scheduleId', (req, res) => {
+router.put('/:scheduleId', (req, res) => {
   const schedule = {
     scheduleId: req.params.scheduleId,
     schedule: [
@@ -174,7 +181,7 @@ router.put('/schedule/:scheduleId', (req, res) => {
 });
 
 // DELETE /schedule/:scheduleId
-router.delete('/schedule/:scheduleId', (req, res) => {
+router.delete('/:scheduleId', (req, res) => {
   res.send(req.params.scheduleId);
 });
 
