@@ -1,3 +1,10 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-09-23T13:50:36-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-09-23T23:23:29-05:00
+ */
+
 const { Router } = require('express');
 const { postCtrl } = require('../controllers');
 
@@ -21,15 +28,16 @@ const router = Router();
  * GET /forum/news/:newsId/comments/:commentsId
 
  */
-router.get('/posts', postCtrl.getAll) ;
+router.get('/posts', postCtrl.getAll);
 router.get('/posts/:postsId', postCtrl.get);
-router.get('/posts/:postsId/comments', (req,res) =>{
+
+router.get('/posts/:postsId/comments', (req, res) => {
   const comments = [
     {
       id: 123,
       text: 'No es tu muro prro :v',
       likes: 1,
-      postId:123,
+      postId: 123,
       userId: 1233,
       publishedAt: '14/10/12',
     },
@@ -37,26 +45,27 @@ router.get('/posts/:postsId/comments', (req,res) =>{
       id: 123,
       text: 'No es tu muro prro :v',
       likes: 1,
-      postId:123,
+      postId: 123,
       userId: 1233,
-      publishedAt: 14/10/12,
+      publishedAt: '14/10/12',
     },
   ];
   res.send(comments);
 });
-router.get('/posts/:postsId/comments/:commentsId', (req,res) =>{
+
+router.get('/posts/:postsId/comments/:commentsId', (req, res) => {
   const comment = {
     id: req.params.commentsId,
     text: 'No es tu muro prro :v',
     likes: 1,
-    postId:123,
+    postId: 123,
     userId: 1233,
-    publishedAt: 14/10/12,
+    publishedAt: '14/10/12',
   };
   res.send(comment);
-
 });
-router.get('/teachers',(req,res) =>{
+
+router.get('/teachers', (req, res) => {
   const teachers = [
     {
       id: 123,
@@ -71,14 +80,12 @@ router.get('/teachers',(req,res) =>{
       name: 'El mugres',
       subject: 'algoritmia',
       department: 'ingenieria',
-      rating:5,
-
-
+      rating: 5,
     },
   ];
   res.send(teachers);
-
 });
+
 router.get('/teachers/:teachersId',(req,res) =>{
   const teacher = {
     id: req.params.teachersId,
