@@ -1,56 +1,48 @@
 const db = require('../db')
+// const thread = require('../models');
 
 class ThreadCtrl {
   constructor() {
 
-    this.data = [
-      {
-        id: 1,
-        text: 'fdasgdasgfag',
-        by: 'juan1',
-      },
-      {
-        id: 2,
-        text: 'fdasgdasgfag2222',
-        by: 'juan2',
-      },
-    ];
     this.getAll = this.getAll.bind(this);
     this.get = this.get.bind(this);
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
+
+    // this.getAllComents = this.getAllComents.bind(this);
+    // this.getComment = this.get.bind(this);
+    // this.createComment = this.createComment.bind(this);
+    // this.modifyComment = this.modifyComment.bind(this);
+    // this.deleteComment = this.deleteComment.bind(this);
   }
 
-  getAll(req,res) {
-    // this.posts = db.get('posts');
-    const json = {
-      data: this.data,
-      total_count: this.data.lenght,
-    };
-    res.status(200).send(json);
+  getAll(req, res) {
+    db.getAll('threads', (err, data) => {
+      res.send(data);
+    });
   }
 
   get(req, res) {
     const data = this.data.find(element => element.id === Number(req.params.postsId));
 
     if (data === undefined) {
-      // send error not found.
-      console.log('damns');
+      res.status(400).json({
+        ok:false,
+        menssage: 'Id doesn´t exist',
+      });
     }
-    res.status(200).send(data);
+    res.send(data);
   }
 
   create(req, res) {
-    const lastId = this.data[this.data.lenght - 1].id;
+    this.response = thread.create();
     const data = {
-      id: lastId + 1,
-      text: req.body.text,
-      publishedAt: req.body.date,
-      userId: req.body.userId,
+      subject: req.body.text,
+      created: req.body.date,
+      user_id: req.body.userId,
+      topic_id: req.body.topicId,
     };
-
-    this.data.push(data);
     res.status(201).send(data);
   }
 
@@ -64,6 +56,27 @@ class ThreadCtrl {
   }
 
   delete(req, res) {}
+
+  getAllPosts(req, res) {
+    const { threadId } = req.params;
+    this.posts = db.get('posts', 'threadId', threadId)
+    const json = {
+      data: this.post,
+      total_count: this.post.lenght,
+    };
+    res.status(200).send(json);
+  }
+
+  getPost(req, res) {
+    const { postId } = req.params;
+    this.post = db.get('posts','postId', postId);
+    res.status(200).send(this.post);
+  }
+  createPost(){
+
+  }
+  //   this.modifyComment = this.modifyComment.bind(this);
+  // this.deleteComment = this.deleteComment.bind(this);
 
 }
 module.exports = new ThreadCtrl();

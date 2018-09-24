@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { postCtrl } = require('../controllers');
+const { threadCtrl } = require('../controllers');
 const middlewares = require('../middlewares/forum')
 const router = Router();
 
@@ -15,132 +16,23 @@ const router = Router();
  * GET /forum/teachers/:teachersId/comments
  * GET /forum/teachers/:teachersId/comments/:commentsId
 
- * GET /forum/news
- * GET /forum/news/:newsId
+ * GET /forum/threads
+ * GET /forum/threads/:newsId
  * GET /forum/news/:newsId/comments
  * GET /forum/news/:newsId/comments/:commentsId
 
  */
-router.get('/posts', postCtrl.getAll) ;
-router.get('/posts/:postsId', postCtrl.get);
-router.get('/posts/:postsId/comments', (req,res) =>{
-  const comments = [
-    {
-      id: 123,
-      text: 'No es tu muro prro :v',
-      likes: 1,
-      postId:123,
-      userId: 1233,
-      publishedAt: '14/10/12',
-    },
-    {
-      id: 123,
-      text: 'No es tu muro prro :v',
-      likes: 1,
-      postId:123,
-      userId: 1233,
-      publishedAt: 14/10/12,
-    },
-  ];
-  res.send(comments);
-});
-router.get('/posts/:postsId/comments/:commentsId', (req,res) =>{
-  const comment = {
-    id: req.params.commentsId,
-    text: 'No es tu muro prro :v',
-    likes: 1,
-    postId:123,
-    userId: 1233,
-    publishedAt: 14/10/12,
-  };
-  res.send(comment);
+router.get('/threads', threadCtrl.getAll);
+router.get('/threads/:threadId', threadCtrl.get);
+router.get('/threads/:threadId/posts', threadCtrl.get);
+router.get('/threads/:threadId/posts/:postId', threadCtrl.get);
 
-});
-router.get('/teachers',(req,res) =>{
-  const teachers = [
-    {
-      id: 123,
-      name: 'El mugres',
-      subject: 'algoritmia',
-      department: 'ingenieria',
+router.get('/teachers')
+router.get('/teachers/:teachersId');
+router.get('/teachers/:teachersId/comments');
+router.get('/teachers/:teachersId/comments/:commentsId');
 
-
-    },
-    {
-      id: 123,
-      name: 'El mugres',
-      subject: 'algoritmia',
-      department: 'ingenieria',
-      rating:5,
-
-
-    },
-  ];
-  res.send(teachers);
-
-});
-router.get('/teachers/:teachersId',(req,res) =>{
-  const teacher = {
-    id: req.params.teachersId,
-    positive: 1,
-    negative: 2,
-    name: 'El mugres',
-    subject: 'algoritmia',
-    department: 'ingenieria',
-    followers: 10,
-  };
-  res.send(teacher);
-
-});
-router.get('/teachers/:teachersId/comments',(req,res) =>{
-  const comments = [
-    {
-      id: 123,
-      text: 'fdsafasdfas',
-      teacherId: 111,
-      userId: 1213,
-      likes: 1,
-      publishedAt: 14/10/12,
-    },
-  ];
-  res.send(comments);
-
-});
-router.get('/teachers/:teachersId/comments/:commentsId',(req,res) =>{
-  const comment = {
-    id: req.params.commentsId,
-    text: 'fdsafasdfas',
-    userId: 1213,
-    teacherId: 111,
-    likes: 1,
-    publishedAt: 14/10/12,
-  };
-  res.send(comment);
-
-});
-
-router.get('/news',(req,res)  =>{
-  const news = [
-    {
-      id: 11,
-      title: 'dsafas',
-      text: 'dsafasdf',
-      image: 'fsfasdfas.jpg',
-      publishedAt: '14/10/12',
-      publishedBy: '12321',
-    },
-    {
-      id: 11,
-      title: 'dsafas',
-      text: 'dsafasdf',
-      image: 'fsfasdfas.jpg',
-      publishedAt: '14/10/12',
-      publishedBy: '12321',
-    }
-  ];
-  res.send(news);
-
-});
+router.get('/news');
 router.get('/news/:newsId',(req,res)  =>{
   const news = {
     id: 11,
@@ -203,16 +95,7 @@ router.get('/news/:newsId/comments/:commentsId',(req,res) =>{
 /**
  * Create a post
  */
-router.post('/posts',(req,res) => {
-  const json = {
-    response: 'New post created successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación',
-    },
-  };
-  res.send(json);
-});
+router.post('/thread', threadCtrl.create);
 
 /**
  * Create a comment on a post

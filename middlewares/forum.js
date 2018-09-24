@@ -7,10 +7,10 @@
  * @param  {Function} next te lleva a la siguiente funcion
  */
 exports.bloquearGroserias = (req, res, next) => {
-  var groserias = ['pendejo','puto','idiota','maricon','cabron'];
-  var texto = req.body.text
-  for(i in groserias){
-    if(texto.includes(groserias[i])){
+  const groserias = ['pendejo','puto','idiota','maricon','cabron'];
+  const texto = req.body.text;
+  for (i in groserias) {
+    if (texto.includes(groserias[i])) {
       texto = texto.replace(groserias[i],'*****');
     }
   }
@@ -25,9 +25,9 @@ exports.bloquearGroserias = (req, res, next) => {
  * @param  {object}   res  response
  * @param  {Function} next te lleva a la siguiente funcion
  */
-exports.validateTeacherName = (req,res,next) =>{
-  var nombre = req.body.name;
-  if(nombre.lengt < 40 && /^[a-zA-Z]/.test(nombre)){
+exports.noNumbers = (req, res, next) => {
+  const nombre = req.body.name;
+  if (nombre.lengt < 40 && /^[a-zA-Z]/.test(nombre)) {
     next();
   }
   next({

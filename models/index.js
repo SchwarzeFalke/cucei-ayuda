@@ -1,1 +1,1 @@
-exports.post = require('../')
+exports.thread = require('./thread')

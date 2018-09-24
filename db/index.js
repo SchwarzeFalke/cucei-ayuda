@@ -11,12 +11,11 @@ class DB {
     this.con.connect();
   }
 
-  getAll() {
-    this.connection.query(`SELECT * FROM ${table}`, (err, results) => {
-      if (err) throw err;
-      this.result = results;
+  getAll(table, cb) {
+    this.con.query(`SELECT * FROM ${table}`, (err, results) => {
+      if (err) cb(err, null);
+      cb(null, results);
     });
-    return this.result;
   }
 
   get(table, arg1, arg2) {
@@ -25,7 +24,6 @@ class DB {
         if (err) throw err;
         this.result = results;
       });
-
     return this.result;
   }
 
@@ -45,9 +43,17 @@ class DB {
         if (err) throw err;
         this.result = results;
       });
-
     return this.result;
   }
 }
 
 module.exports = new DB();
+
+
+// INSERT INTO users (stud_code,name,middle_name,flastname,mlastname,email,password) VALUES
+// (1111,'brandon', 'manuel','diaz','flores','brandon@gmail.com','1234');
+//
+// INSERT INTO topics(name) VALUES ('Noticias');
+//
+// INSERT INTO threads (subject,created,user_id,topic_id) VALUES
+//  ('como se hace la tarea?',NULL, 1111, 1);
