@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-23T23:52:08-05:00
+ * @Last modified time: 2018-09-24T00:36:29-05:00
  */
 
 const db = require('../db');
@@ -16,44 +16,47 @@ class UserCtrl {
   }
 
   getAll(req, res) {
-    this.users = db.getAll('users');
-    const json = {
-      response: 'Ok',
-      data: this.users,
-      total: 7,
-    };
-    res.send(json);
+    db.getAll('users').then(results => {
+      const json = {
+        response: 'Ok',
+        data: results,
+        total: 7,
+      };
+      res.send(json);
+    });
   }
 
   get(req, res) {
-    this.user = db.get('users', 'stud_code', req.params.userId);
-    const json = {
-      response: 'Ok',
-      data: this.user,
-      total: 7,
-    };
-    res.send(json);
-    console.log(req.route.path);
+    db.get('users', 'stud_code', req.params.userId).then(results => {
+      const json = {
+        response: 'Ok',
+        data: results,
+        total: 7,
+      };
+      res.send(json);
+    });
   }
 
   insert(req, res) {
     const values = 'stud_code, name, middle_name, flastname, mlastname, email, password';
     const postdata = req.body;
-    this.response = db.insert('users', values, postdata);
-    const json = {
-      response: this.response,
-    };
-    res.send(json);
+    db.insert('users', values, postdata).then(results => {
+      const json = {
+        response: results,
+      };
+      res.send(json);
+    });
   }
 
   del(req, res) {
-    this.user = db.del('users', 'stud_code', req.params.userId);
-    const json = {
-      response: 'Ok',
-      data: this.user,
-      total: 7,
-    };
-    res.send(json);
+    db.del('users', 'stud_code', req.params.userId).then(results => {
+      const json = {
+        response: 'Ok',
+        data: results,
+        total: 7,
+      };
+      res.send(json);
+    });
   }
 }
 
