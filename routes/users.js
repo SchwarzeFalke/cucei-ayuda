@@ -2,12 +2,12 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-24T12:11:57-05:00
+ * @Last modified time: 2018-09-24T23:52:09-05:00
  */
 
 const { Router } = require('express');
 
-// const middleWares = require('../middlewares');
+const middleWares = require('../middlewares');
 
 const { usersCtrl } = require('../controllers');
 
@@ -37,7 +37,7 @@ router.get('/', usersCtrl.getAll);
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', usersCtrl.get);
+router.get('/:userId', middleWares.validateId, usersCtrl.get);
 
 /**
  * GET users/userId/map

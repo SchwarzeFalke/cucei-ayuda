@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-24T12:12:35-05:00
+ * @Last modified time: 2018-09-24T23:52:36-05:00
  */
 
 const db = require('../db');
@@ -86,12 +86,19 @@ class UserCtrl {
     });
   }
 
-  // update(req, res) {
-  //
-  // }
-
   del(req, res) {
     this.data = db.del('users', 'stud_code', req.params.userId).then((results) => {
+      const json = {
+        response: 'Ok',
+        data: results,
+        total: 7,
+      };
+      res.send(json);
+    });
+  }
+
+  validate(req, res) {
+    this.data = db.validate('users', 'stud_code', req.params.userId).then((results) => {
       const json = {
         response: 'Ok',
         data: results,
