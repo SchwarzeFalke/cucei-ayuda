@@ -1,1 +1,1 @@
-exports.thread = require('./thread')
+exports.thread = require('./thread');

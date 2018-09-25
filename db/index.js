@@ -11,45 +11,52 @@ class DB {
     this.con.connect();
   }
 
-  getAll(table, cb) {
-    this.con.query(`SELECT * FROM ${table}`, (err, results) => {
-      if (err) cb(err, null);
-      cb(null, results);
+  getAll(table) {
+    return new Promise((resolve, reject) => {
+      this.con.query(`SELECT * FROM ${table}`, (err, results) => {
+        if (err) throw reject(err);
+        resolve(results);
+      });
     });
   }
 
   get(table, arg1, arg2) {
-    this.connection.query(`SELECT * FROM ${table} WHERE ${arg1} = ${arg2}`,
-      (err, results) => {
-        if (err) throw err;
-        this.result = results;
-      });
-    return this.result;
+    return new Promise((resolve, reject) => {
+      this.con.query(`SELECT * FROM ${table} WHERE ${arg1} = ${arg2}`,
+        (err, results) => {
+          if (err) throw reject(err);
+          resolve(results);
+        });
+    });
   }
 
   insert(table, data) {
-    const sql = 'INSERT INTO '.concat(`${table}`);
-    const sql2 = `${sql} SET ?`;
-    this.connection.query(sql2, data, (err, results) => {
-      if (err) throw err;
-      this.result = results;
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO '.concat(`${table}`);
+      const sql2 = `${sql} SET ?`;
+      console.log(data);
+      this.con.query(sql2, data, (err, results) => {
+        if (err) {
+          console.log(err);
+          throw reject(err);
+        }
+        resolve(results);
+      });
     });
-    return this.result;
   }
 
   del(table, arg1, arg2) {
-    this.connection.query(`DELETE FROM ${table} WHERE ${arg1} = ${arg2}`,
-      (err, results) => {
-        if (err) throw err;
-        this.result = results;
-      });
-    return this.result;
+    return new Promise((resolve, reject) => {
+      this.con.query(`DELETE FROM ${table} WHERE ${arg1} = ${arg2}`,
+        (err, results) => {
+          if (err) throw reject(err);
+          resolve(results);
+        });
+    });
   }
 }
 
 module.exports = new DB();
-
-
 // INSERT INTO users (stud_code,name,middle_name,flastname,mlastname,email,password) VALUES
 // (1111,'brandon', 'manuel','diaz','flores','brandon@gmail.com','1234');
 //

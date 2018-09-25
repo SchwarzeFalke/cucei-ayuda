@@ -1,39 +1,75 @@
-const db = require('../db')
+const db = require('../db');
 
 class Thread {
   constructor(...args) {
-    this.id = args.id;
     this.subject = args.subject;
-    this.createdAt = args.subject;
+    this.created = args.created;
     this.user_id = args.user_id;
     this.topic_id = args.topic_id;
 
-    this.all.bind(this);
-    this.create.bind(this);
+    // this.all.bind(this);
+    // this.create.bind(this);
+  }
+
+  construct(args) {
+    this.setSubject(args.subject);
+    this.setCreatedAt(args.created);
+    this.setUserId(args.user_id);
+    this.setTopicId(args.topic_id);
+  }
+
+  setSubject(s) {
+    this.subject = s;
+  }
+
+  setCreatedAt(c) {
+    this.created = c;
+  }
+
+  setUserId(u) {
+    const isNumber = /^\d+$/.test(u);
+    if (isNumber) {
+      this.user_id = u;
+    }
+  }
+
+  setTopicId(t) {
+    const isNumber = /^\d+$/.test(t);
+    if (isNumber) {
+      this.topic_id = t;
+    }
   }
 
   required() {
-    return (this.id !== undefined && this.subject !== undefined &&
-     this.createdAt !== undefined && this.user_id !== undefined && this.topic_id
-     !== undefined)
+    return (this.subject !== undefined
+    && this.created !== undefined && this.user_id !== undefined
+    && this.topic_id !== undefined);
   }
 
-  all() {
-    return db.getAll('threads');
+  async all() {
+    const threads = await db.getAll('threads');
+    this.threads = threads;
+    return this.threads;
   }
 
-  find(id) {
-    return db.get('threads','id',id);
+  async find(id) {
+    const thread = await db.get('threads', 'id', id);
+    this.thread = thread;
+    console.log(thread);
+    return this.thread;
   }
 
-  save() {
-    if(required()) {
-      return db.create('threads',this);
+  async save() {
+    if (this.required()) {
+      const result = await db.insert('threads', this);
+      return result;
     }
-  }
-  //create();
-  delete(id) {
-    return db.del('threads','id',id);
+    return 'bad reques';
   }
 
+  async delete(id) {
+    this.result = await db.del('threads', 'id', id);
+    return this.result;
+  }
 }
+module.exports = new Thread();

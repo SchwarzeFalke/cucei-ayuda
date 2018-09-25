@@ -14,12 +14,11 @@ class TeachersCtrl {
     const json = {
       data: this.teachers,
       total_count: this.teachers.lenght,
-    }
+    };
     res.send(json);
   }
 
   get(res, req) {
     this.teacher = db.get('teachers', 'id', res.params.id);
-
   }
 }

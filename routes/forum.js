@@ -27,56 +27,10 @@ router.get('/threads/:threadId', threadCtrl.get);
 router.get('/threads/:threadId/posts', threadCtrl.get);
 router.get('/threads/:threadId/posts/:postId', threadCtrl.get);
 
-router.get('/teachers')
+router.get('/teachers');
 router.get('/teachers/:teachersId');
 router.get('/teachers/:teachersId/comments');
 router.get('/teachers/:teachersId/comments/:commentsId');
-
-router.get('/news');
-router.get('/news/:newsId',(req,res)  =>{
-  const news = {
-    id: 11,
-    title: 'dsafas',
-    text: 'dsafasdf',
-    image: 'fsfasdfas.jpg',
-    publishedAt: '14/10/12',
-    publishedBy: '12321',
-  };
-  res.send(news);
-
-});
-router.get('/news/:newsId/comments',(req,res) =>{
-  const comments = [
-    {
-      id: 11,
-      userId:123,
-      likes:1,
-      text: 'dsafasdf',
-      publishedAt: '14/10/12',
-    },
-    {
-      id: 11,
-      userId:123,
-      likes:1,
-      text: 'dsafasdf',
-      publishedAt: '14/10/12',
-    }
-  ];
-  res.send(comments);
-
-});
-router.get('/news/:newsId/comments/:commentsId',(req,res) =>{
-  const comment = {
-      id: 11,
-      newsId:12,
-      userId:123,
-      likes:1,
-      text: 'dsafasdf',
-      publishedAt: '14/10/12',
-    };
-    res.send(comment);
-
-});
 
 
 /**

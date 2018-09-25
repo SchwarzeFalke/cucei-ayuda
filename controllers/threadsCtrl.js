@@ -1,9 +1,8 @@
-const db = require('../db')
-// const thread = require('../models');
+// const db = require('../db')
+const { thread } = require('../models');
 
 class ThreadCtrl {
   constructor() {
-
     this.getAll = this.getAll.bind(this);
     this.get = this.get.bind(this);
     this.create = this.create.bind(this);
@@ -18,32 +17,42 @@ class ThreadCtrl {
   }
 
   getAll(req, res) {
-    db.getAll('threads', (err, data) => {
-      res.send(data);
+    this.data = thread.all().then((results) => {
+      const json = {
+        response: 'Ok',
+        data: results,
+      };
+      res.send(json);
     });
   }
 
   get(req, res) {
-    const data = this.data.find(element => element.id === Number(req.params.postsId));
-
-    if (data === undefined) {
-      res.status(400).json({
-        ok:false,
-        menssage: 'Id doesn´t exist',
-      });
-    }
-    res.send(data);
+    thread.find(req.params.threadId).then((results) => {
+      this.results = results;
+      if (this.results !== undefined && Object.keys(results).length) {
+        res.send(this.results);
+      }
+      const json = {
+        info: 'not found',
+      };
+      res.status(404).send(json);
+    }).catch((reason) => {
+      console.log(reason);
+    });
   }
 
   create(req, res) {
-    this.response = thread.create();
     const data = {
-      subject: req.body.text,
+      subject: req.body.subject,
       created: req.body.date,
-      user_id: req.body.userId,
-      topic_id: req.body.topicId,
+      user_id: req.body.user_id,
+      topic_id: req.body.topic_id,
     };
-    res.status(201).send(data);
+    thread.construct(data);
+    this.response = thread.save().then((results) => {
+      console.log(results);
+      res.status(201).send(results);
+    });
   }
 
   modify(req, res) {
@@ -52,14 +61,14 @@ class ThreadCtrl {
       // send error not found.
       console.log('damns');
     }
-    res.send(data)
+    res.send(data);
   }
 
   delete(req, res) {}
 
   getAllPosts(req, res) {
     const { threadId } = req.params;
-    this.posts = db.get('posts', 'threadId', threadId)
+    this.posts = db.get('posts', 'threadId', threadId);
     const json = {
       data: this.post,
       total_count: this.post.lenght,
