@@ -10,15 +10,16 @@ class TeachersCtrl {
   }
 
   getAll(req, res) {
-    this.teachers = thread.All('teachers');
-    const json = {
-      data: this.teachers,
-      total_count: this.teachers.lenght,
-    };
-    res.send(json);
+    this.data = thread.all().then((results) => {
+      const json = {
+        response: 'Ok',
+        data: results,
+      };
+      res.send(json);
+    });
   }
 
-  get(res, req) {
-    this.teacher = db.get('teachers', 'id', res.params.id);
-  }
+  get(res, req) {}
 }
+
+module.exports = new TeachersCtrl();

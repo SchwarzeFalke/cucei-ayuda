@@ -1,5 +1,4 @@
 const { Router } = require('express');
-const { postCtrl } = require('../controllers');
 const { threadCtrl } = require('../controllers');
 const middlewares = require('../middlewares/forum')
 const router = Router();
@@ -29,9 +28,9 @@ router.get('/threads/:threadId/posts/:postId', threadCtrl.get);
 
 router.get('/teachers');
 router.get('/teachers/:teachersId');
-router.get('/teachers/:teachersId/comments');
-router.get('/teachers/:teachersId/comments/:commentsId');
 
+router.get('/topics');
+router.get('/topics/:topicsId');
 
 /**
  * This are all the POST methods for the forum page.
@@ -46,192 +45,37 @@ router.get('/teachers/:teachersId/comments/:commentsId');
  * POST /forum/news/:newsId/comments
  */
 
-/**
- * Create a post
- */
-router.post('/thread', threadCtrl.create);
+router.post('/threads', threadCtrl.create);
+router.post('/threads/:threadId/posts');
+router.post('/teachers');
+router.post('/topics');
 
-/**
- * Create a comment on a post
- */
-router.post('/posts/:postsId/comments', (req,res) =>{
-  const json = {
-    response: 'New comment created successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación',
-    },
-  };
-  res.send(json);
-
-});
-
-/**
- * Create a new teacher
- */
-router.post('/teachers',(req,res) =>{
-  const json = {
-    response: 'New teacher created successfully!',
-    data: {
-      id: 4345,
-      subject: 'algoritmia',
-      department: 'ingenieria',
-      name: 'fdsaf',
-    },
-  };
-  res.send(json);
-
-});
-
-/**
- * comment a teacher
- */
-router.post('/teachers/:teachersId/comments',(req,res) =>{
-  const json = {
-    response: 'New comment created successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación',
-    },
-  };
-  res.send(json);
-
-});
-
-/**
- * Create a news
- */
-router.post('/news/',(req,res) =>{
-  const json = {
-    response: 'News created successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación',
-    },
-  };
-  res.send(json);
-
-});
-/**
- * Comment a news
- */
-router.post('/news/:newsId/comments',(req,res) =>{
-  const json = {
-    response: 'New comment created successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación',
-    },
-  };
-  res.send(json);
-
-});
 /**
  * This are all the PUT methods for the forum page.
 
- * PUT /forum/posts
- * PUT /forum/posts/:postsId/comments
+ * PUT /threads/:threadId
+ * PUT /threads/:threadId/posts/:postId
 
- * PUT /forum/teachers
- * PUT /forum/teachers/:teachersId/comments
+ * PUT /teachers/:teacherId
 
- * PUT /forum/news
- * PUT /forum/news/:newsId/comments
+ * PUT /topics/:topicId
  */
 
-router.put('/posts',(req,res) => {
-  const json = {
-    response: 'New post created successfully!',
-    data: {
-      id: 4345,
-      text: 'modificado',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
-router.put('/posts/:postsId/comments', (req,res) =>{
-  const json = {
-    response: 'New comment created successfully!',
-    data: {
-      id: 4345,
-      text: 'modificado',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
+router.put('/threads/:threadId');
+router.put('/threads/:threadId/posts/:postId');
+router.put('/teachers/:teacherId');
+router.put('/topics/:topicId');
 /**
- * Create a new teacher
+ * delete routes
+ *
+ * DELETE /threads/:threadId
+ * DELETE /threads/:threadId/posts/:postId
+ * DELETE /teachers/:teacherId
+ * DELETE /topics/:topicId
  */
-router.put('/teachers',(req,res) =>{
-  const json = {
-    response: 'New teacher created successfully!',
-    data: {
-      id: 4345,
-      name: 'new name',
-      subject: 'algoritmia',
-      department: 'ingenieria',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
-/**
- * comment a teacher
- */
-router.put('/teachers/:teachersId/comments',(req,res) =>{
-  const json = {
-    response: 'Modified successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación modificado',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
-/**
- * Create a news
- */
-router.put('/news/',(req,res) =>{
-  const json = {
-    response: 'modified successfully!',
-    data: {
-      id: 4345,
-      text: 'Contenido de la publicación modificado',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
-router.put('/news/:newsId/comments',(req,res) =>{
-  const json = {
-    response: 'modified successfully!',
-    data: {
-      id: 4345,
-      text: 'Coenido modificado',
-      modifiedAt: 14/12/18,
-    },
-  };
-  res.send(json);
-
-});
-
-router.delete('/posts/:postsId', (req,res) =>{});
-router.delete('/posts/:postsId/comments/:commentsId', (req,res) =>{});
-router.delete('/teachers/:teachersId',(req,res)=>{ });
-router.delete('/teachers/:teachersId/comments/:commentsId',(req,res)=>{ });
-router.delete('/topics/:topicId',(req,res)=>{ });
+router.delete('/threads/:threadId');
+router.delete('/threads/:threadId/posts/:postId');
+router.delete('/teachers/:teacherId');
+router.delete('/topics/:topicId');
 
 module.exports = router;

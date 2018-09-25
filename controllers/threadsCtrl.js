@@ -55,37 +55,19 @@ class ThreadCtrl {
     });
   }
 
-  modify(req, res) {
-    const data = this.data.find(element => element.id === Number(req.params.postsId));
-    if (data === undefined) {
-      // send error not found.
-      console.log('damns');
-    }
-    res.send(data);
+  modify(req, res) {}
+
+  delete(req, res) {
+    thread.delete(req.params.threadId).then((results) => {
+      this.results = results;
+    });
   }
 
-  delete(req, res) {}
+  getAllPosts(req, res) {}
 
-  getAllPosts(req, res) {
-    const { threadId } = req.params;
-    this.posts = db.get('posts', 'threadId', threadId);
-    const json = {
-      data: this.post,
-      total_count: this.post.lenght,
-    };
-    res.status(200).send(json);
-  }
-
-  getPost(req, res) {
-    const { postId } = req.params;
-    this.post = db.get('posts','postId', postId);
-    res.status(200).send(this.post);
-  }
-  createPost(){
-
-  }
+  getPost(req, res) {}
+  createPost() {}
   //   this.modifyComment = this.modifyComment.bind(this);
   // this.deleteComment = this.deleteComment.bind(this);
-
 }
 module.exports = new ThreadCtrl();

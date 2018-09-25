@@ -1,2 +1,2 @@
-exports.postCtrl = require('./postCtrl');
 exports.threadCtrl = require('./threadsCtrl');
+exports.TeachersCtrl = require('./threadsCtrl');
