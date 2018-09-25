@@ -55,8 +55,7 @@ class DB {
         if (err) {
           console.log(err);
           throw reject(err);
-        }
-         resolve(results);
+        }resolve(results);
       });
     });
   }

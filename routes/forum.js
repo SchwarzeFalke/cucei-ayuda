@@ -1,10 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-09-23T13:50:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-23T23:23:29-05:00
- */
-
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
 const middlewares = require('../middlewares/forum')

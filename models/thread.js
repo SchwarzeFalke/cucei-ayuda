@@ -1,22 +1,22 @@
 const db = require('../db');
 
+// tienes que regresar la clase, y en controllers creas instancias de lo que resgresaste
+// por lo tanto  cada funcion regresa una instancia tambien y se lo agregas a un usuario
+
+
 class Thread {
-  constructor(...args) {
+  constructor(args) {
     this.subject = args.subject;
     this.created = args.created;
     this.user_id = args.user_id;
     this.topic_id = args.topic_id;
-
-    // this.all.bind(this);
-    // this.create.bind(this);
   }
-
-  construct(args) {
-    this.setSubject(args.subject);
-    this.setCreatedAt(args.created);
-    this.setUserId(args.user_id);
-    this.setTopicId(args.topic_id);
-  }
+  // construct(args) {
+  //   this.setSubject(args.subject);
+  //   this.setCreatedAt(args.created);
+  //   this.setUserId(args.user_id);
+  //   this.setTopicId(args.topic_id);
+  // }
 
   setSubject(s) {
     this.subject = s;
