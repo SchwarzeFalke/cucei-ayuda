@@ -2,10 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T01:53:58-05:00
+ * @Last modified time: 2018-09-26T02:12:37-05:00
  */
 
 const db = require('../db');
+const { UserMdl } = require('../models');
 
 class UserCtrl {
   constructor() {
@@ -34,7 +35,7 @@ class UserCtrl {
     });
   }
 
-  get(req, res) {
+  async get(req, res) {
     if (req.route.path === '/:userId/map') {
       this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
         const json = {
@@ -83,7 +84,7 @@ class UserCtrl {
     });
   }
 
-  insert(req, res) {
+  async insert(req, res) {
     const values = 'stud_code, name, middle_name, flastname, mlastname, email, password';
     const postdata = req.body;
     this.data = db.insert('users', values, postdata).then((results) => {
@@ -94,11 +95,7 @@ class UserCtrl {
     });
   }
 
-  // update(req, res) {
-  //
-  // }
-
-  del(req, res) {
+  async del(req, res) {
     this.data = db.del('users', 'stud_code', req.params.userId).then((results) => {
       const json = {
         response: 'Ok',

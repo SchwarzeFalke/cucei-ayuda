@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T10:18:54-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T01:55:27-05:00
+ * @Last modified time: 2018-09-26T02:12:38-05:00
  */
 
 const mysql = require('mysql');
@@ -15,11 +15,6 @@ class DB {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     });
-
-    // this.getAll = this.getAll.bind(this);
-    // this.get = this.get.bind(this);
-    // this.insert = this.insert.bind(this);
-    // this.del = this.del.bind(this);
 
     this.connection.connect();
   }
