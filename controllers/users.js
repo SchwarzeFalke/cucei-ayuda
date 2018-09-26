@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-24T12:12:35-05:00
+ * @Last modified time: 2018-09-26T01:53:58-05:00
  */
 
 const db = require('../db');
@@ -15,14 +15,22 @@ class UserCtrl {
     this.del = this.del.bind(this);
   }
 
-  getAll(req, res) {
-    this.data = db.getAll('users').then((results) => {
-      const json = {
-        response: 'Ok',
-        data: results,
-        total: 7,
-      };
-      res.send(json);
+  async getAll(req, res) {
+    this.data = db.getAll('users', '*').then((results) => {
+      let json = {};
+      if (this.data.length < 1) {
+        json = {
+          response: 'Error!',
+          message: 'There is not elements in the database!',
+        };
+        res.status(400).send(json);
+      } else {
+        json = {
+          response: 'Ok',
+          data: results,
+        };
+        res.status(200).send(json);
+      }
     });
   }
 

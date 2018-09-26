@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T10:18:54-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-24T00:34:58-05:00
+ * @Last modified time: 2018-09-26T01:55:27-05:00
  */
 
 const mysql = require('mysql');
@@ -16,19 +16,22 @@ class DB {
       database: process.env.DB_NAME,
     });
 
+    // this.getAll = this.getAll.bind(this);
+    // this.get = this.get.bind(this);
+    // this.insert = this.insert.bind(this);
+    // this.del = this.del.bind(this);
+
     this.connection.connect();
   }
 
-  query() {
-    this.connection.query('SELECT 1 + 1 AS solution', (err, results) => {
-      if (err) throw err;
-      console.log('The solution is: ', results[0].solution);
-    });
-  }
-
-  getAll(table) {
+  getAll(table, columns, condition) {
     return new Promise((resolve, reject) => {
-      this.connection.query(`SELECT * FROM ${table}`, (err, results) => {
+      let query = 'SELECT ?? FROM ??';
+      const data = [columns, table];
+      if (condition) {
+        query += `WHERE ${condition}`;
+      }
+      this.connection.query(query, data, (err, results) => {
         if (err) throw reject(err);
         resolve(results);
       });
