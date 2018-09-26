@@ -2,11 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T02:12:37-05:00
+ * @Last modified time: 2018-09-26T02:21:14-05:00
  */
 
 const db = require('../db');
-const { UserMdl } = require('../models');
+const { User } = require('../models');
 
 class UserCtrl {
   constructor() {
@@ -85,14 +85,34 @@ class UserCtrl {
   }
 
   async insert(req, res) {
-    const values = 'stud_code, name, middle_name, flastname, mlastname, email, password';
-    const postdata = req.body;
-    this.data = db.insert('users', values, postdata).then((results) => {
-      const json = {
-        response: results,
+    const user = new User(req.body);
+    let json = {};
+    user.stud_code = req.params.userId;
+
+    this.result = await user.save();
+
+    if (this.result === 0) {
+      json = {
+        status: 'Ok',
+        message: 'Successfully created!',
       };
-      res.send(json);
-    });
+      res.status(201).send(json);
+    } else if (this.result === 1) {
+      json = {
+        status: 'Error!',
+        message: 'Cannot create user!',
+      };
+      res.status(400).send(json);
+    }
+
+    // const values = 'stud_code, name, middle_name, flastname, mlastname, email, password';
+    // const postdata = req.body;
+    // this.data = db.insert('users', values, postdata).then((results) => {
+    //   const json = {
+    //     response: results,
+    //   };
+    //   res.send(json);
+    // });
   }
 
   async del(req, res) {
