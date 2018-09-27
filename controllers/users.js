@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T02:38:11-05:00
+ * @Last modified time: 2018-09-27T03:27:06-05:00
  */
 
 const db = require('../db');
@@ -12,7 +12,10 @@ class UserCtrl {
   constructor() {
     // Binding class methods of the controller
     this.getAll = this.getAll.bind(this);
-    this.get = this.get.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.getRoads = this.getRoads.bind(this);
+    this.getSchedule = this.getSchedule.bind(this);
+    this.getPosts = this.getPosts.bind(this);
     this.insert = this.insert.bind(this);
     this.del = this.del.bind(this);
 
@@ -81,6 +84,21 @@ class UserCtrl {
     }
   }
 
+  getUser(req, res) {
+    try {
+      const condition = `stud_code = ${req.params.userId}`;
+      db.get('user', '*', condition)
+        .then((results) => {
+          this.requestJSON.data = results;
+          res.status(this.requestJSON.status).send(this.requestJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
   getRoads(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
@@ -114,7 +132,7 @@ class UserCtrl {
   getPosts(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('maps', '*', condition)
+      db.get('post', '*', condition)
         .then((results) => {
           this.requestJSON.data = results;
           res.status(this.requestJSON.status).send(this.requestJSON);
@@ -126,73 +144,14 @@ class UserCtrl {
     }
   }
 
-  get(req, res) {
-    if (req.route.path === '/:userId/map') {
-      this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/routes') {
-      this.data = db.get('roads', 'id_stud', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/schedule') {
-      this.data = db.get('schedule', 'stud_code', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/posts') {
-      this.data = db.get('posts', 'user_id', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    }
-
-    this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
-      const json = {
-        response: 'Ok',
-        data: results,
-        total: 7,
-      };
-      res.send(json);
-    });
-  }
-
   insert(req, res) {
     const user = new UserMdl({ ...req.body });
-    let json = {};
-
-    this.result = user.save();
-
-    if (this.result === 0) {
-      json = {
-        status: 'Ok',
-        message: 'Successfully created!',
-      };
-      res.status(201).send(json);
-    } else if (this.result === 1) {
-      json = {
-        status: 'Error!',
-        message: 'Cannot create user!',
-      };
-      res.status(400).send(json);
+    try {
+      this.createdJSON.data = user.save();
+      res.status(this.createdJSON.status).send(this.createdJSON);
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
 

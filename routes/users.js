@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T02:39:08-05:00
+ * @Last modified time: 2018-09-27T03:21:45-05:00
  */
 
 const { Router } = require('express');
@@ -33,32 +33,26 @@ router.get('/', usersCtrl.getAll);
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', usersCtrl.get);
-
-/**
- * GET users/userId/map
- * @type {Object} Returns the identifier of an specific user's map
- */
-router.get('/:userId/map', usersCtrl.get);
+router.get('/:userId', usersCtrl.getUser);
 
 /**
  * GET users/userId/routes
  * @type {Array} Returns all routes from a specific user through its identifier
  * "start" and "end" attributes reffers to a starting point and an ending point
  */
-router.get('/:userId/routes', usersCtrl.get);
+router.get('/:userId/roads', usersCtrl.getRoads);
 
 /**
  * GET users/userId/schedule
  * @type {Object} Returns the schedule's identifier from an specific user
  */
-router.get('/:userId/schedule', usersCtrl.get);
+router.get('/:userId/schedule', usersCtrl.getSchedule);
 
 /**
  * GET users/userId/posts
  * @type {Array} Returns all publications by the given user
  */
-router.get('/:userId/posts', usersCtrl.get);
+router.get('/:userId/posts', usersCtrl.getPosts);
 
 /**
  * The next block code reffers to all modification methods of USERS resource,

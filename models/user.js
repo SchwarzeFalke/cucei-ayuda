@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T03:04:17-05:00
+ * @Last modified time: 2018-09-27T03:25:45-05:00
  */
 const db = require('../db');
 /**
@@ -29,8 +29,14 @@ class UserMdl {
   }
 
   save() {
-    db.insert('user', this);
+    db.insert('user', this)
+      .then((results) => {
+        this.result = results;
+        return this.result;
+      })
+      .catch(e => console.error(`.catch(${e}})`));
   }
+
   /**
    * Returns the user name formatted in a specific way
    * @param  {[type]} order param for set the name format
