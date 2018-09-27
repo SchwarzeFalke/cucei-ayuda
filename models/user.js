@@ -2,9 +2,9 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T02:31:43-05:00
+ * @Last modified time: 2018-09-27T03:04:17-05:00
  */
-
+const db = require('../db');
 /**
  * User Model class
  */
@@ -28,6 +28,9 @@ class UserMdl {
     return this.result;
   }
 
+  save() {
+    db.insert('user', this);
+  }
   /**
    * Returns the user name formatted in a specific way
    * @param  {[type]} order param for set the name format
