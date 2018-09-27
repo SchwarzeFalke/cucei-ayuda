@@ -1,5 +1,4 @@
-// const db = require('../db')
-const { thread } = require('../models');
+const { ThreadMdl } = require('../models');
 
 class ThreadCtrl {
   constructor() {
@@ -11,49 +10,48 @@ class ThreadCtrl {
   }
 
   async getAll(req, res) {
-    this.data = await thread.all();
-    const json = {
-      response: 'Ok',
-      data: this.data,
+    const threads = new ThreadMdl({});
+    this.data = await threads.getAll();
+    if (this.data === undefined || this.data.length === 0) {
+      res.status(404).send({
+        error: 'you don´t have any data',
+      });
+    } else {
+      res.send(this.data);
     }
-    res.send(json);
   }
 
-  get(req, res) {
-    thread.find(req.params.threadId).then((results) => {
-      this.results = results;
-      if (this.results !== undefined && Object.keys(results).length) {
-        res.send(this.results);
-      }
-      const json = {
-        info: 'not found',
-      };
-      res.status(404).send(json);
-    }).catch((reason) => {
-      console.log(reason);
-    });
+  async get(req, res) {
+    const thread = new ThreadMdl({});
+    this.threadId = req.params.threadId;
+    this.data = await thread.find(this.threadId);
+    if (this.data === undefined || this.data.length === 0) {
+      res.status(404).send({
+        error: 'data not found',
+      });
+    } else {
+      res.send(this.data);
+    }
   }
 
-  create(req, res) {
-    const data = {
-      subject: req.body.subject,
-      created: req.body.date,
-      user_id: req.body.user_id,
-      topic_id: req.body.topic_id,
-    };
-    thread.construct(data);
-    this.response = thread.save().then((results) => {
-      console.log(results);
-      res.status(201).send(results);
-    });
+  async create(req, res) {
+    const thread = new ThreadMdl(req.body);
+    this.response = await thread.save();
+    if (this.response === 'bad reques') {
+      res.status(400).send({
+        error: 'bad reques',
+      });
+    } else if (this.response === 'done') {
+      res.status(201).send(this.response);
+    }
   }
 
   modify(req, res) {}
 
-  delete(req, res) {
-    thread.delete(req.params.threadId).then((results) => {
-      this.results = results;
-    });
+  async delete(req, res) {
+    const thread = new ThreadMdl(req.body);
+    this.deleted = thread.delete(req.params.threadId);
+    if(this.deleted === )
   }
 
   getAllPosts(req, res) {}

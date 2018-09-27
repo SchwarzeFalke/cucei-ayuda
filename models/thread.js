@@ -1,22 +1,14 @@
 const db = require('../db');
 
-// tienes que regresar la clase, y en controllers creas instancias de lo que resgresaste
-// por lo tanto  cada funcion regresa una instancia tambien y se lo agregas a un usuario
-
-
-class Thread {
+class ThreadMdl {
   constructor(args) {
-    this.subject = args.subject;
-    this.created = args.created;
-    this.user_id = args.user_id;
-    this.topic_id = args.topic_id;
+    console.log()
+    this.id = null || args.id;
+    this.subject = null || args.subject;
+    this.created = null || args.created;
+    this.user_id = null || args.user_id;
+    this.topic_id = null || args.topic_id;
   }
-  // construct(args) {
-  //   this.setSubject(args.subject);
-  //   this.setCreatedAt(args.created);
-  //   this.setUserId(args.user_id);
-  //   this.setTopicId(args.topic_id);
-  // }
 
   setSubject(s) {
     this.subject = s;
@@ -46,30 +38,44 @@ class Thread {
     && this.topic_id !== undefined);
   }
 
-  async all() {
+  processData(data) {
+    this.hola = 1;
+    const results = [];
+    data.forEach((res) => {
+      results.push(new ThreadMdl(res));
+    });
+    return results;
+  }
+
+  async getAll() {
     const threads = await db.getAll('threads');
-    this.threads = threads;
+    this.threads = this.processData(threads);
     return this.threads;
   }
 
   async find(id) {
     const thread = await db.get('threads', 'id', id);
-    this.thread = thread;
-    console.log(thread);
+    this.thread = this.processData(thread);
     return this.thread;
   }
 
   async save() {
     if (this.required()) {
-      const result = await db.insert('threads', this);
-      return result;
+      delete this.id;
+      const result = await db.insertTh('threads', this);
+      console.log(result);
+      return 'done';
     }
     return 'bad reques';
   }
 
   async delete(id) {
     this.result = await db.del('threads', 'id', id);
-    return this.result;
+    this.result = this.process(this.result);
+    if (this.result === undefined || this.result === ){
+      return 0;
+    }
+    return 0;
   }
 }
-module.exports = new Thread();
+module.exports = ThreadMdl;

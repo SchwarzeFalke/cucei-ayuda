@@ -30,8 +30,8 @@ class DB {
   getAll(table) {
     return new Promise((resolve, reject) => {
       this.connection.query(`SELECT * FROM ${table}`, (err, results) => {
-        if (err) throw reject(err);
-        resolve(results);
+        if (err) return reject(err);
+        return resolve(results);
       });
     });
   }
@@ -40,8 +40,8 @@ class DB {
     return new Promise((resolve, reject) => {
       this.connection.query(`SELECT * FROM ${table} WHERE ${arg1} = ${arg2}`,
         (err, results) => {
-          if (err) throw reject(err);
-          resolve(results);
+          if (err) return reject(err);
+          return resolve(results);
         });
     });
   }
@@ -51,11 +51,12 @@ class DB {
       const sql = 'INSERT INTO '.concat(`${table}`);
       const sql2 = `${sql} SET ?`;
       console.log(data);
-      this.con.query(sql2, data, (err, results) => {
+      console.log(sql2);
+      this.connection.query(sql2, data, (err, results) => {
         if (err) {
-          console.log(err);
-          throw reject(err);
-        }resolve(results);
+          return reject(err);
+        }
+        return resolve(results);
       });
     });
   }
