@@ -2,10 +2,8 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T21:56:04-05:00
+ * @Last modified time: 2018-09-27T00:13:18-05:00
  */
-
-const db = require('../db');
 
 class UserMdl {
   constructor(args) {
@@ -18,7 +16,7 @@ class UserMdl {
     this.password = args.password;
   }
 
-  async processResult(data) {
+  processResult(data) {
     this.result = [];
     data.forEach((res) => {
       this.result.push(new UserMdl(res));
@@ -26,11 +24,29 @@ class UserMdl {
     return this.result;
   }
 
-  async save() {
-    await db.insert('users', this).then((results) => {
-      this.result = results;
-    });
-    return 0;
+  getFullName(order) {
+    let name = '';
+    switch (order) {
+      case 1:
+        name += this.flastname + this.mlastname + this.name + this.middle_name;
+        break;
+      case 2:
+        name += this.flastname + this.mlastname;
+        break;
+      case 3:
+        name += this.name + this.flastname;
+        break;
+      case 4:
+        name += this.name;
+        break;
+      default:
+        name += this.name + this.middle_name + this.flastname + this.mlastname;
+    }
+    return name;
   }
+
+  getStudCode() { return this.stud_code; }
+
+  getEmail() { return this.email; }
 }
 module.exports = UserMdl;

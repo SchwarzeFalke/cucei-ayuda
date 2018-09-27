@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T18:50:05-05:00
+ * @Last modified time: 2018-09-26T22:06:57-05:00
  */
 
 const { Router } = require('express');
@@ -23,8 +23,6 @@ const router = Router();
  GET /users/userId/schedule
  GET /users/userId/posts
  GET /users/userId/posts/postId
- Block code beggining line: 29
- Block code ending line: 234
 */
 
 /**
