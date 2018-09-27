@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T22:06:57-05:00
+ * @Last modified time: 2018-09-27T02:39:08-05:00
  */
 
 const { Router } = require('express');
@@ -18,11 +18,9 @@ const router = Router();
  includes the next resources:
  GET /users
  GET /users/userId
- GET /users/userId/map
  GET /users/userId/routes
  GET /users/userId/schedule
  GET /users/userId/posts
- GET /users/userId/posts/postId
 */
 
 /**
@@ -68,8 +66,6 @@ router.get('/:userId/posts', usersCtrl.get);
  * POST /users
  * PUT /users
  * DELETE /users
- * Block code beggining line: 247
- * Block code ending line: 234
  */
 
 /**
