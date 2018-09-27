@@ -19,6 +19,7 @@ class Schedule {
   save() {
     db.create(this);
   }
+
 }
 
 module.exports = Schedule;

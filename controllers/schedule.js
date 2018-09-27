@@ -11,7 +11,7 @@ class ScheduleCtrl {
   }
 
   getAll(req, res) {
-    this.schedules = db.getAll('schedules');
+    this.schedules = db.getAll('subjects');
     const json = {
       response: 'ok',
       data: this.schedules,
@@ -21,7 +21,7 @@ class ScheduleCtrl {
   }
 
   get(req, res) {
-    this.schedule = db.get('schedules', 'Id', req.params.scheduleId);
+    this.schedule = db.get('subjects', 'nrc', req.params.nrc);
     const json = {
       response: 'ok',
       data: this.schedule,
@@ -31,9 +31,9 @@ class ScheduleCtrl {
   }
 
   insert(req, res) {
-    const values = 'schedule_id, clave, materia, sec, cr, hora, dias, edif, aula, profesor';
+    const values = 'nrc, name, init_hour, end_hour, first_day, sec_day, classroom, section, credits, taught_by';
     const postdata = req.body;
-    this.response = db.insert('schedules', values, postdata);
+    this.response = db.insert('subjects', values, postdata);
     const json = {
       response: this.respose,
     };
@@ -41,14 +41,21 @@ class ScheduleCtrl {
   }
 
   del(req, res) {
-    this.schedule = db.del('schedules', 'schedule_id', req.params.scheduleId);
+    this.schedule = db.del('subjects', 'nrc', req.params.nrc);
     const json = {
       response: 'Ok',
-      data: this.user,
+      data: this.schedule,
     };
-
-
+    res.send(json);
 }
+  update(req, res) {
+    this.schedule = db.update('subjects', req.body.arg1, req.body.arg2, req.body.arg3, req.body.arg4);
+    const json = {
+      response: 'Ok',
+      data: this.schedule;
+    };
+    res.send(json);
+  }
 }
 
 module.exports = new ScheduleCtrl();
