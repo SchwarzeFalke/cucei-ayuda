@@ -2,11 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T02:21:14-05:00
+ * @Last modified time: 2018-09-26T21:56:05-05:00
  */
 
 const db = require('../db');
-const { User } = require('../models');
+const { UserMdl } = require('../models');
 
 class UserCtrl {
   constructor() {
@@ -16,7 +16,7 @@ class UserCtrl {
     this.del = this.del.bind(this);
   }
 
-  async getAll(req, res) {
+  getAll(req, res) {
     this.data = db.getAll('users', '*').then((results) => {
       let json = {};
       if (this.data.length < 1) {
@@ -35,7 +35,7 @@ class UserCtrl {
     });
   }
 
-  async get(req, res) {
+  get(req, res) {
     if (req.route.path === '/:userId/map') {
       this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
         const json = {
@@ -84,12 +84,11 @@ class UserCtrl {
     });
   }
 
-  async insert(req, res) {
-    const user = new User(req.body);
+  insert(req, res) {
+    const user = new UserMdl({ ...req.body });
     let json = {};
-    user.stud_code = req.params.userId;
 
-    this.result = await user.save();
+    this.result = user.save();
 
     if (this.result === 0) {
       json = {

@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T10:18:54-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-26T02:12:38-05:00
+ * @Last modified time: 2018-09-26T20:00:43-05:00
  */
 
 const mysql = require('mysql');
@@ -19,13 +19,14 @@ class DB {
     this.connection.connect();
   }
 
-  getAll(table, columns, condition) {
+  async getAll(table, columns, condition) {
     return new Promise((resolve, reject) => {
       let query = 'SELECT ?? FROM ??';
       const data = [columns, table];
       if (condition) {
-        query += `WHERE ${condition}`;
-      }
+        query += `WHERE ${condition};`;
+      } else { query += ';'; }
+
       this.connection.query(query, data, (err, results) => {
         if (err) throw reject(err);
         resolve(results);
@@ -43,6 +44,16 @@ class DB {
     });
   }
 
+  async insert(table, data) {
+    return new Promise((resolve, reject) => {
+      this.connection.query('INSERT INTO ?? SET ?;', [table, data], (err, results) => {
+        if (err) return reject(err);
+        return resolve(results);
+      });
+    });
+  }
+
+  /*
   insert(table, data, body) {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO '.concat(`${table}`);
@@ -53,6 +64,7 @@ class DB {
       });
     });
   }
+  */
 
   del(table, arg1, arg2) {
     return new Promise((resolve, reject) => {
