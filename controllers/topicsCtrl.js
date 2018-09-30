@@ -1,4 +1,4 @@
-const { thread } = require('../models');
+const { TopicMdl } = require('../models');
 
 class TopicCtrl {
   constructor() {
@@ -10,49 +10,54 @@ class TopicCtrl {
   }
 
   async getAll(req, res) {
-    this.data = await thread.all();
-    const json = {
-      response: 'Ok',
-      data: this.data,
+    let data = await TopicMdl.getAll();
+    if (data === undefined || data.length === 0) {
+      res.status(404).send({
+        error: 'you don´t have any data',
+      });
+    } else {
+      res.send(data);
     }
-    res.send(json);
   }
 
-  get(req, res) {
-    thread.find(req.params.threadId).then((results) => {
-      this.results = results;
-      if (this.results !== undefined && Object.keys(results).length) {
-        res.send(this.results);
-      }
-      const json = {
-        info: 'not found',
-      };
-      res.status(404).send(json);
-    }).catch((reason) => {
-      console.log(reason);
-    });
+  async get(req, res) {
+    this.topicId = req.params.topicId;
+    const data = await TopicMdl.find(this.topicId);
+    if (data === undefined || data.length === 0) {
+      res.status(404).send({
+        error: 'data not found',
+      });
+    } else {
+      res.send(data);
+    }
   }
 
-  create(req, res) {
-    const data = {
-      subject: req.body.subject,
-      created: req.body.date,
-      user_id: req.body.user_id,
-      topic_id: req.body.topic_id,
-    };
-    thread.construct(data);
-    this.response = thread.save().then((results) => {
-      console.log(results);
-      res.status(201).send(results);
-    });
+  async create(req, res) {
+    const topic = new TopicMdl(req.body);
+    this.response = await topic.save();
+    if (this.response === 'bad reques') {
+      res.status(400).send({
+        error: 'bad reques',
+      });
+    } else if (this.response === 1) {
+      res.status(200).send({ message: 'Registrado Correctamente' });
+    } else {
+      res.status(409).send({ error: 'No se completó' });
+    }
   }
 
-  modify(req, res) {}
+  async modify(req, res) {
+    const topicModify = await TopicMdl.modify(req.body);
+  }
 
-  delete(req, res) {
-    thread.delete(req.params.threadId).then((results) => {
-      this.results = results;
-    });
+  async delete(req, res) {
+    const topic = new TopicMdl(req.body);
+    this.deleted = await topic.delete(req.params.topicId);
+    if (this.deleted === 1) {
+      res.status(200).send({ message: 'todo bien' });
+    } else {
+      res.status(400).send({ message: 'todo mal' });
+    }
   }
 
   getAllPosts(req, res) {}

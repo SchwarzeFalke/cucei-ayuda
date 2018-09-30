@@ -28,6 +28,8 @@ router.get('/threads/:threadId/posts/:postId', threadCtrl.get);
 
 router.get('/teachers');
 router.get('/teachers/:teachersId');
+router.get('/teachers/:teachersId/rate');
+router.get('/teachers/:teachersId/rate/:scheduleId');
 
 router.get('/topics');
 router.get('/topics/:topicsId');
@@ -73,7 +75,7 @@ router.put('/topics/:topicId');
  * DELETE /teachers/:teacherId
  * DELETE /topics/:topicId
  */
-router.delete('/threads/:threadId');
+router.delete('/threads/:threadId', threadCtrl.delete);
 router.delete('/threads/:threadId/posts/:postId');
 router.delete('/teachers/:teacherId');
 router.delete('/topics/:topicId');

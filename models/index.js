@@ -5,8 +5,8 @@
  * @Last modified time: 2018-09-21T19:39:30-05:00
  */
 exports.user = require('./user');
-const ThreadMdl = require('./thread');
-
-module.exports = {
-  ThreadMdl
-}
+exports.ThreadMdl = require('./thread');
+exports.TopicCtrl = require('./topic');
+// module.exports = {
+//   ThreadMdl
+// }

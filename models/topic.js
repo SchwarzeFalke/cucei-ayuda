@@ -1,41 +1,38 @@
 const db = require('../db');
 
-class ThreadMdl {
+class TopicMdl {
   constructor({
-    id, subject, created, user_id, topic_id
+    id, name, descriptcion, exist,
   }) {
     this.id = id;
-    //this.exist = exist;
-    this.subject = subject;
-    this.created = created;
-    this.user_id = user_id;
-    this.topic_id = topic_id;
+    this.name = name;
+    this.descriptcion = descriptcion;
+    this.exist = exist;
   }
 
   required() {
-    return (this.subject !== undefined
-    && this.created !== undefined && this.user_id !== undefined
-    && this.topic_id !== undefined);
+    return (this.name !== undefined
+    && this.descriptcion !== undefined);
   }
 
   static processData(data) {
     const results = [];
     data.forEach((res) => {
-      results.push(new ThreadMdl(res));
+      results.push(new TopicMdl(res));
     });
     return results;
   }
 
   static async getAll() {
-    let threads = await db.getAll('threads');
-    threads = this.processData(threads);
-    return threads;
+    let topics = await db.getAll('topic');
+    topics = this.processData(topics);
+    return topics;
   }
 
   static async find(id) {
-    let thread = await db.get('threads', 'id', id);
-    thread = this.processData(thread);
-    return thread;
+    let topic = await db.get('topic', 'id', id);
+    topic = this.processData(topic);
+    return topic;
   }
 
   async save() {
@@ -43,7 +40,7 @@ class ThreadMdl {
     delete this.id;
     if (this.required()) {
       try {
-        result = await db.insertTh('threads', this);
+        result = await db.insertTh('topic', this);
       } catch (e) {
         if (e) {
           return 'error';
@@ -61,9 +58,10 @@ class ThreadMdl {
   async modify({ id, content, date}) {
     let query = ''
   }
+
   async delete(id) {
     try {
-      this.result = await db.del('threads', 'id', id);
+      this.result = await db.del('topic', 'id', id);
     } catch (e) {
       return 0;
     }
@@ -73,4 +71,4 @@ class ThreadMdl {
     return 1;
   }
 }
-module.exports = ThreadMdl;
+module.exports = TopicMdl;

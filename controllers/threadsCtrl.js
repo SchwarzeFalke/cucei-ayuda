@@ -10,27 +10,25 @@ class ThreadCtrl {
   }
 
   async getAll(req, res) {
-    const threads = new ThreadMdl({});
-    this.data = await threads.getAll();
-    if (this.data === undefined || this.data.length === 0) {
+    let data = await ThreadMdl.getAll();
+    if (data === undefined || data.length === 0) {
       res.status(404).send({
         error: 'you don´t have any data',
       });
     } else {
-      res.send(this.data);
+      res.send(data);
     }
   }
 
   async get(req, res) {
-    const thread = new ThreadMdl({});
     this.threadId = req.params.threadId;
-    this.data = await thread.find(this.threadId);
-    if (this.data === undefined || this.data.length === 0) {
+    const data = await ThreadMdl.find(this.threadId);
+    if (data === undefined || data.length === 0) {
       res.status(404).send({
         error: 'data not found',
       });
     } else {
-      res.send(this.data);
+      res.send(data);
     }
   }
 
@@ -41,20 +39,36 @@ class ThreadCtrl {
       res.status(400).send({
         error: 'bad reques',
       });
-    } else if (this.response === 'done') {
-      res.status(201).send(this.response);
+    } else if (this.response === 1) {
+      res.status(200).send({ message: 'Registrado Correctamente' });
+    } else {
+      res.status(409).send({ error: 'No se completó' });
     }
   }
 
-  modify(req, res) {}
+  async modify(req, res) {
+    const threadModify = await ThreadMdl.modify(req.body);
+  }
 
   async delete(req, res) {
     const thread = new ThreadMdl(req.body);
-    this.deleted = thread.delete(req.params.threadId);
-    if(this.deleted === )
+    this.deleted = await thread.delete(req.params.threadId);
+    if (this.deleted === 1) {
+      res.status(200).send({ message: 'todo bien' });
+    } else {
+      res.status(400).send({ message: 'todo mal' });
+    }
   }
 
-  getAllPosts(req, res) {}
+  async getAllPosts(req, res) {
+    let data = await ThreadMdl.getAll();
+    if (data === undefined || data.length === 0) {
+      res.status(404).send({
+        error: 'you don´t have any data',
+      });
+    } else {
+      res.send(data);
+    }}
 
   getPost(req, res) {}
   createPost() {}

@@ -1,12 +1,5 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-09-23T13:50:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-23T23:55:01-05:00
- */
-
 exports.bloquearGroserias = (req, res, next) => {
-  const groserias = ['pendejo','puto','idiota','maricon','cabron'];
+  const groserias = ['pendejo', 'puto', 'idiota', 'maricon','cabron'];
   const texto = req.body.text;
   for (i in groserias) {
     if (texto.includes(groserias[i])) {
