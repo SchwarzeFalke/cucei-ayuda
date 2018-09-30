@@ -2,10 +2,9 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T03:27:06-05:00
+ * @Last modified time: 2018-09-30T02:39:05-05:00
  */
 
-const db = require('../db');
 const { UserMdl } = require('../models');
 
 class UserCtrl {
@@ -24,12 +23,10 @@ class UserCtrl {
      * @type {Object} Defines a format to give a success response at requesting
      * a new user. Its 'data' field does not return nothing.
      */
-    this.createdJSON = {
+    this.modifyJSON = {
       status: 201,
-      response: 'Created',
-      message: 'New user successfully created',
-      description: 'A new user has been created successfully into database. '
-      + 'Please, update your profile information.',
+      response: null,
+      message: 'User successfully',
       data: null,
     };
 
@@ -42,9 +39,7 @@ class UserCtrl {
     this.requestJSON = {
       status: 200,
       response: 'Ok',
-      message: 'Display request information',
-      description: 'These are all the users (students) from the database API. '
-      + 'Paging of the data is in progress.',
+      message: null,
       data: null,
     };
 
@@ -57,9 +52,7 @@ class UserCtrl {
     this.forbiddenJSON = {
       status: 403,
       response: 'Forbidden',
-      message: 'Cannot create user',
-      description: 'The user creation request cannot proceed because of a '
-      + 'duplicated value. Please provide correct information',
+      message: null,
       data: null,
     };
   }
@@ -70,26 +63,27 @@ class UserCtrl {
    * @param  {[type]} res
    * @return {[type]}     not-formatted rows (pending)
    */
-  getAll(req, res) {
+
+  async getAll(req, res) {
     try {
-      db.get('user', '*') // asteriks reffers to ALL columns
-        .then((results) => {
-          this.requestJSON.data = results; // data field is set
+      await UserMdl.getAll()
+        .then((data) => {
+          this.requestJSON.data = data; // data field is set
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
-        .catch(e => console.error(`.catch(${e})`));
+        .catch(e => console.error(`.catch(${e}})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
 
-  getUser(req, res) {
+  async getUser(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('user', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
+      await UserMdl.get('*', condition)
+        .then((data) => {
+          this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -99,12 +93,13 @@ class UserCtrl {
     }
   }
 
-  getRoads(req, res) {
+  async getRoads(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('road', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
+      await UserMdl.get('*', condition)
+        .then((data) => {
+          console.log(data);
+          this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -114,12 +109,12 @@ class UserCtrl {
     }
   }
 
-  getSchedule(req, res) {
+  async getSchedule(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('schedule', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
+      await UserMdl.get('*', condition)
+        .then((data) => {
+          this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -129,12 +124,12 @@ class UserCtrl {
     }
   }
 
-  getPosts(req, res) {
+  async getPosts(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('post', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
+      await UserMdl.get('*', condition)
+        .then((data) => {
+          this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -144,11 +139,18 @@ class UserCtrl {
     }
   }
 
-  insert(req, res) {
-    const user = new UserMdl({ ...req.body });
+  async insert(req, res) {
+    const newUser = new UserMdl({ ...req.body });
     try {
-      this.createdJSON.data = user.save();
-      res.status(this.createdJSON.status).send(this.createdJSON);
+      await newUser.save()
+        .then((data) => {
+          this.info = data;
+          this.modifyJSON.response = 'Created';
+          this.modifyJSON.message += ' created into database';
+          this.modifyJSON.data = newUser;
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
@@ -156,14 +158,37 @@ class UserCtrl {
   }
 
   async del(req, res) {
-    this.data = db.del('users', 'stud_code', req.params.userId).then((results) => {
-      const json = {
-        response: 'Ok',
-        data: results,
-        total: 7,
-      };
-      res.send(json);
-    });
+    try {
+      const condition = `stud_code = ${req.params.userId}`;
+      await UserMdl.del(condition)
+        .then((data) => {
+          this.modifyJSON.data = data;
+          this.modifyJSON.response = 'Deleted';
+          this.modifyJSON.message += ' deleted from database';
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async update(req, res) {
+    const updateUser = new UserMdl({ ...req.body });
+    try {
+      await updateUser.update(req.params.userId)
+        .then((data) => {
+          this.modifyJSON.response = 'Updated';
+          this.modifyJSON.message += ' updated from database';
+          this.createdJSON.data = data;
+          res.status(this.createdJSON.status).send(this.createdJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
   }
 }
 

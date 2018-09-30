@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T03:21:45-05:00
+ * @Last modified time: 2018-09-30T02:35:49-05:00
  */
 
 const { Router } = require('express');
@@ -68,6 +68,8 @@ router.get('/:userId/posts', usersCtrl.getPosts);
  * and a password. Returns an ok response.
  */
 router.post('/', usersCtrl.insert);
+
+router.put('/:userId', usersCtrl.update);
 
 router.delete('/:userId', usersCtrl.del);
 

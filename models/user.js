@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T03:25:45-05:00
+ * @Last modified time: 2018-09-30T03:02:50-05:00
  */
 const db = require('../db');
 /**
@@ -20,7 +20,7 @@ class UserMdl {
     this.exist = args.exist;
   }
 
-  processResult(data) {
+  static processResult(data) {
     this.result = [];
     data.forEach((res) => {
       this.result.push(new UserMdl(res));
@@ -28,13 +28,63 @@ class UserMdl {
     return this.result;
   }
 
-  save() {
-    db.insert('user', this)
+  static checkUndefined(data) {
+    this.result = {};
+    this.forEach((dae) => {
+      if (data !== undefined) {
+        console.log(ae);
+      }
+    });
+    return this.result;
+  }
+
+  static async getAll() {
+    await db.get('user', '*')
+      .then((results) => {
+        this.result = UserMdl.processResult(results);
+      })
+      .catch(e => console.error(`.catch(${e})`));
+    return this.result;
+  }
+
+  static async get(columns, condition) {
+    await db.get('user', columns, condition)
+      .then((results) => {
+        this.result = results;
+      })
+      .catch(e => console.error(`.catch(${e})`));
+    return this.result;
+  }
+
+  static async del(condition) {
+    await db.del('user', condition)
+      .then((results) => {
+        this.result = results;
+      })
+      .catch(e => console.error(`.catch(${e})`));
+    return this.result;
+  }
+
+  async save() {
+    await db.insert('user', this)
       .then((results) => {
         this.result = results;
         return this.result;
       })
       .catch(e => console.error(`.catch(${e}})`));
+    return this.result;
+  }
+
+  async update(id) {
+    console.log(UserMdl.checkUndefined(this));
+    const condition = `stud_code = ${id}`;
+    await db.update('user', this, condition)
+      .then((results) => {
+        this.result = results;
+        return this.result;
+      })
+      .catch(e => console.error(`.catch(${e}})`));
+    return this.result;
   }
 
   /**
