@@ -1,15 +1,16 @@
 const { Router } = require('express');
 
-const router = Router();
-
 const bodyParser = require('body-parser');
 
 const mapRouter = require('./map');
 
+const router = Router();
+
+router.use('/map', mapRouter);
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
-
-router.use('/map', mapRouter);
+router.get('/', (req, res) => res.send('Welcome to QCInf!'));
 
 module.exports = router;

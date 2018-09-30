@@ -1,0 +1,1 @@
+exports.mapCtrl = require('./map');
