@@ -2,19 +2,19 @@ const db = require('../db');
 
 class ThreadMdl {
   constructor({
-    id, subject, created, user_id, topic_id
+    thread_id, subject, created, stud_code, topic_id, exist
   }) {
-    this.id = id;
-    //this.exist = exist;
+    this.thread_id = thread_id;
+    this.exist = exist;
     this.subject = subject;
     this.created = created;
-    this.user_id = user_id;
+    this.stud_code = stud_code;
     this.topic_id = topic_id;
   }
 
   required() {
     return (this.subject !== undefined
-    && this.created !== undefined && this.user_id !== undefined
+    && this.created !== undefined && this.stud_code !== undefined
     && this.topic_id !== undefined);
   }
 
@@ -27,14 +27,24 @@ class ThreadMdl {
   }
 
   static async getAll() {
-    let threads = await db.getAll('threads');
-    threads = this.processData(threads);
-    return threads;
+    try {
+      this.threads = await db.getAll('thread');
+    } catch (e) {
+      console.log(e);
+    }
+    this.threads = this.processData(this.threads);
+    return this.threads;
   }
 
   static async find(id) {
-    let thread = await db.get('threads', 'id', id);
-    thread = this.processData(thread);
+    try {
+      const condition = `thread_id = ${id}`;
+      this.thread = await db.get('thread', '*', condition);
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+    let thread = this.processData(this.thread);
     return thread;
   }
 
@@ -43,9 +53,10 @@ class ThreadMdl {
     delete this.id;
     if (this.required()) {
       try {
-        result = await db.insertTh('threads', this);
+        result = await db.insert('thread', this);
       } catch (e) {
         if (e) {
+          console.log(e);
           return 'error';
         }
       }
@@ -55,12 +66,15 @@ class ThreadMdl {
       }
       return 0;
     }
+    console.log("dfasdfasd");
     return 'bad reques';
   }
 
-  async modify({ id, content, date}) {
-    let query = ''
+  async modify({ thread_id, content, date}) {
+    let condition = `thread_id = ${thread_id}`;
+
   }
+
   async delete(id) {
     try {
       this.result = await db.del('threads', 'id', id);
