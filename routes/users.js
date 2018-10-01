@@ -2,12 +2,12 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-30T02:35:49-05:00
+ * @Last modified time: 2018-09-30T13:51:47-05:00
  */
 
 const { Router } = require('express');
 
-// const middleWares = require('../middlewares');
+const middleWares = require('../middlewares');
 
 const { usersCtrl } = require('../controllers');
 
@@ -33,7 +33,16 @@ router.get('/', usersCtrl.getAll);
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', usersCtrl.getUser);
+router.get('/:userId', (req, res, next) => {
+  middleWares.validator.validate(req, res, next, {
+    body: {
+      stud_code: 'stud_code,required',
+      name: 'word,required',
+      email: 'email,required',
+      unwanted: 'required',
+    },
+  });
+}, usersCtrl.getUser);
 
 /**
  * GET users/userId/routes

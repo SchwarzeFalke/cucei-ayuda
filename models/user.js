@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-30T03:02:50-05:00
+ * @Last modified time: 2018-10-01T01:09:08-05:00
  */
 const db = require('../db');
 /**
@@ -38,6 +38,16 @@ class UserMdl {
     return this.result;
   }
 
+  static async validUser(id) {
+    await db.get('user', 'stud_code', `stud_code = ${id}`)
+      .then((results) => {
+        this.result = results.length;
+      })
+      .catch(e => console.error(`.catch(${e})`));
+    console.log(this.result);
+    return this.result;
+  }
+
   static async getAll() {
     await db.get('user', '*')
       .then((results) => {
@@ -65,6 +75,7 @@ class UserMdl {
     return this.result;
   }
 
+
   async save() {
     await db.insert('user', this)
       .then((results) => {
@@ -76,7 +87,7 @@ class UserMdl {
   }
 
   async update(id) {
-    console.log(UserMdl.checkUndefined(this));
+    console.log(this);
     const condition = `stud_code = ${id}`;
     await db.update('user', this, condition)
       .then((results) => {

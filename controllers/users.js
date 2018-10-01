@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-30T02:39:05-05:00
+ * @Last modified time: 2018-09-30T13:26:17-05:00
  */
 
 const { UserMdl } = require('../models');
@@ -80,46 +80,68 @@ class UserCtrl {
 
   async getUser(req, res) {
     try {
-      const condition = `stud_code = ${req.params.userId}`;
-      await UserMdl.get('*', condition)
-        .then((data) => {
-          this.requestJSON.data = data;
-          res.status(this.requestJSON.status).send(this.requestJSON);
+      await UserMdl.validUser(req.params.userId)
+        .then((exists) => {
+          if (exists) {
+            const condition = `stud_code = ${req.params.userId}`;
+            UserMdl.get('*', condition)
+              .then((data) => {
+                this.requestJSON.data = data;
+                res.status(this.requestJSON.status).send(this.requestJSON);
+              })
+              .catch(e => console.error(`.catch(${e})`));
+          } else {
+            this.forbiddenJSON.message = 'The requested user cannot be found';
+            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+          }
         })
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
 
   async getRoads(req, res) {
     try {
-      const condition = `stud_code = ${req.params.userId}`;
-      await UserMdl.get('*', condition)
-        .then((data) => {
-          console.log(data);
-          this.requestJSON.data = data;
-          res.status(this.requestJSON.status).send(this.requestJSON);
-        })
-        .catch(e => console.error(`.catch(${e})`));
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_code = ${req.params.userId}`;
+        await UserMdl.get('*', condition)
+          .then((data) => {
+            console.log(data);
+            this.requestJSON.data = data;
+            res.status(this.requestJSON.status).send(this.requestJSON);
+          })
+          .catch(e => console.error(`.catch(${e})`));
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
     } catch (e) {
       console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
 
   async getSchedule(req, res) {
     try {
-      const condition = `stud_code = ${req.params.userId}`;
-      await UserMdl.get('*', condition)
-        .then((data) => {
-          this.requestJSON.data = data;
-          res.status(this.requestJSON.status).send(this.requestJSON);
-        })
-        .catch(e => console.error(`.catch(${e})`));
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_code = ${req.params.userId}`;
+        await UserMdl.get('*', condition)
+          .then((data) => {
+            this.requestJSON.data = data;
+            res.status(this.requestJSON.status).send(this.requestJSON);
+          })
+          .catch(e => console.error(`.catch(${e})`));
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
     } catch (e) {
       console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
