@@ -8,14 +8,8 @@ router.get('/', mapCtrl.getAll);
 
 router.get('/:mapId', mapCtrl.get);
 
-router.get('/buildings', mapCtrl.getAll);
+router.post('/', mapCtrl.insert);
 
-router.get('/:buildingId', mapCtrl.get);
-
-router.get('/:buildingId/classes', mapCtrl.getClasses);
-
-router.get('/routes', mapCtrl.getAll);
-
-router.get('/:routeId', mapCtrl.get);
+router.put('/mapId', mapCtrl.update);
 
 module.exports = router;
