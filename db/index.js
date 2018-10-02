@@ -7,7 +7,6 @@
 
 const mysql = require('mysql');
 
-
 class DB {
   constructor() {
     this.connection = mysql.createConnection({
@@ -71,16 +70,6 @@ class DB {
         if (err) throw reject(err);
         resolve(results);
       });
-    });
-  }
-
-  update(table, arg1, arg2, arg3, arg4) {
-    return new Promise((resolve, reject) => {
-      this.connection.query(`UPDATE ${table} SET ${arg1} = ${arg2} WHERE ${arg3} = ${arg4}`,
-        (err, results) => {
-          if (err) throw reject(err);
-          resolve(results);
-        });
     });
   }
 }
