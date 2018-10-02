@@ -3,7 +3,10 @@
  */
 
 const { Router } = require('express');
-const scheduleCtrl = require('../controllers/schedule.js')
+
+const middleWares = require('../middlewares');
+
+const { scheduleCtrl } = require('../controllers');
 // const middleWares = require('../middlewares');
 
 const router = Router();
@@ -19,7 +22,7 @@ const router = Router();
 router.get('/', scheduleCtrl.getAll);
 
 // GET /schedule/:scheduleId    returns specific schedule
-router.get('/:scheduleId', scheduleCtrl.get);
+router.get('/:scheduleId', scheduleCtrl.getSubject);
 
 // GET /schedule/:scheduleId/subjects
 // Returns all subjects of a method
