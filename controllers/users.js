@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-30T13:26:17-05:00
+ * @Last modified time: 2018-10-02T05:06:59-05:00
  */
 
 const { UserMdl } = require('../models');
@@ -26,7 +26,7 @@ class UserCtrl {
     this.modifyJSON = {
       status: 201,
       response: null,
-      message: 'User successfully',
+      message: null,
       data: null,
     };
 
@@ -68,6 +68,7 @@ class UserCtrl {
     try {
       await UserMdl.getAll()
         .then((data) => {
+          this.requestJSON.message = 'All database users';
           this.requestJSON.data = data; // data field is set
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
@@ -168,7 +169,7 @@ class UserCtrl {
         .then((data) => {
           this.info = data;
           this.modifyJSON.response = 'Created';
-          this.modifyJSON.message += ' created into database';
+          this.modifyJSON.message = 'User successfully created into database';
           this.modifyJSON.data = newUser;
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
@@ -186,7 +187,7 @@ class UserCtrl {
         .then((data) => {
           this.modifyJSON.data = data;
           this.modifyJSON.response = 'Deleted';
-          this.modifyJSON.message += ' deleted from database';
+          this.modifyJSON.message += 'User successfully deleted from database';
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -201,10 +202,11 @@ class UserCtrl {
     try {
       await updateUser.update(req.params.userId)
         .then((data) => {
+          this.info = data;
           this.modifyJSON.response = 'Updated';
-          this.modifyJSON.message += ' updated from database';
-          this.createdJSON.data = data;
-          res.status(this.createdJSON.status).send(this.createdJSON);
+          this.modifyJSON.message = 'User successfully updated from database';
+          this.modifyJSON.data = updateUser;
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
