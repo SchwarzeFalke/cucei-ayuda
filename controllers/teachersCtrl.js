@@ -10,20 +10,20 @@ class TeacherCtrl {
   }
 
   async getAll(req, res) {
-    await TeacherMdl.getAll(1)
-      .then((data) => {
-        this.requestJSON.data = data;
-        res.status(this.requestJSON.status).send(this.requestJSON);
-      })
-      .catch(e => console.error(`.catch(${e}})`));
-    // let data = await TeacherMdl.getAll();
-    // if (data === undefined || data.length === 0) {
-    //   res.status(404).send({
-    //     error: 'you don´t have any data',
-    //   });
-    // } else {
-    //   res.send(data);
-    // }
+    // await TeacherMdl.getAll(1)
+    //   .then((data) => {
+    //     this.requestJSON.data = data;
+    //     res.status(this.requestJSON.status).send(this.requestJSON);
+    //   })
+    //   .catch(e => console.error(`.catch(${e}})`));
+    let data = await TeacherMdl.getAll();
+    if (data === undefined || data.length === 0) {
+      res.status(404).send({
+        error: 'you don´t have any data',
+      });
+    } else {
+      res.send(data);
+    }
   }
 
   async get(req, res) {

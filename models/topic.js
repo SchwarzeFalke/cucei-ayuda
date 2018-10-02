@@ -24,15 +24,25 @@ class TopicMdl {
   }
 
   static async getAll() {
-    let topics = await db.getAll('topic');
-    topics = this.processData(topics);
-    return topics;
+    try {
+      this.topics = await db.getAll('topic');
+      this.topics = this.processData(this.topics);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+      return 0;
+    }
+    return this.topics;
   }
 
   static async find(id) {
-    let topic = await db.get('topic', 'id', id);
-    topic = this.processData(topic);
-    return topic;
+    try {
+      this.topic = await db.find('topic', 'topic_id', id);
+      this.topic = this.processData(this.topic);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+      return 0;
+    }
+    return this.topic;
   }
 
   async save() {
@@ -40,7 +50,7 @@ class TopicMdl {
     delete this.id;
     if (this.required()) {
       try {
-        result = await db.insertTh('topic', this);
+        result = await db.insert('topic', this);
       } catch (e) {
         if (e) {
           return 'error';

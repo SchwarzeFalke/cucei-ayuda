@@ -8,6 +8,7 @@ exports.user = require('./user');
 exports.ThreadMdl = require('./thread');
 exports.TopicMdl = require('./topic');
 exports.PostMdl = require('./post');
+exports.TeacherMdl = require('./teacher');
 // module.exports = {
 //   ThreadMdl
 // }

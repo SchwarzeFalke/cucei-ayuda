@@ -10,13 +10,14 @@ class TopicCtrl {
   }
 
   async getAll(req, res) {
-    let data = await TopicMdl.getAll();
-    if (data === undefined || data.length === 0) {
+    this.data = await TopicMdl.getAll();
+    if (this.data === undefined || this.data.length === 0
+       || this.data.length === 0) {
       res.status(404).send({
         error: 'you don´t have any data',
       });
     } else {
-      res.send(data);
+      res.send(this.data);
     }
   }
 
@@ -37,7 +38,7 @@ class TopicCtrl {
     this.response = await topic.save();
     if (this.response === 'bad reques') {
       res.status(400).send({
-        error: 'bad reques',
+        error: 'bad request',
       });
     } else if (this.response === 1) {
       res.status(200).send({ message: 'Registrado Correctamente' });

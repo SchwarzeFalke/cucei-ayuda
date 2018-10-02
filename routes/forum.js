@@ -1,5 +1,7 @@
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
+// const { teacherCtrl } = require('../controllers');
+const { topicCtrl } = require('../controllers');
 const middlewares = require('../middlewares/forum')
 const router = Router();
 
@@ -27,13 +29,13 @@ router.get('/threads/posts/:postId', threadCtrl.getPost);
 router.get('/threads/:threadId/posts', threadCtrl.getAllPosts);
 // router.get('/threads/:threadId/posts/:postId', threadCtrl.getPostThread);
 
-router.get('/teachers');
-router.get('/teachers/:teachersId');
-router.get('/teachers/:teachersId/rate');
-router.get('/teachers/:teachersId/rate/:scheduleId');
+// router.get('/teachers', teacherCtrl.getAll);
+// router.get('/teachers/:teachersId', teacherCtrl.get);
+// router.get('/teachers/:teachersId/rate', teacherCtrl.getRate);
+// router.get('/teachers/:teachersId/rate/:scheduleId', teacherCtrl.getRateSchedule);
 
-router.get('/topics');
-router.get('/topics/:topicsId');
+// router.get('/topics', topicCtrl.getAll);
+// router.get('/topics/:topicsId', topicCtrl.get);
 
 /**
  * This are all the POST methods for the forum page.
@@ -50,8 +52,8 @@ router.get('/topics/:topicsId');
 
 router.post('/threads', threadCtrl.create);
 router.post('/threads/:threadId/posts', threadCtrl.createPost);
-router.post('/teachers');
-router.post('/topics');
+// router.post('/teachers', teacherCtrl.create);
+// router.post('/topics', topicCtrl.create);
 
 /**
  * This are all the PUT methods for the forum page.
@@ -66,8 +68,8 @@ router.post('/topics');
 
 router.put('/threads/:threadId', threadCtrl.modify);
 router.put('/threads/:threadId/posts/:postId', threadCtrl.updatePost);
-router.put('/teachers/:teacherId');
-router.put('/topics/:topicId');
+// router.put('/teachers/:teacherId', teacherCtrl.update);
+// router.put('/topics/:topicId', topicCtrl.update);
 /**
  * delete routes
  *
@@ -78,7 +80,7 @@ router.put('/topics/:topicId');
  */
 router.delete('/threads/:threadId', threadCtrl.delete);
 router.delete('/threads/:threadId/posts/:postId', threadCtrl.deletePost);
-router.delete('/teachers/:teacherId');
-router.delete('/topics/:topicId');
+// router.delete('/teachers/:teacherId', teacherCtrl.delete);
+// router.delete('/topics/:topicId', topicCtrl.delete);
 
 module.exports = router;

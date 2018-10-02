@@ -11,7 +11,7 @@ class ThreadCtrl {
   }
 
   async getAll(req, res) {
-    this.data = await ThreadMdl.getAll(1);
+    this.data = await ThreadMdl.getAll();
     if (this.data === undefined || this.data.length === 0) {
       //  enviar error
       res.status(404).send({

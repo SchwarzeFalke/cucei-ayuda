@@ -28,13 +28,22 @@ class ThreadMdl {
 
   static async getAll() {
     try {
-      this.threads = await db.getAll('thread');
-      this.threads = this.processData(this.threads);
+      let b = ['*'];
+      let a = ['thread_id','exist','subject','created','stud_code','topic_id'];
+      this.data = await db.get('thread', b);
     } catch (e) {
-      console.error(`.catch(${e})`);
-      return e;
+      console.log(e);
+      throw e;
     }
-    return this.threads;
+    return this.data;
+    // try {
+    //   this.threads = await db.getAll('thread');
+    //   this.threads = this.processData(this.threads);
+    // } catch (e) {
+    //   console.error(`.catch(${e})`);
+    //   return e;
+    // }
+    // return this.threads;
   }
 
   static async find(id) {
@@ -67,7 +76,6 @@ class ThreadMdl {
       }
       return 0;
     }
-    console.log("dfasdfasd");
     return 'bad reques';
   }
 
