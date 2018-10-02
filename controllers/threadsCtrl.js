@@ -8,54 +8,29 @@ class ThreadCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
-
-    this.modifyJSON = {
-      status: 201,
-      response: null,
-      message: 'User successfully',
-      data: null,
-    };
-    this.requestJSON = {
-      status: 200,
-      response: 'Ok',
-      message: null,
-      data: null,
-    };
-    this.forbiddenJSON = {
-      status: 403,
-      response: 'Forbidden',
-      message: null,
-      data: null,
-    };
   }
 
   async getAll(req, res) {
-    await ThreadMdl.getAll(1)
-      .then((data) => {
-        this.requestJSO.data = data;
-        res.status(this.requestJSON.status).send(this.requestJSON);
-      })
-      .catch(e => console.error(`.catch(${e}})`));
-    // let data = await ThreadMdl.getAll();
-    // if (data === undefined || data.length === 0) {
-    //   res.status(404).send({
-    //     error: 'you don´t have any data',
-    //   });
-    // } else {
-    //   res.send(data);
-    // }
+    this.data = await ThreadMdl.getAll(1);
+    if (this.data === undefined || this.data.length === 0) {
+      //  enviar error
+      res.status(404).send({
+        error: 'you don´t have any data',
+      });
+    } else {
+      res.send(this.data);
+    }
   }
 
   async get(req, res) {
-    console.log(req.params);
-    this.threadId = req.params.threadId;
-    const data = await ThreadMdl.find(this.threadId);
-    if (data === undefined || data.length === 0) {
+    const { threadId } = req.params;
+    this.data = await ThreadMdl.find(threadId);
+    if (this.data === undefined || this.data.length === 0) {
       res.status(404).send({
         error: 'data not found',
       });
     } else {
-      res.send(data);
+      res.send(this.data);
     }
   }
 

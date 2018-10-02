@@ -26,22 +26,15 @@ class ThreadMdl {
     return results;
   }
 
-
-
   static async getAll() {
-    await db.get('thread', '*')
-      .then((results) => {
-        this.result = this.processResult(results);
-      })
-      .catch(e => console.error(`.catch(${e})`));
-    return this.result;
-    // try {
-    //   this.threads = await db.getAll('thread');
-    // } catch (e) {
-    //   console.log(e);
-    // }
-    // this.threads = this.processData(this.threads);
-    // return this.threads;
+    try {
+      this.threads = await db.getAll('thread');
+      this.threads = this.processData(this.threads);
+    } catch (e) {
+      console.error(`.catch(${e})`);
+      return e;
+    }
+    return this.threads;
   }
 
   static async find(id) {
