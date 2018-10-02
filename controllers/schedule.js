@@ -52,7 +52,7 @@ class ScheduleCtrl {
 
   async getSubject(req, res) {
     try {
-      await Schedule.validSchedule(req.params.userId)
+      await Schedule.validSchedule(req.params.nrc)
         .then((exists) => {
           if (exists) {
             const condition = `nrc = ${req.params.nrc}`;

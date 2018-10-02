@@ -22,7 +22,7 @@ const router = Router();
 router.get('/', scheduleCtrl.getAll);
 
 // GET /schedule/:scheduleId    returns specific schedule
-router.get('/:scheduleId', scheduleCtrl.getSubject);
+router.get('/:nrc', scheduleCtrl.getSubject);
 
 // GET /schedule/:scheduleId/subjects
 // Returns all subjects of a method

@@ -39,7 +39,7 @@ class Schedule {
         this.result = results.length;
       })
       .catch((e) => {
-        throw e;
+        console.log(e);
       });
     console.log(this.result);
     return this.result;
