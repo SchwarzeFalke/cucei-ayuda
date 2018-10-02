@@ -2,17 +2,19 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-27T02:38:11-05:00
+ * @Last modified time: 2018-10-02T05:06:59-05:00
  */
 
-const db = require('../db');
 const { UserMdl } = require('../models');
 
 class UserCtrl {
   constructor() {
     // Binding class methods of the controller
     this.getAll = this.getAll.bind(this);
-    this.get = this.get.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.getRoads = this.getRoads.bind(this);
+    this.getSchedule = this.getSchedule.bind(this);
+    this.getPosts = this.getPosts.bind(this);
     this.insert = this.insert.bind(this);
     this.del = this.del.bind(this);
 
@@ -21,12 +23,10 @@ class UserCtrl {
      * @type {Object} Defines a format to give a success response at requesting
      * a new user. Its 'data' field does not return nothing.
      */
-    this.createdJSON = {
+    this.modifyJSON = {
       status: 201,
-      response: 'Created',
-      message: 'New user successfully created',
-      description: 'A new user has been created successfully into database. '
-      + 'Please, update your profile information.',
+      response: null,
+      message: null,
       data: null,
     };
 
@@ -39,9 +39,7 @@ class UserCtrl {
     this.requestJSON = {
       status: 200,
       response: 'Ok',
-      message: 'Display request information',
-      description: 'These are all the users (students) from the database API. '
-      + 'Paging of the data is in progress.',
+      message: null,
       data: null,
     };
 
@@ -54,9 +52,7 @@ class UserCtrl {
     this.forbiddenJSON = {
       status: 403,
       response: 'Forbidden',
-      message: 'Cannot create user',
-      description: 'The user creation request cannot proceed because of a '
-      + 'duplicated value. Please provide correct information',
+      message: null,
       data: null,
     };
   }
@@ -67,26 +63,96 @@ class UserCtrl {
    * @param  {[type]} res
    * @return {[type]}     not-formatted rows (pending)
    */
-  getAll(req, res) {
+
+  async getAll(req, res) {
     try {
-      db.get('user', '*') // asteriks reffers to ALL columns
-        .then((results) => {
-          this.requestJSON.data = results; // data field is set
+      await UserMdl.getAll()
+        .then((data) => {
+          this.requestJSON.message = 'All database users';
+          this.requestJSON.data = data; // data field is set
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
-        .catch(e => console.error(`.catch(${e})`));
+        .catch(e => console.error(`.catch(${e}})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
 
-  getRoads(req, res) {
+  async getUser(req, res) {
+    try {
+      await UserMdl.validUser(req.params.userId)
+        .then((exists) => {
+          if (exists) {
+            const condition = `stud_code = ${req.params.userId}`;
+            UserMdl.get('*', condition)
+              .then((data) => {
+                this.requestJSON.data = data;
+                res.status(this.requestJSON.status).send(this.requestJSON);
+              })
+              .catch(e => console.error(`.catch(${e})`));
+          } else {
+            this.forbiddenJSON.message = 'The requested user cannot be found';
+            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+          }
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async getRoads(req, res) {
+    try {
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_code = ${req.params.userId}`;
+        await UserMdl.get('*', condition)
+          .then((data) => {
+            console.log(data);
+            this.requestJSON.data = data;
+            res.status(this.requestJSON.status).send(this.requestJSON);
+          })
+          .catch(e => console.error(`.catch(${e})`));
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async getSchedule(req, res) {
+    try {
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_code = ${req.params.userId}`;
+        await UserMdl.get('*', condition)
+          .then((data) => {
+            this.requestJSON.data = data;
+            res.status(this.requestJSON.status).send(this.requestJSON);
+          })
+          .catch(e => console.error(`.catch(${e})`));
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async getPosts(req, res) {
     try {
       const condition = `stud_code = ${req.params.userId}`;
-      db.get('road', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
+      await UserMdl.get('*', condition)
+        .then((data) => {
+          this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -96,115 +162,57 @@ class UserCtrl {
     }
   }
 
-  getSchedule(req, res) {
+  async insert(req, res) {
+    const newUser = new UserMdl({ ...req.body });
     try {
-      const condition = `stud_code = ${req.params.userId}`;
-      db.get('schedule', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
-          res.status(this.requestJSON.status).send(this.requestJSON);
+      await newUser.save()
+        .then((data) => {
+          this.info = data;
+          this.modifyJSON.response = 'Created';
+          this.modifyJSON.message = 'User successfully created into database';
+          this.modifyJSON.data = newUser;
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-    }
-  }
-
-  getPosts(req, res) {
-    try {
-      const condition = `stud_code = ${req.params.userId}`;
-      db.get('maps', '*', condition)
-        .then((results) => {
-          this.requestJSON.data = results;
-          res.status(this.requestJSON.status).send(this.requestJSON);
-        })
-        .catch(e => console.error(`.catch(${e})`));
-    } catch (e) {
-      console.error(`try/catch(${e})`);
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-    }
-  }
-
-  get(req, res) {
-    if (req.route.path === '/:userId/map') {
-      this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/routes') {
-      this.data = db.get('roads', 'id_stud', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/schedule') {
-      this.data = db.get('schedule', 'stud_code', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    } else if (req.route.path === '/:userId/posts') {
-      this.data = db.get('posts', 'user_id', req.params.userId).then((results) => {
-        const json = {
-          response: 'Ok',
-          data: results,
-          total: 7,
-        };
-        res.send(json);
-      });
-    }
-
-    this.data = db.get('users', 'stud_code', req.params.userId).then((results) => {
-      const json = {
-        response: 'Ok',
-        data: results,
-        total: 7,
-      };
-      res.send(json);
-    });
-  }
-
-  insert(req, res) {
-    const user = new UserMdl({ ...req.body });
-    let json = {};
-
-    this.result = user.save();
-
-    if (this.result === 0) {
-      json = {
-        status: 'Ok',
-        message: 'Successfully created!',
-      };
-      res.status(201).send(json);
-    } else if (this.result === 1) {
-      json = {
-        status: 'Error!',
-        message: 'Cannot create user!',
-      };
-      res.status(400).send(json);
     }
   }
 
   async del(req, res) {
-    this.data = db.del('users', 'stud_code', req.params.userId).then((results) => {
-      const json = {
-        response: 'Ok',
-        data: results,
-        total: 7,
-      };
-      res.send(json);
-    });
+    try {
+      const condition = `stud_code = ${req.params.userId}`;
+      await UserMdl.del(condition)
+        .then((data) => {
+          this.modifyJSON.data = data;
+          this.modifyJSON.response = 'Deleted';
+          this.modifyJSON.message += 'User successfully deleted from database';
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async update(req, res) {
+    const updateUser = new UserMdl({ ...req.body });
+    try {
+      await updateUser.update(req.params.userId)
+        .then((data) => {
+          this.info = data;
+          this.modifyJSON.response = 'Updated';
+          this.modifyJSON.message = 'User successfully updated from database';
+          this.modifyJSON.data = updateUser;
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
   }
 }
 
