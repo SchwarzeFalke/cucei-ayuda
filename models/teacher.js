@@ -26,32 +26,78 @@ class TeacherMdl {
     return results;
   }
 
-  static async getAll() {
-    let teachers = await db.getAll('teacher');
-    teachers = this.processData(teachers);
-    return teachers;
+  static async getAll(id) {
+    await db.get('user', '*')
+      .then((results) => {
+        this.result = this.processResult(results);
+      })
+      .catch(e => console.error(`.catch(${e})`));
+    return this.result;
+    // try {
+    //   this.teacher = await db.find('teacher', 'teach_code', id);
+    // } catch (e) {
+    //   console.log(e);
+    // }
+    // this.teachers = this.processData(this.teachers);
+    // return this.teachers;
   }
 
   static async find(id) {
-    let teacher = await db.get('teacher', 'id', id);
-    teacher = this.processData(teacher);
+    try {
+      this.teacher = await db.find('teacher', 'teach_code', id);
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+    const teacher = this.processData(this.teacher);
     return teacher;
   }
 
-  async save() {
+  async save(threadId) {
+    this.thread_id = Number(threadId);
+    delete this.teacher_id;
     if (this.required()) {
       try {
-        const result = await db.insertTh('teacher', this);
-        console.log(result);
+        this.result = await db.insert('teacher', this);
       } catch (e) {
-        return e;
+        if (e) {
+          console.log(e);
+          return 'error';
+        }
       }
+      const id = this.result.insertId;
+      if (id > 0) {
+        return 1;
+      }
+      return 0;
     }
     return 'bad reques';
   }
 
+  async modify() {
+    const condition = `teacher_id = ${this.teacher_id}`;
+    const obj = {};
+    obj.content = this.content;
+    //obj.created = this.created;
+    console.log(obj);
+    try {
+      this.data = await db.update('teacher', obj, condition);
+    } catch (e) {
+      console.log(e);
+    }
+    return this.data;
+  }
+
   async delete(id) {
-    this.result = await db.del('teacher', 'id', id);
+    try {
+      this.result = await db.del('teacher', 'teach_code', id);
+    } catch (e) {
+      return 0;
+    }
+    if (this.result.affectedRows === 0) {
+      return 0;
+    }
+    return 1;
   }
 }
 module.exports = TeacherMdl;
