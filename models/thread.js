@@ -39,18 +39,18 @@ class ThreadMdl {
   static async find(id) {
     try {
       const condition = `thread_id = ${id}`;
-      this.thread = await db.get('thread', '*', condition);
+      this.thread = await db.find('thread', 'thread_id', id);
     } catch (e) {
       console.log(e);
       return e;
     }
-    let thread = this.processData(this.thread);
+    const thread = this.processData(this.thread);
     return thread;
   }
 
   async save() {
     let result;
-    delete this.id;
+    delete this.thread_id;
     if (this.required()) {
       try {
         result = await db.insert('thread', this);
@@ -70,14 +70,25 @@ class ThreadMdl {
     return 'bad reques';
   }
 
-  async modify({ thread_id, content, date}) {
-    let condition = `thread_id = ${thread_id}`;
-
+  async modify(threadId) {
+    const condition = `thread_id = ${threadId}`;
+    const obj = {};
+    obj.subject = this.subject;
+    obj.created = this.created;
+    console.log(obj);
+    try {
+      this.data = await db.update('thread', obj, condition);
+    } catch (e) {
+      console.log(e);
+    }
+    return this.data;
   }
 
   async delete(id) {
     try {
-      this.result = await db.del('threads', 'id', id);
+      console.log(id);
+      const condition = `thread_id = ${id}`;
+      this.result = await db.del('thread', condition);
     } catch (e) {
       return 0;
     }

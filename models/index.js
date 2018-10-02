@@ -6,7 +6,8 @@
  */
 exports.user = require('./user');
 exports.ThreadMdl = require('./thread');
-exports.TopicCtrl = require('./topic');
+exports.TopicMdl = require('./topic');
+exports.PostMdl = require('./post');
 // module.exports = {
 //   ThreadMdl
 // }

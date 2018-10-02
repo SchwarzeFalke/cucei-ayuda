@@ -1,10 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-09-23T23:04:27-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-23T23:09:15-05:00
- */
-
 class PostCtrl {
   constructor() {
     this.data = [

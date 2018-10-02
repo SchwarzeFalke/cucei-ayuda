@@ -23,8 +23,9 @@ const router = Router();
  */
 router.get('/threads', threadCtrl.getAll);
 router.get('/threads/:threadId', threadCtrl.get);
-router.get('/threads/:threadId/posts', threadCtrl.get);
-router.get('/threads/:threadId/posts/:postId', threadCtrl.get);
+router.get('/threads/posts/:postId', threadCtrl.getPost);
+router.get('/threads/:threadId/posts', threadCtrl.getAllPosts);
+// router.get('/threads/:threadId/posts/:postId', threadCtrl.getPostThread);
 
 router.get('/teachers');
 router.get('/teachers/:teachersId');
@@ -48,7 +49,7 @@ router.get('/topics/:topicsId');
  */
 
 router.post('/threads', threadCtrl.create);
-router.post('/threads/:threadId/posts');
+router.post('/threads/:threadId/posts', threadCtrl.createPost);
 router.post('/teachers');
 router.post('/topics');
 
@@ -63,8 +64,8 @@ router.post('/topics');
  * PUT /topics/:topicId
  */
 
-router.put('/threads/:threadId');
-router.put('/threads/:threadId/posts/:postId');
+router.put('/threads/:threadId', threadCtrl.modify);
+router.put('/threads/:threadId/posts/:postId', threadCtrl.updatePost);
 router.put('/teachers/:teacherId');
 router.put('/topics/:topicId');
 /**
@@ -76,7 +77,7 @@ router.put('/topics/:topicId');
  * DELETE /topics/:topicId
  */
 router.delete('/threads/:threadId', threadCtrl.delete);
-router.delete('/threads/:threadId/posts/:postId');
+router.delete('/threads/:threadId/posts/:postId', threadCtrl.deletePost);
 router.delete('/teachers/:teacherId');
 router.delete('/topics/:topicId');
 
