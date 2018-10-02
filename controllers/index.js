@@ -8,3 +8,4 @@
 exports.usersCtrl = require('./users');
 exports.postCtrl = require('./post');
 exports.mapCtrl = require('./map');
+exports.scheduleCtrl = require('./schedule');
