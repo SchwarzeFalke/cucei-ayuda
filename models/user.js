@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-02T23:53:10-05:00
+ * @Last modified time: 2018-10-03T00:29:38-05:00
  */
 const db = require('../db');
 /**
@@ -10,7 +10,18 @@ const db = require('../db');
  */
 class UserMdl {
   constructor(args) {
-    this.validColumns = [
+    if (args.stud_code !== undefined) this.stud_code = args.stud_code;
+    if (args.name !== undefined) this.name = args.name;
+    if (args.middle_name !== undefined) this.middle_name = args.middle_name;
+    if (args.flastname !== undefined) this.flastname = args.flastname;
+    if (args.mlastname !== undefined) this.mlastname = args.mlastname;
+    if (args.email !== undefined) this.email = args.email;
+    if (args.password !== undefined) this.password = args.password;
+    if (args.exist !== undefined) this.exist = args.exist;
+  }
+
+  static get validColumns() {
+    const params = [
       'stud_code',
       'name',
       'middle_name',
@@ -20,15 +31,7 @@ class UserMdl {
       'password',
       'exist',
     ];
-
-    if (args.stud_code !== undefined) this.stud_code = args.stud_code;
-    if (args.name !== undefined) this.name = args.name;
-    if (args.middle_name !== undefined) this.middle_name = args.middle_name;
-    if (args.flastname !== undefined) this.flastname = args.flastname;
-    if (args.mlastname !== undefined) this.mlastname = args.mlastname;
-    if (args.email !== undefined) this.email = args.email;
-    if (args.password !== undefined) this.password = args.password;
-    if (args.exist !== undefined) this.exist = args.exist;
+    return params;
   }
 
   static processResult(data) {
@@ -40,9 +43,15 @@ class UserMdl {
   }
 
   static processConditions(data) {
-    this.result = [];
-    console.log(data);
-    return this.result;
+    this.querySentence = '';
+    const columns = UserMdl.validColumns;
+    columns.forEach((column) => {
+      if (data[column] !== undefined) {
+        this.querySentence += `${column} = ${data[column]} && `;
+      }
+    });
+    if (this.querySentence.length < 1) return false;
+    return this.querySentence.slice(0, -4);
   }
 
   static async validUser(id) {
