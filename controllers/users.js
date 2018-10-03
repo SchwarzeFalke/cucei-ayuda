@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-02T05:06:59-05:00
+ * @Last modified time: 2018-10-02T23:51:52-05:00
  */
 
 const { UserMdl } = require('../models');
@@ -66,6 +66,7 @@ class UserCtrl {
 
   async getAll(req, res) {
     try {
+      await UserMdl.processConditions(req.params);
       await UserMdl.getAll()
         .then((data) => {
           this.requestJSON.message = 'All database users';
@@ -176,6 +177,7 @@ class UserCtrl {
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
+      this.forbiddenJSON.data = e;
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }

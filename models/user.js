@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-02T04:49:03-05:00
+ * @Last modified time: 2018-10-02T23:53:10-05:00
  */
 const db = require('../db');
 /**
@@ -10,6 +10,17 @@ const db = require('../db');
  */
 class UserMdl {
   constructor(args) {
+    this.validColumns = [
+      'stud_code',
+      'name',
+      'middle_name',
+      'flastname',
+      'mlastname',
+      'email',
+      'password',
+      'exist',
+    ];
+
     if (args.stud_code !== undefined) this.stud_code = args.stud_code;
     if (args.name !== undefined) this.name = args.name;
     if (args.middle_name !== undefined) this.middle_name = args.middle_name;
@@ -25,6 +36,12 @@ class UserMdl {
     data.forEach((res) => {
       this.result.push(new UserMdl(res));
     });
+    return this.result;
+  }
+
+  static processConditions(data) {
+    this.result = [];
+    console.log(data);
     return this.result;
   }
 
