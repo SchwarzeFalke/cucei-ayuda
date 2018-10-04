@@ -2,17 +2,22 @@ const db = require('../db');
 
 class TopicMdl {
   constructor({
-    id, name, descriptcion, exist,
+    id, name, descriptcion, exist
   }) {
-    this.id = id;
+    this.topic_id = id;
     this.name = name;
-    this.descriptcion = descriptcion;
+    this.descript = descriptcion;
     this.exist = exist;
   }
 
   required() {
     return (this.name !== undefined
     && this.descriptcion !== undefined);
+  }
+
+  processRequest(data) {
+    const condition = `name = ${data.name}`
+    return  condition;
   }
 
   static processData(data) {
@@ -25,21 +30,25 @@ class TopicMdl {
 
   static async getAll() {
     try {
-      this.topics = await db.getAll('topic');
+      this.topics = await db.get('topic', '*');
       this.topics = this.processData(this.topics);
     } catch (e) {
       console.log(`Error: ${e}`);
-      return 0;
+      return 1;
     }
     return this.topics;
   }
 
-  static async find(id) {
+  static async find(id, query) {
     try {
-      this.topic = await db.find('topic', 'topic_id', id);
+      let condition = `topic_id = ${id}`;
+      if (Object.keys(query).length !== 0 && query.constructor !== Object) {
+        condition = this.processRequest(query);
+      }
+      this.topic = await db.get('topic', '*', condition);
       this.topic = this.processData(this.topic);
     } catch (e) {
-      console.log(`Error: ${e}`);
+      console.error(`.catch(${e})`);
       return 0;
     }
     return this.topic;

@@ -12,7 +12,7 @@ class TopicCtrl {
   async getAll(req, res) {
     this.data = await TopicMdl.getAll();
     if (this.data === undefined || this.data.length === 0
-       || this.data.length === 0) {
+       || this.data === 1) {
       res.status(404).send({
         error: 'you don´t have any data',
       });
@@ -22,14 +22,26 @@ class TopicCtrl {
   }
 
   async get(req, res) {
-    this.topicId = req.params.topicId;
-    const data = await TopicMdl.find(this.topicId);
-    if (data === undefined || data.length === 0) {
+    console.log(req.query);
+    const query = req.query;
+    const { topicId } = req.params;
+    try {
+      if (Object.keys(query).length === 0 && query.constructor === Object) {
+        this.data = await TopicMdl.find(topicId, query);
+      } else {
+        this.data = await TopicMdl.find(query);
+      }
+    } catch (e) {
+      res.status(404).send({
+        error: 'data not found',
+      });
+    }
+    if (this.data === undefined || this.data.length === 0) {
       res.status(404).send({
         error: 'data not found',
       });
     } else {
-      res.send(data);
+      res.send(this.data);
     }
   }
 

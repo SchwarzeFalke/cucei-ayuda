@@ -18,6 +18,10 @@ class ThreadMdl {
     && this.topic_id !== undefined);
   }
 
+  processRequest() {
+    this.a = 1;
+  }
+
   static processData(data) {
     const results = [];
     data.forEach((res) => {
@@ -27,29 +31,21 @@ class ThreadMdl {
   }
 
   static async getAll() {
-    try {
-      let b = ['*'];
-      let a = ['thread_id','exist','subject','created','stud_code','topic_id'];
-      this.data = await db.get('thread', b);
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
-    return this.data;
-    // try {
-    //   this.threads = await db.getAll('thread');
-    //   this.threads = this.processData(this.threads);
-    // } catch (e) {
-    //   console.error(`.catch(${e})`);
-    //   return e;
-    // }
-    // return this.threads;
+    // let a = ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'];
+    await db.get('thread', '*').then((results) => {
+      this.result = this.processData(results);
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+      return 0; //  regresa una señal de que hay un error
+    });
+    return this.result;
   }
 
   static async find(id) {
     try {
       const condition = `thread_id = ${id}`;
-      this.thread = await db.find('thread', 'thread_id', id);
+      const column = '*';
+      this.thread = await db.get('thread', column, condition);
     } catch (e) {
       console.log(e);
       return e;

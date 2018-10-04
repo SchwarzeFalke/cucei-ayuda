@@ -1,86 +1,54 @@
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
-// const { teacherCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
-const middlewares = require('../middlewares/forum')
+
+// const middlewares = require('../middlewares/forum')
+
 const router = Router();
 
 /**
- * This are all the GET methods for the forum page.
- * GET /forum/posts
- * GET /forum/posts/:postsId
- * GET /forum/posts/:postsId/comments
- * GET /forum/posts/:postsId/comments/:commentsId
-
- * GET /forum/teachers
- * GET /forum/teachers/:teachersId
- * GET /forum/teachers/:teachersId/comments
- * GET /forum/teachers/:teachersId/comments/:commentsId
-
- * GET /forum/threads
- * GET /forum/threads/:newsId
- * GET /forum/news/:newsId/comments
- * GET /forum/news/:newsId/comments/:commentsId
-
+ * ALL GET methods for the forum
  */
-router.get('/threads', threadCtrl.getAll);
-router.get('/threads/:threadId', threadCtrl.get);
-router.get('/threads/posts/:postId', threadCtrl.getPost);
-router.get('/threads/:threadId/posts', threadCtrl.getAllPosts);
-// router.get('/threads/:threadId/posts/:postId', threadCtrl.getPostThread);
 
-// router.get('/teachers', teacherCtrl.getAll);
-// router.get('/teachers/:teachersId', teacherCtrl.get);
-// router.get('/teachers/:teachersId/rate', teacherCtrl.getRate);
-// router.get('/teachers/:teachersId/rate/:scheduleId', teacherCtrl.getRateSchedule);
-
-// router.get('/topics', topicCtrl.getAll);
-// router.get('/topics/:topicsId', topicCtrl.get);
+router.get('/', topicCtrl.getAll);
+router.get('/:topicId', topicCtrl.get);
+router.get('/:topicId/threads', threadCtrl.getAll);
+router.get('/:topicId/threads/:threadId', threadCtrl.get);
+// router.get('/:topicId/threads/posts/:postId', threadCtrl.getPost);
+// router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
+// router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPostThread);
 
 /**
- * This are all the POST methods for the forum page.
-
- * POST /forum/posts
- * POST /forum/posts/:postsId/comments
-
- * POST /forum/teachers
- * POST /forum/teachers/:teachersId/comments
-
- * POST /forum/news
- * POST /forum/news/:newsId/comments
+ * ALL POST methods for the forum
  */
 
-router.post('/threads', threadCtrl.create);
-router.post('/threads/:threadId/posts', threadCtrl.createPost);
-// router.post('/teachers', teacherCtrl.create);
-// router.post('/topics', topicCtrl.create);
+router.post('/', topicCtrl.create);
+router.post('/:topicId/threads', threadCtrl.create);
+router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
 
 /**
  * This are all the PUT methods for the forum page.
 
- * PUT /threads/:threadId
- * PUT /threads/:threadId/posts/:postId
+ * PUT /:topicId
+ * PUT /:topicId/threads/:threadId
+ * PUT /:topicId/threads/:threadId/posts/:postId
 
- * PUT /teachers/:teacherId
-
- * PUT /topics/:topicId
  */
 
-router.put('/threads/:threadId', threadCtrl.modify);
-router.put('/threads/:threadId/posts/:postId', threadCtrl.updatePost);
-// router.put('/teachers/:teacherId', teacherCtrl.update);
-// router.put('/topics/:topicId', topicCtrl.update);
+router.put('/:topicId', topicCtrl.modify);
+router.put('/:topicId/threads/:threadId', threadCtrl.modify);
+router.put('/:topicId/threads/:threadId/posts/:postId', threadCtrl.updatePost);
+
 /**
  * delete routes
- *
- * DELETE /threads/:threadId
- * DELETE /threads/:threadId/posts/:postId
- * DELETE /teachers/:teacherId
- * DELETE /topics/:topicId
+ * DELETE /:topicId
+ * DELETE /:topicId/threads/:threadId
+ * DELETE /:topicId/threads/:threadId/posts/:postId
  */
-router.delete('/threads/:threadId', threadCtrl.delete);
-router.delete('/threads/:threadId/posts/:postId', threadCtrl.deletePost);
-// router.delete('/teachers/:teacherId', teacherCtrl.delete);
-// router.delete('/topics/:topicId', topicCtrl.delete);
+
+router.delete('/:topicId', topicCtrl.delete);
+router.delete('/:topicId/threads/:threadId', threadCtrl.delete);
+router.delete('/:topicId/threads/:threadId/posts/:postId', threadCtrl.deletePost);
+
 
 module.exports = router;

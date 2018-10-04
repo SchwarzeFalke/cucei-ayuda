@@ -11,10 +11,18 @@ class ThreadCtrl {
   }
 
   async getAll(req, res) {
-    this.data = await ThreadMdl.getAll();
-    if (this.data === undefined || this.data.length === 0) {
-      //  enviar error
+    try {
+      this.data = await ThreadMdl.getAll();
+    } catch (e) {
+      console.log(e);
       res.status(404).send({
+        code: 404,
+        error: 'you don´t have any data',
+      });
+    }
+    if (this.data === undefined || this.data.length === 0 || this.data === 0) {
+      res.status(404).send({
+        code: 404,
         error: 'you don´t have any data',
       });
     } else {
@@ -24,7 +32,15 @@ class ThreadCtrl {
 
   async get(req, res) {
     const { threadId } = req.params;
-    this.data = await ThreadMdl.find(threadId);
+    try {
+      this.data = await ThreadMdl.find(threadId);
+    } catch (e) {
+      if (this.data === undefined || this.data.length === 0) {
+        res.status(404).send({
+          error: 'data not found',
+        });
+      }
+    }
     if (this.data === undefined || this.data.length === 0) {
       res.status(404).send({
         error: 'data not found',

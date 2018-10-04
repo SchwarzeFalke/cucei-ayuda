@@ -12,25 +12,6 @@ class DB {
     this.connection.connect();
   }
 
-  getAll(table) {
-    return new Promise((resolve, reject) => {
-      this.connection.query(`SELECT * FROM ${table}`, (err, results) => {
-        if (err) return reject(err);
-        return resolve(results);
-      });
-    });
-  }
-
-  find(table, arg1, arg2) {
-    return new Promise((resolve, reject) => {
-      this.connection.query(`SELECT * FROM ${table} WHERE ${arg1} = ${arg2}`,
-        (err, results) => {
-          if (err) return reject(err);
-          return resolve(results);
-        });
-    });
-  }
-
   get(table, columns, condition) {
     return new Promise((resolve, reject) => {
       let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
@@ -39,7 +20,7 @@ class DB {
         query += ` && ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, data, (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -53,7 +34,7 @@ class DB {
       } else { query += ';'; }
       console.log(data);
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -67,7 +48,7 @@ class DB {
       } else { query += ';'; }
       console.log(query);
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -80,8 +61,8 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, table, (err, results) => {
-        if (err) throw reject(err);
-        resolve(results);
+        if (err) reject(err);
+        return resolve(results);
       });
     });
   }
