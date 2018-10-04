@@ -2,14 +2,44 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-03T00:29:38-05:00
+ * @Last modified time: 2018-10-04T14:25:00-05:00
  */
-const db = require('../db');
+
+const db = require('../db'); // for database handling
+
 /**
- * User Model class
+ * Name: user.js | Type: Class | Description: User Model | @Author: Carlos Vara
+ *                                 METHODS
+ * constructor(args)  ->  Defines all the properties of the model
+ * -----------------------------------------------------------------------------
+ * Getters:
+ * ---> getFullName(order)      ->  Returns a full name
+ * ---> getStudCode()           ->  Returns a student code
+ * ---> getEmail()              ->  Return an email
+ * ---> validColumns()          ->  Returns an user ID validation
+ * -----------------------------------------------------------------------------
+ * Processing:
+ * ---> processResult(data)     ->  Processes row data from database
+ * ---> processConditions(data) ->  Filters the params for the query condition
+ * ---> validUser(id)           ->  Verifies the existence in database of an user
+ * -----------------------------------------------------------------------------
+ * Data Handling:
+ * ---> getAll(condition)       ->  Returns all database users
+ * ---> get(condition)          ->  Returns the requested user by params
+ * ---> del(condition)          ->  Deletes by a condition
+ * ---> save()                  ->  Saves the object into database
+ * ---> update()                ->  Updates the requested user
+ * -----------------------------------------------------------------------------
  */
+
 class UserMdl {
+  /**
+   * [constructor description: Defines all the object's attributes]
+   * @param {[type]} args [description: the received params for making the instance]
+   */
   constructor(args) {
+    // If the value of a requested arg is an undefined value, does not create a
+    // field for it (this is useful for the updating method).
     if (args.stud_code !== undefined) this.stud_code = args.stud_code;
     if (args.name !== undefined) this.name = args.name;
     if (args.middle_name !== undefined) this.middle_name = args.middle_name;
@@ -20,8 +50,12 @@ class UserMdl {
     if (args.exist !== undefined) this.exist = args.exist;
   }
 
+  /**
+   * [result description: Returns all the valids columns for the user model]
+   * @type {Array}
+   */
   static get validColumns() {
-    const params = [
+    return [
       'stud_code',
       'name',
       'middle_name',
@@ -31,9 +65,14 @@ class UserMdl {
       'password',
       'exist',
     ];
-    return params;
   }
 
+  /**
+   * [processResult description: Processes all the raw data and return the
+   * requested data in a formatted way]
+   * @param  {[type]} data [description: the returned data row from database]
+   * @return {[type]}      [description: the formatted data]
+   */
   static processResult(data) {
     this.result = [];
     data.forEach((res) => {
@@ -42,18 +81,36 @@ class UserMdl {
     return this.result;
   }
 
+  /**
+   * [processConditions description: Processes the params received from the req
+   * and evaluates if all the req.params have valid names. Also evaluates which
+   * columns have undefined values]
+   * @param  {[type]} data [description: The req.params]
+   * @return {[type]}      [description: A formatted string with the condition
+   *                       for the query database]
+   */
   static processConditions(data) {
     this.querySentence = '';
     const columns = UserMdl.validColumns;
     columns.forEach((column) => {
       if (data[column] !== undefined) {
-        this.querySentence += `${column} = ${data[column]} && `;
+        this.querySentence += `${column} = '${data[column]}' && `;
       }
     });
-    if (this.querySentence.length < 1) return false;
+    if (this.querySentence.length < 1) return '';
+    // if there are not more columns to evaluate, delete the last '&&' operator
+    // from the query condition
     return this.querySentence.slice(0, -4);
   }
 
+  /**
+   * [validUser description: Validates if there's a user with the given ID]
+   * @param  {[type]}  id [description: ID to evaluate]
+   * @return {Promise}    [description: Makes a query to database and returns
+   *                      the resulting data length; if the user exists, the
+   *                      length must be greater than 1, if it's not, it will
+   *                      the user does not exist]
+   */
   static async validUser(id) {
     await db.get('user', 'stud_code', `stud_code = ${id}`)
       .then((results) => {
@@ -63,8 +120,19 @@ class UserMdl {
     return this.result;
   }
 
-  static async getAll() {
-    await db.get('user', '*')
+  /**
+   * [getAll description: Returns all users from database]
+   * @param  {[type]}  condition [description: Specifies the conditions for the
+   *                              requested users to search.]
+   * @return {Promise}           [description: Returns all the users, or all the
+   *                              requested users ]
+   */
+  static async getAll(condition) {
+    let queryCondition = '';
+    if (condition) {
+      queryCondition = UserMdl.processConditions(condition);
+    }
+    await db.get('user', '*', queryCondition)
       .then((results) => {
         this.result = UserMdl.processResult(results);
       })
@@ -72,8 +140,20 @@ class UserMdl {
     return this.result;
   }
 
-  static async get(columns, condition) {
-    await db.get('user', columns, condition)
+  /**
+   * [get description: Returns an specific user from the database given certain
+   * conditions or not.]
+   * @param  {[type]}  columns   [description: Specifies which columns return]
+   * @param  {[type]}  id        [description: Specifies the user's ID]
+   * @param  {[type]}  condition [description: Specifies a condition if it exists]
+   * @return {Promise}           [description: Return the requested data]
+   */
+  static async get(columns, id, condition) {
+    let queryCondition = `stud_code = ${id}`;
+    if (condition.length > 1) {
+      queryCondition = UserMdl.processConditions(condition);
+    }
+    await db.get('user', columns, queryCondition)
       .then((results) => {
         this.result = results;
       })
@@ -89,7 +169,6 @@ class UserMdl {
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
   }
-
 
   async save() {
     await db.insert('user', this)

@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-02T23:58:58-05:00
+ * @Last modified time: 2018-10-04T14:26:13-05:00
  */
 
 const { UserMdl } = require('../models');
@@ -58,16 +58,14 @@ class UserCtrl {
   }
 
   /**
-   * getAll: Returns all the data from database via db class
+   * getAll: Returns all the data from database via user model
    * @param  {[type]} req
    * @param  {[type]} res
    * @return {[type]}     not-formatted rows (pending)
    */
-
   async getAll(req, res) {
     try {
-      await UserMdl.processConditions(req.query);
-      await UserMdl.getAll()
+      await UserMdl.getAll(req.query)
         .then((data) => {
           this.requestJSON.message = 'All database users';
           this.requestJSON.data = data; // data field is set
@@ -85,8 +83,7 @@ class UserCtrl {
       await UserMdl.validUser(req.params.userId)
         .then((exists) => {
           if (exists) {
-            const condition = `stud_code = ${req.params.userId}`;
-            UserMdl.get('*', condition)
+            UserMdl.get('*', req.params.userId, req.query)
               .then((data) => {
                 this.requestJSON.data = data;
                 res.status(this.requestJSON.status).send(this.requestJSON);

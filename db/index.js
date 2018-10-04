@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T10:18:54-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-30T02:43:04-05:00
+ * @Last modified time: 2018-10-04T13:29:16-05:00
  */
 
 const mysql = require('mysql');
@@ -23,8 +23,8 @@ class DB {
     return new Promise((resolve, reject) => {
       let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
       const data = [columns, table];
-      if (condition) {
-        query += `&& ${condition};`;
+      if (condition.length > 1) {
+        query += ` && ${condition};`;
       } else { query += ';'; }
 
       this.connection.query(query, data, (err, results) => {
