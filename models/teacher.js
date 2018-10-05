@@ -1,7 +1,8 @@
 const db = require('../db');
 
 class TeacherMdl {
-  constructor({ name, middle_name, flastname, mlastname, email, total_rate, exist }) {
+  constructor({ teach_code, name, middle_name, flastname, mlastname, email, total_rate, exist }) {
+    this.teach_code = teach_code;
     this.name = name;
     this.middle_name = middle_name;
     this.flastname = flastname;
@@ -26,65 +27,53 @@ class TeacherMdl {
     return results;
   }
 
-  static async getAll(id) {
-    await db.get('user', '*')
-      .then((results) => {
-        this.result = this.processResult(results);
-      })
-      .catch(e => console.error(`.catch(${e})`));
-    return this.result;
-    // try {
-    //   this.teacher = await db.find('teacher', 'teach_code', id);
-    // } catch (e) {
-    //   console.log(e);
-    // }
-    // this.teachers = this.processData(this.teachers);
-    // return this.teachers;
+  static async getAll() {
+    await db.get('post', '*').then((results) => {
+      this.res = this.processData(results);
+    }).catch((e) => {
+      console.log(`Error: ${e}`);
+    });
+    return this.res;
   }
 
-  static async find(id) {
-    try {
-      this.teacher = await db.find('teacher', 'teach_code', id);
-    } catch (e) {
-      console.log(e);
-      return e;
+  static async find(data) {
+    let condition;
+    if (Object.keys(data) == 'content') {
+      condition = `${Object.keys(data)} = '%${Object.values(data)}%'`;
+    } else {
+      condition = `post_id = ${Object.values(data)}`;
     }
-    const teacher = this.processData(this.teacher);
-    return teacher;
+    await db.get('post', '*', condition).then((result) => {
+      this.post = this.processData(result);
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.post;
   }
 
-  async save(threadId) {
-    this.thread_id = Number(threadId);
-    delete this.teacher_id;
+  async save() {
+    delete this.post_id;
     if (this.required()) {
-      try {
-        this.result = await db.insert('teacher', this);
-      } catch (e) {
-        if (e) {
-          console.log(e);
-          return 'error';
-        }
-      }
-      const id = this.result.insertId;
-      if (id > 0) {
-        return 1;
-      }
-      return 0;
+      await db.insert('post', this).then((result) => {
+        this.result = result;
+      }).catch((e) => {
+        console.error(`.catch(${e})`);
+      });
+      return this.result;
     }
-    return 'bad reques';
+    return 1;
   }
 
-  async modify() {
-    const condition = `teacher_id = ${this.teacher_id}`;
+  async modify(teachCode) {
+    const condition = `teach_code = ${teachCode}`;
     const obj = {};
-    obj.content = this.content;
-    //obj.created = this.created;
-    console.log(obj);
-    try {
-      this.data = await db.update('teacher', obj, condition);
-    } catch (e) {
-      console.log(e);
-    }
+    obj.name = this.name;
+    obj. = this.descript;
+    await db.update('post', obj, condition).then((result) => {
+      this.data = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
     return this.data;
   }
 

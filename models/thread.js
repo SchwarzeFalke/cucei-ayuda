@@ -18,10 +18,6 @@ class ThreadMdl {
     && this.topic_id !== undefined);
   }
 
-  processRequest() {
-    this.a = 1;
-  }
-
   static processData(data) {
     const results = [];
     data.forEach((res) => {
@@ -31,76 +27,63 @@ class ThreadMdl {
   }
 
   static async getAll() {
-    // let a = ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'];
     await db.get('thread', '*').then((results) => {
-      this.result = this.processData(results);
+      this.res = this.processData(results);
     }).catch((e) => {
-      console.error(`.catch(${e})`);
-      return 0; //  regresa una señal de que hay un error
+      console.log(`Error: ${e}`);
     });
-    return this.result;
+    return this.res;
   }
 
-  static async find(id) {
-    try {
-      const condition = `thread_id = ${id}`;
-      const column = '*';
-      this.thread = await db.get('thread', column, condition);
-    } catch (e) {
-      console.log(e);
-      return e;
+  static async find(data) {
+    let condition;
+    if (Object.keys(data) == 'subject') {
+      condition = `${Object.keys(data)} = '%${Object.values(data)}%'`;
+    } else {
+      condition = `thread_id = ${Object.values(data)}`;
     }
-    const thread = this.processData(this.thread);
-    return thread;
+    await db.get('thread', '*', condition).then((result) => {
+      this.thread = this.processData(result);
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.thread;
   }
 
   async save() {
-    let result;
     delete this.thread_id;
     if (this.required()) {
-      try {
-        result = await db.insert('thread', this);
-      } catch (e) {
-        if (e) {
-          console.log(e);
-          return 'error';
-        }
-      }
-      const id = result.insertId;
-      if (id > 0) {
-        return 1;
-      }
-      return 0;
+      await db.insert('thread', this).then((result) => {
+        this.result = result;
+      }).catch((e) => {
+        console.error(`.catch(${e})`);
+      });
+      return this.result;
     }
-    return 'bad reques';
+    return 1;
   }
 
   async modify(threadId) {
     const condition = `thread_id = ${threadId}`;
     const obj = {};
-    obj.subject = this.subject;
-    obj.created = this.created;
-    console.log(obj);
-    try {
-      this.data = await db.update('thread', obj, condition);
-    } catch (e) {
-      console.log(e);
-    }
+    obj.name = this.name;
+    obj.descript = this.descript;
+    await db.update('thread', obj, condition).then((result) => {
+      this.data = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
     return this.data;
   }
 
   async delete(id) {
-    try {
-      console.log(id);
-      const condition = `thread_id = ${id}`;
-      this.result = await db.del('thread', condition);
-    } catch (e) {
-      return 0;
-    }
-    if (this.result.affectedRows === 0) {
-      return 0;
-    }
-    return 1;
+    const condition = `thread_id = ${id}`;
+    await db.del('thread', condition).then((result) => {
+      this.result = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.result;
   }
 }
 module.exports = ThreadMdl;

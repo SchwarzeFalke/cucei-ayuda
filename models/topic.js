@@ -1,93 +1,91 @@
 const db = require('../db');
 
 class TopicMdl {
-  constructor({
-    id, name, descriptcion, exist
-  }) {
-    this.topic_id = id;
-    this.name = name;
-    this.descript = descriptcion;
-    this.exist = exist;
+  constructor(obj) {
+    this.topic_id = obj.topic_id;
+    this.name = obj.name;
+    this.descript = obj.descript;
+    this.exist = obj.exist;
   }
 
   required() {
     return (this.name !== undefined
-    && this.descriptcion !== undefined);
+    && this.descript !== undefined);
   }
 
   processRequest(data) {
-    const condition = `name = ${data.name}`
+    const condition = `name = ${data.name}`;
     return  condition;
   }
 
   static processData(data) {
     const results = [];
     data.forEach((res) => {
+      console.log(res)
       results.push(new TopicMdl(res));
     });
     return results;
   }
 
   static async getAll() {
-    try {
-      this.topics = await db.get('topic', '*');
-      this.topics = this.processData(this.topics);
-    } catch (e) {
+    await db.get('topic', '*').then((results) => {
+      this.res = this.processData(results);
+    }).catch((e) => {
       console.log(`Error: ${e}`);
-      return 1;
-    }
-    return this.topics;
+    });
+    return this.res;
   }
 
-  static async find(id, query) {
-    try {
-      let condition = `topic_id = ${id}`;
-      if (Object.keys(query).length !== 0 && query.constructor !== Object) {
-        condition = this.processRequest(query);
-      }
-      this.topic = await db.get('topic', '*', condition);
-      this.topic = this.processData(this.topic);
-    } catch (e) {
-      console.error(`.catch(${e})`);
-      return 0;
+  static async find(data) {
+    let condition;
+    console.log(Object.keys(data));
+    if (Object.keys(data) == 'name') {
+      condition = `${Object.keys(data)} = '${Object.values(data)}'`;
+    } else {
+      condition = `topic_id = ${Object.values(data)}`;
     }
+    await db.get('topic', '*', condition).then((result) => {
+      this.topic = this.processData(result);
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
     return this.topic;
   }
 
   async save() {
-    let result;
-    delete this.id;
+    delete this.topic_id;
     if (this.required()) {
-      try {
-        result = await db.insert('topic', this);
-      } catch (e) {
-        if (e) {
-          return 'error';
-        }
-      }
-      const id = result.insertId;
-      if (id > 0) {
-        return 1;
-      }
-      return 0;
+      await db.insert('topic', this).then((result) => {
+        this.result = result;
+      }).catch((e) => {
+        console.error(`.catch(${e})`);
+      });
+      return this.result;
     }
-    return 'bad reques';
+    return 1;
   }
 
-  async modify({ id, content, date}) {
-    let query = ''
+  async modify(id) {
+    const condition = `topic_id = ${id}`;
+    const obj = {};
+    obj.name = this.name;
+    obj.descript = this.descript;
+    await db.update('topic', obj, condition).then((result) => {
+      this.data = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.data;
   }
 
   async delete(id) {
-    try {
-      this.result = await db.del('topic', 'id', id);
-    } catch (e) {
-      return 0;
-    }
-    if (this.result.affectedRows === 0) {
-      return 0;
-    }
-    return 1;
+    const condition = `topic_id = ${id}`;
+    await db.del('topic', condition).then((result) => {
+      this.result = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.result;
   }
 }
 module.exports = TopicMdl;
