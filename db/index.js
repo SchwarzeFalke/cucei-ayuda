@@ -17,7 +17,7 @@ class DB {
       let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
       const data = [columns, table];
       if (condition) {
-        query += ` && ${condition};`;
+        query += `${condition};`;
       } else { query += ';'; }
       this.connection.query(query, data, (err, results) => {
         if (err) reject(err);
@@ -43,8 +43,9 @@ class DB {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
       if (condition) {
-        query += `WHERE ${condition};`;
+        query += ` WHERE ${condition};`;
       } else { query += ';'; }
+      console.log(query);
       this.connection.query(query, [table, data], (err, results) => {
         if (err) reject(err);
         return resolve(results);

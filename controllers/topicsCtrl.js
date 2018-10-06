@@ -11,7 +11,7 @@ class TopicCtrl {
 
   async getAll(req, res) {
     const query = req.query;
-    //  GET query data
+    //  GET ALL
     if (Object.keys(query).length === 0 && query.constructor === Object) {
       await TopicMdl.getAll().then((result) => {
         this.data = result;
@@ -26,7 +26,7 @@ class TopicCtrl {
       } else {
         res.send(this.data);
       }
-      //  GET ALL
+      //  GET query data
     } else {
       await TopicMdl.find(query).then((result) => {
         this.data = result;

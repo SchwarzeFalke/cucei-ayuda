@@ -11,23 +11,58 @@ class ThreadCtrl {
   }
 
   async getAll(req, res) {
-    try {
-      this.data = await ThreadMdl.getAll();
-    } catch (e) {
-      console.log(e);
-      res.status(404).send({
-        code: 404,
-        error: 'you don´t have any data',
+    const query = req.query;
+    const { topicId } = req.params;
+    //  GET All
+    if (Object.keys(query).length === 0 && query.constructor === Object) {
+      await ThreadMdl.getAll(topicId).then((result) => {
+        this.data = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
       });
-    }
-    if (this.data === undefined || this.data.length === 0 || this.data === 0) {
-      res.status(404).send({
-        code: 404,
-        error: 'you don´t have any data',
-      });
+      if (this.data === undefined || this.data.length === 0) {
+        res.status(404).send({
+          error: 'you don´t have any data',
+        });
+      } else {
+        res.send(this.data);
+      }
+      //  GET query Data
     } else {
-      res.send(this.data);
+      await ThreadMdl.find(query, topicId).then((result) => {
+        this.data = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(404).send({
+          error: 'No se encontró el dato',
+        });
+      });
+      if (this.data === undefined || this.data.length === 0) {
+        res.status(404).send({
+          error: 'No se encontró el dato',
+        });
+      } else {
+        res.send(this.data);
+      }
     }
+    // try {
+    //   this.data = await ThreadMdl.getAll();
+    // } catch (e) {
+    //   console.log(e);
+    //   res.status(404).send({
+    //     code: 404,
+    //     error: 'you don´t have any data',
+    //   });
+    // }
+    // if (this.data === undefined || this.data.length === 0 || this.data === 0) {
+    //   res.status(404).send({
+    //     code: 404,
+    //     error: 'you don´t have any data',
+    //   });
+    // } else {
+    //   res.send(this.data);
+    // }
   }
 
   async get(req, res) {
@@ -51,23 +86,48 @@ class ThreadCtrl {
   }
 
   async create(req, res) {
+    req.body.topic_id = req.params.topicId;
     const thread = new ThreadMdl(req.body);
-    this.response = await thread.save();
-    if (this.response === 'bad reques') {
+    await thread.save().then((result) => {
+      this.response = result;
+    }).catch((e) => {
+      console.error(`error!! ${e}`);
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    });
+    if (this.response === 1) {
+      res.status(400).send({ message: 'Not enough data' });
+    }
+    const id = this.response.insertId;
+    if (id === undefined) {
       res.status(400).send({
-        error: 'bad reques',
+        error: 'Something went wrong, data not saved',
       });
-    } else if (this.response === 1) {
+    }
+    if (id > 0) {
       res.status(200).send({ message: 'Registrado Correctamente' });
     } else {
-      res.status(409).send({ error: 'No se pudo crear.' });
+      res.status(400).send({
+        error: 'Something went wrong, data not saved',
+      });
     }
   }
 
   async modify(req, res) {
     const thread = new ThreadMdl(req.body);
-    this.response = await thread.modify(req.params.threadId);
-    res.status(200).send(this.response);
+    try {
+      await thread.modify(req.params.threadId).then((result) => {
+        this.topicModify = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(400).send({ error: 'todo mal' });
+      });
+    } catch (e) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    if (this.topicModify === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    res.send({ message: 'Modificado Correctamente' });
   }
 
   async delete(req, res) {

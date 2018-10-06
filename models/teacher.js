@@ -52,7 +52,7 @@ class TeacherMdl {
   }
 
   async save() {
-    delete this.post_id;
+    delete this.teach_code;
     if (this.required()) {
       await db.insert('post', this).then((result) => {
         this.result = result;
@@ -65,11 +65,9 @@ class TeacherMdl {
   }
 
   async modify(teachCode) {
+    delete this.teach_code;
     const condition = `teach_code = ${teachCode}`;
-    const obj = {};
-    obj.name = this.name;
-    obj. = this.descript;
-    await db.update('post', obj, condition).then((result) => {
+    await db.update('post', this, condition).then((result) => {
       this.data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
@@ -78,15 +76,13 @@ class TeacherMdl {
   }
 
   async delete(id) {
-    try {
-      this.result = await db.del('teacher', 'teach_code', id);
-    } catch (e) {
-      return 0;
-    }
-    if (this.result.affectedRows === 0) {
-      return 0;
-    }
-    return 1;
+    const condition = `teach_id = ${id}`;
+    await db.del('teacher', condition).then((result) => {
+      this.result = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return this.result;
   }
 }
 module.exports = TeacherMdl;

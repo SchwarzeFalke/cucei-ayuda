@@ -13,15 +13,28 @@ class TopicMdl {
     && this.descript !== undefined);
   }
 
-  processRequest(data) {
-    const condition = `name = ${data.name}`;
-    return  condition;
+  static processRequest(data) {
+    this.condition = '';
+    if (data.q) {
+      this.condition = ` && name = '${data.q}'`;
+    }
+    if (data.sort) {
+      this.condition += ` ORDER BY name ${data.sort}`;
+    }
+    if (data.count) {
+      this.condition += ` LIMIT ${data.count}`;
+    } else {
+      this.condition += ' LIMIT 15';
+    }
+    if (data.page) {
+      this.condition += ` OFFSET ${data.page - 1} `;
+    }
+    return this.condition;
   }
 
   static processData(data) {
     const results = [];
     data.forEach((res) => {
-      console.log(res)
       results.push(new TopicMdl(res));
     });
     return results;
@@ -38,12 +51,18 @@ class TopicMdl {
 
   static async find(data) {
     let condition;
-    console.log(Object.keys(data));
-    if (Object.keys(data) == 'name') {
-      condition = `${Object.keys(data)} = '${Object.values(data)}'`;
+    if (data.q || data.page || data.count || data.sort) {
+      condition = this.processRequest(data);
     } else {
-      condition = `topic_id = ${Object.values(data)}`;
+      condition = `&& topic_id = ${Object.values(data)}`
     }
+    // if (Object.keys(data) == 'name') {
+    //   condition = this.processRequest(data);
+    //   // condition = `${Object.keys(data)} = '${Object.values(data)}'`;
+    // } else {
+    //   condition = `topic_id = ${Object.values(data)}`;
+    // }
+    console.log(condition);
     await db.get('topic', '*', condition).then((result) => {
       this.topic = this.processData(result);
     }).catch((e) => {
