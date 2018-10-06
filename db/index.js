@@ -7,19 +7,15 @@ const mysql = require('mysql');
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     });
-     this.connection.connect((err) => {
-      if (err) {
-        console.error('Error connecting', err.stack);
-        throw err;
-      }
-    });
+     this.connection.connect();
   }
+
    get(table, columns, condition) {
     return new Promise((resolve, reject) => {
       let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
       const data = [columns, table];
-      if (condition) {
-        query += `&& ${condition};`;
+      if (condition.length > 1) {
+        query += ` &&  ${condition};`;
       } else { query += ';'; }
        this.connection.query(query, data, (err, results) => {
         if (err) throw reject(err);
@@ -27,6 +23,7 @@ const mysql = require('mysql');
       });
     });
   }
+
    insert(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'INSERT INTO ?? SET ?';
@@ -39,6 +36,7 @@ const mysql = require('mysql');
       });
     });
   }
+
    update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
@@ -51,12 +49,14 @@ const mysql = require('mysql');
       });
     });
   }
+
    del(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
       if (condition) {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
+      console.log(query);
       this.connection.query(query, table, (err, results) => {
         if (err) throw reject(err);
         resolve(results);
