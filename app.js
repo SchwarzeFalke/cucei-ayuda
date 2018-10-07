@@ -12,6 +12,7 @@ const app = express();
 
 const router = require('./routes');
 
+
 app.use(router);
 
 app.listen(process.env.PORT, () => console.log(`CUCEI AYUDA IS RUNNING ON PORT ${process.env.PORT}!`));

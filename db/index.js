@@ -1,9 +1,4 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-09-20T10:18:54-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T12:58:19-05:00
- */
+
 
 const mysql = require('mysql');
 
@@ -15,23 +10,20 @@ class DB {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     });
-     this.connection.connect();
+    this.connection.connect();
   }
 
   get(table, columns, condition, order) {
     return new Promise((resolve, reject) => {
       const data = [columns, table];
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
-
+      query += ' WHERE exist = TRUE';
+      if (condition) query += ` && ${condition}`;
       if (order) query += order;
-      query += 'WHERE exist = TRUE';
-
-      if (condition.length > 1) query += ` && ${condition};`;
-      else query += ';';
-
-        this.connection.query(query, data, (err, results) => {
-          if (err) throw reject(err);
-          resolve(results);
+      query += ';';
+      this.connection.query(query, data, (err, results) => {
+        if (err) reject(err);
+        resolve(results);
       });
     });
   }
@@ -39,16 +31,19 @@ class DB {
    insert(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'INSERT INTO ?? SET ?';
-      if (condition) query += `WHERE ${condition};`;
-      else query += ';';
+      if (condition) {
+        query += `WHERE ${condition};`;
+      } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) reject(err);
+        if (err) {
+          reject(err);
+        }
         return resolve(results);
       });
     });
   }
 
-   update(table, data, condition) {
+  update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
       if (condition) query += `WHERE ${condition};`;
@@ -61,14 +56,16 @@ class DB {
     });
   }
 
+
   physicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
       if (condition) query += `WHERE ${condition};`;
       else query += ';';
       this.connection.query(query, table, (err, results) => {
-        if (err) throw reject(err);
+        if (err) reject(err);
         resolve(results);
+
       });
     });
   }
@@ -83,7 +80,5 @@ class DB {
       });
     });
   }
-
-
 }
- module.exports = new DB();
+module.exports = new DB();

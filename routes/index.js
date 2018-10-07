@@ -25,7 +25,7 @@ router.get('/', (req, res) => res.send('Welcome to QCInf!'));
 
 router.use('/users', usersRouter);
 router.use('/schedule', scheduleRouter);
-router.use('/forum', forumRouter);
+router.use('/topics', forumRouter);
 router.use('/map', mapRouter);
 router.use('/building', buildingRouter);
 
