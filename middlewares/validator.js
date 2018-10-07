@@ -13,16 +13,19 @@ class Validator {
       data: null,
     };
   }
-   static get regex() {
+
+  static get regex() {
     return {
       code: /^[1-9]+[0-9]*$/,
     };
   }
-   static code(data) {
+
+  static code(data) {
     if (!Validator.regex.code.test(data)) {
       return Validator.badJSON;
     }
     return false;
   }
 }
- module.exports = Validator;
+
+module.exports = Validator;

@@ -1,5 +1,13 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-09-20T10:18:54-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-09-30T02:43:04-05:00
+ */
+
 const mysql = require('mysql');
- class DB {
+
+class DB {
   constructor() {
     this.connection = mysql.createConnection({
       host: process.env.DB_HOST,
@@ -32,7 +40,7 @@ const mysql = require('mysql');
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -45,7 +53,8 @@ const mysql = require('mysql');
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (results.affectedRows === 0) reject(new Error('Doesnt exist'));
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -57,9 +66,8 @@ const mysql = require('mysql');
       if (condition) {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
-      console.log(query);
       this.connection.query(query, table, (err, results) => {
-        if (err) throw reject(err);
+        if (err) reject(err);
         resolve(results);
       });
     });

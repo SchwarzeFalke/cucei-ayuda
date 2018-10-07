@@ -6,10 +6,14 @@
  */
  require('dotenv').config();
 
- const express = require('express');
- const router = require('./routes');
- const app = express();
+require('dotenv').config();
+
+const express = require('express');
 
  app.use(router);
 
- app.listen(process.env.PORT, () => console.log('Example app listening on port 3000!'));
+const router = require('./routes');
+
+app.use(router);
+
+app.listen(process.env.PORT, () => console.log('My cute app is running on port 3000!'));
