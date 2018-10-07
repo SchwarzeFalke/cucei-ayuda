@@ -12,6 +12,7 @@ class Schedule {
     this.section = args.section;
     this.credits = args.credits;
     this.building = args.building;
+    this.exist = '1';
     this.taught_by = args.taught_by;
   }
 
@@ -45,8 +46,8 @@ class Schedule {
     return this.result;
   }
 
-  static async getAll() {
-    await db.get('subject', '*')
+  static async getAll(condition, order) {
+    await db.get('subject', '*', condition, order)
       .then((results) => {
         this.result = Schedule.processResult(results);
       })
@@ -56,8 +57,8 @@ class Schedule {
     return this.result;
   }
 
-  static async get(columns, condition) {
-    await db.get('subject', columns, condition)
+  static async get(columns, condition, order) {
+    await db.get('subject', columns, condition, order)
       .then((results) => {
         this.result = results;
       })
@@ -68,7 +69,7 @@ class Schedule {
   }
 
   static async del(condition) {
-    await db.del('subject', condition)
+    await db.logicalDel('subject', condition)
       .then((results) => {
         this.result = results;
       })

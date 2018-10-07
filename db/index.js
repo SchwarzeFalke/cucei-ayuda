@@ -27,8 +27,9 @@ class DB {
       if (order) query += order;
       query += 'WHERE exist = TRUE';
 
-      if (condition.length > 1) query += ` && ${condition};`;
-      else query += ';';
+      if (condition) {
+        if (condition.length > 1) query += ` && ${condition};`;
+      } else query += ';';
 
       this.connection.query(query, data, (err, results) => {
         if (err) reject(err);
@@ -78,7 +79,7 @@ class DB {
   logicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
-      if (condition) query += `WHERE ${condition}`;
+      if (condition) query += ` WHERE ${condition};`;
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);
