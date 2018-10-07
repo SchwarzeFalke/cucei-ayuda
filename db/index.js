@@ -55,6 +55,7 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
+        if (results.affectedRows === 0) reject(new Error('Doesnt exist'));
         if (err) reject(err);
         return resolve(results);
       });
