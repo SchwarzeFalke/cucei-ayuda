@@ -61,7 +61,7 @@ class ThreadMdl {
     if (data.q || data.page || data.count || data.sort) {
       this.condition = `topic_id = ${topicId}`;
       if (data.q) {
-        this.condition = ` && subject LIKE '%${data.q}%'`;
+        this.condition = `subject LIKE '%${data.q}%'`;
       }
       condition = this.condition;
       order = this.processRequest(data);
@@ -108,6 +108,19 @@ class ThreadMdl {
   }
 
   async delete(id) {
+    let data;
+    const condition = `thread_id = ${id}`;
+    const obj = {};
+    obj.exist = 0;
+    await db.update('thread', obj, condition).then((result) => {
+      data = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return data;
+  }
+
+  async deleteReal(id) {
     let data;
     const condition = `thread_id = ${id}`;
     await db.del('thread', condition).then((result) => {

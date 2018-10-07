@@ -8,6 +8,41 @@ class ThreadCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
+    this.getAllPosts = this.getAll.bind(this);
+    this.getPost = this.get.bind(this);
+    this.createPost = this.create.bind(this);
+    this.updatePost = this.modify.bind(this);
+    this.deletePost = this.delete.bind(this);
+    this.modifyJSON = {
+      status: 201,
+      response: null,
+      message: null,
+      data: null,
+    };
+    this.requestJSON = {
+      status: 200,
+      response: 'Ok',
+      message: null,
+      data: null,
+    };
+    this.forbiddenJSON = {
+      status: 403,
+      response: 'Forbidden',
+      message: null,
+      data: null,
+    };
+    this.badRequestJSON = {
+      status: 400,
+      response: 'Bad request',
+      message: null,
+      data: null,
+    };
+    this.notFoundJSON = {
+      status: 404,
+      response: 'Noy found',
+      message: null,
+      data: null,
+    };
   }
 
   async getAll(req, res) {
@@ -20,14 +55,16 @@ class ThreadCtrl {
         data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+        this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(400).send(this.badRequestJSON);
       });
       if (data === undefined || data.length === 0) {
-        res.status(404).send({
-          error: 'you don´t have any data',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       } else {
-        res.send(data);
+        this.requestJSON.message = 'Data succesfully retrieve';
+        this.requestJSON.data = data;
+        res.send(this.requestJSON);
       }
       //  GET query Data
     } else {
@@ -35,16 +72,16 @@ class ThreadCtrl {
         data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       });
       if (data === undefined || data.length === 0) {
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       } else {
-        res.send(data);
+        this.requestJSON.message = 'Data succesfully retrieve';
+        this.requestJSON.data = data;
+        res.send(this.requestJSON);
       }
     }
   }
@@ -55,16 +92,17 @@ class ThreadCtrl {
     try {
       data = await ThreadMdl.find(threadId);
     } catch (e) {
-      res.status(404).send({
-        error: 'data not found',
-      });
+      console.error('error!');
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     }
     if (data === undefined || data.length === 0) {
-      res.status(404).send({
-        error: 'data not found',
-      });
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     } else {
-      res.send(data);
+      this.requestJSON.message = 'Data succesfully retrieve';
+      this.requestJSON.data = data;
+      res.send(this.requestJSON);
     }
   }
 
@@ -76,28 +114,30 @@ class ThreadCtrl {
       response = result;
     }).catch((e) => {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(403).send(this.forbiddenJSON);
     });
     if (response === undefined) {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (response === 1) {
-      res.status(400).send({ message: 'Not enough data' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     const id = response.insertId;
     if (id === undefined) {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (id > 0) {
-      res.status(200).send({ message: 'Registrado Correctamente' });
+      this.requestJSON.message = 'Data succesfully created';
+      this.requestJSON.data = response;
+      this.requestJSON.code = 201;
+      res.status(201).end(this.requestJSON);
     } else {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
   }
 
@@ -109,15 +149,20 @@ class ThreadCtrl {
         topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ error: 'todo mal' });
+        this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(403).send(this.forbiddenJSON);
       });
     } catch (e) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (topicModify === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
-    res.send({ message: 'Modificado Correctamente' });
+    this.requestJSON.message = 'Data succesfully modified';
+    this.requestJSON.data = topicModify;
+    res.status(200).send(this.requestJSON);
   }
 
   async delete(req, res) {
@@ -128,24 +173,26 @@ class ThreadCtrl {
         deleted = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status().send();
+        this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(403).send(this.forbiddenJSON);
       });
     } catch (e) {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(403).send(this.forbiddenJSON);
     }
     if (deleted === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (deleted.affectedRows === 0) {
-      res.status(400).send({ message: 'todo mal' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
-    res.status(204).send({ message: 'todo bien' });
+    this.requestJSON.message = 'Data succesfully deleted';
+    this.requestJSON.data = deleted;
+    res.status(200).send(this.requestJSON);
   }
-
-/**
-  Aqui empiezan las funciones de los posts
- */
 
 //  obtiene todos los post de un thread
   async getAllPosts(req, res) {
@@ -158,89 +205,88 @@ class ThreadCtrl {
         data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+        this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(400).send(this.badRequestJSON);
       });
       if (data === undefined || data.length === 0) {
-        res.status(404).send({
-          error: 'you don´t have any data',
-        });
-      } else {
-        res.send(data);
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       }
+      const message = 'Data succesfully retrieve';
+      this.requestJSON.message = message;
+      this.requestJSON.data = data;
+      res.send(this.requestJSON);
       //  GET query Data
     } else {
       await PostMdl.find(query, threadId).then((result) => {
         data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(400).send(this.badRequestJSON);
       });
       if (data === undefined || data.length === 0) {
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       } else {
-        res.send(data);
+        this.requestJSON.message = 'Data succesfully retrieve';
+        this.requestJSON.data = data;
+        res.send(this.requestJSON);
       }
     }
   }
 
-//obtiene un post en especifico
   async getPost(req, res) {
     const { postId } = req.params;
     let data;
     try {
-      console.log(postId);
       data = await PostMdl.find(postId);
     } catch (e) {
-      res.status(404).send({
-        error: 'data not found',
-      });
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     }
     if (data === undefined || data.length === 0) {
-      res.status(404).send({
-        error: 'data not found',
-      });
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     } else {
-      res.send(data);
+      this.requestJSON.message = 'Data succesfully retrieve';
+      this.requestJSON.data = data;
+      res.send(this.requestJSON);
     }
   }
 
   async createPost(req, res) {
-
     req.body.thread_id = req.params.threadId;
-    console.log(req.body);
     const post = new PostMdl(req.body);
     let response;
     await post.save().then((result) => {
       response = result;
     }).catch((e) => {
-      console.log('error en controller aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(403).send(this.forbiddenJSON);
     });
     if (response === undefined) {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (response === 1) {
-      res.status(400).send({ message: 'Not enough data' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     const id = response.insertId;
     if (id === undefined) {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (id > 0) {
-      res.status(200).send({ message: 'Registrado Correctamente' });
+      this.requestJSON.message = 'Data succesfully created';
+      this.requestJSON.data = response;
+      this.requestJSON.code = 201;
+      res.status(201).end(this.requestJSON);
     } else {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
   }
 
@@ -252,15 +298,20 @@ class ThreadCtrl {
         topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ error: 'todo mal' });
+        this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(403).send(this.forbiddenJSON);
       });
     } catch (e) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (topicModify === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
-    res.send({ message: 'Modificado Correctamente' });
+    this.requestJSON.message = 'Data succesfully modified';
+    this.requestJSON.data = topicModify;
+    res.status(200).send(this.requestJSON);
   }
 
   async deletePost(req, res) {
@@ -271,19 +322,25 @@ class ThreadCtrl {
         deleted = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status().send();
+        this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(403).send(this.forbiddenJSON);
       });
     } catch (e) {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.forbiddenJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(403).send(this.forbiddenJSON);
     }
     if (deleted === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (deleted.affectedRows === 0) {
-      res.status(400).send({ message: 'todo mal' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
-    res.status(204).send({ message: 'todo bien' });
+    this.requestJSON.message = 'Data succesfully deleted';
+    this.requestJSON.data = deleted;
+    res.status(200).send(this.requestJSON);
   }
 }
 module.exports = new ThreadCtrl();

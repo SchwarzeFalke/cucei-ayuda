@@ -18,7 +18,7 @@ class DB {
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
       query += ' WHERE exist = TRUE';
 
-      if (condition.length > 1) query += ` && ${condition}`;
+      if (condition) query += ` && ${condition}`;
       if (order) query += order;
       query += ';';
       console.log(query);

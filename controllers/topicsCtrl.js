@@ -7,6 +7,36 @@ class TopicCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
+    this.modifyJSON = {
+      status: 201,
+      response: null,
+      message: null,
+      data: null,
+    };
+    this.requestJSON = {
+      status: 200,
+      response: 'Ok',
+      message: null,
+      data: null,
+    };
+    this.forbiddenJSON = {
+      status: 403,
+      response: 'Forbidden',
+      message: null,
+      data: null,
+    };
+    this.badRequestJSON = {
+      status: 400,
+      response: 'Bad request',
+      message: null,
+      data: null,
+    };
+    this.notFoundJSON = {
+      status: 404,
+      response: 'Noy found',
+      message: null,
+      data: null,
+    };
   }
 
   async getAll(req, res) {
@@ -17,14 +47,16 @@ class TopicCtrl {
         this.data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ error: 'Something went wrong! Monkeys working on it' });
+        this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(400).send(this.badRequestJSON);
       });
       if (this.data === undefined || this.data.length === 0) {
-        res.status(404).send({
-          error: 'you don´t have any data',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       } else {
-        res.send(this.data);
+        this.requestJSON.message = 'Data succesfully retrieve';
+        this.requestJSON.data = this.data;
+        res.send(this.requestJSON);
       }
       //  GET query data
     } else {
@@ -32,16 +64,16 @@ class TopicCtrl {
         this.data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       });
       if (this.data === undefined || this.data.length === 0) {
-        res.status(404).send({
-          error: 'No se encontró el dato',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       } else {
-        res.send(this.data);
+        this.requestJSON.message = 'Data succesfully retrieve';
+        this.requestJSON.data = this.data;
+        res.send(this.requestJSON);
       }
     }
   }
@@ -53,20 +85,21 @@ class TopicCtrl {
         this.data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(404).send({
-          error: 'data not found',
-        });
+        this.notFoundJSON.message = 'you don´t have any data';
+        res.status(404).send(this.notFoundJSON);
       });
     } catch (e) {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     }
     if (this.data === undefined || this.data.length === 0) {
-      res.status(404).send({
-        error: 'data not found',
-      });
+      this.notFoundJSON.message = 'you don´t have any data';
+      res.status(404).send(this.notFoundJSON);
     } else {
-      res.send(this.data);
+      this.requestJSON.message = 'Data succesfully retrieve';
+      this.requestJSON.data = this.data;
+      res.send(this.requestJSON);
     }
   }
 
@@ -76,21 +109,26 @@ class TopicCtrl {
       this.response = result;
     }).catch((e) => {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(400).send(this.badRequestJSON);
     });
     if (this.response === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(400).send(this.badRequestJSON);
     }
     if (this.response === 1) {
-      res.status(400).send({ message: 'Not enough data' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     const id = this.response.insertId;
     if (id > 0) {
-      res.status(200).send({ message: 'Registrado Correctamente' });
+      this.requestJSON.message = 'Data succesfully created';
+      this.requestJSON.data = this.response;
+      this.requestJSON.code = 201;
+      res.status(201).end(this.requestJSON);
     } else {
-      res.status(400).send({
-        error: 'Something went wrong, data not saved',
-      });
+      this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(400).send(this.badRequestJSON);
     }
   }
 
@@ -101,15 +139,20 @@ class TopicCtrl {
         this.topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ error: 'todo mal' });
+        this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+        res.status(400).send(this.badRequestJSON);
       });
     } catch (e) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
+      res.status(400).send(this.badRequestJSON);
     }
     if (this.topicModify === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
-    res.send({ message: 'Modificado Correctamente' });
+    this.requestJSON.message = 'Data succesfully modified';
+    this.requestJSON.data = this.topicModify;
+    res.status(200).send(this.requestJSON);
   }
 
   async delete(req, res) {
@@ -119,19 +162,25 @@ class TopicCtrl {
         this.deleted = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status().send();
+        this.badRequestJSON.message = 'One field is missings or data is wrong';
+        res.status(400).send(this.badRequestJSON);
       });
     } catch (e) {
       console.error(`error!! ${e}`);
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (this.deleted === undefined) {
-      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     }
     if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
-      res.status(400).send({ message: 'todo mal' });
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
     } else {
-      res.status(204).send({ message: 'todo bien' });
+      this.requestJSON.message = 'Data succesfully deleted';
+      this.requestJSON.data = this.deleted;
+      res.status(200).send(this.requestJSON);
     }
   }
 }

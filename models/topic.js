@@ -15,10 +15,6 @@ class TopicMdl {
   }
 
   static processRequest(data) {
-    // this.condition = '';
-    // if (data.q) {
-    //   this.condition = ` && name LIKE '%${data.q}%'`;
-    // }
     let condition = '';
     if (data.sort) {
       condition = ` ORDER BY name ${data.sort}`;
@@ -44,7 +40,7 @@ class TopicMdl {
 
   static async getAll() {
     let res;
-    await db.get('topic', '*', '').then((results) => {
+    await db.get('topic', '*').then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -106,17 +102,43 @@ class TopicMdl {
   async delete(id) {
     let data;
     const condition = `topic_id = ${id}`;
-    try {
-      ThreadMdl.deleteAll()
-    } catch (e) {
-
-    }
-    await db.del('topic', condition).then((result) => {
+    const obj = {};
+    obj.exist = 0;
+    await db.update('topic', obj, condition).then((result) => {
       data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
     return data;
   }
+
+  async deleteReal(id) {
+    let data;
+    const condition = `topic_id = ${id}`;
+    const obj = {};
+    obj.exist = 0;
+    await db.update('topic', obj, condition).then((result) => {
+      data = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    console.log(data);
+    return data;
+  }
+
+  //   let data;
+  //   const condition = `topic_id = ${id}`;
+  //   try {
+  //     ThreadMdl.deleteAll()
+  //   } catch (e) {
+  //
+  //   }
+  //   await db.del('topic', condition).then((result) => {
+  //     data = result;
+  //   }).catch((e) => {
+  //     console.error(`.catch(${e})`);
+  //   });
+  //   return data;
+  // }
 }
 module.exports = TopicMdl;

@@ -52,13 +52,14 @@ class PostMdl {
     if (data.q || data.sort) {
       this.condition = `thread_id = ${threadId}`;
       if (data.q) {
-        this.condition += ` && content LIKE '%${data.q}%'`;
+        this.condition += `content LIKE '%${data.q}%'`;
       }
       condition = this.condition;
       order = this.processRequest(data);
     } else {
       condition = ` post_id = ${Object.values(data)}`;
     }
+    console.log(condition);
     await db.get('post', '*', condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
@@ -71,12 +72,10 @@ class PostMdl {
   async save() {
     delete this.post_id;
     let results;
-    console.log(this);
     if (this.required()) {
       await db.insert('post', this).then((result) => {
         results = result;
       }).catch((e) => {
-        console.log('Error en catch model aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
         console.error(`.catch(${e})`);
       });
       console.log(results);
