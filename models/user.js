@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-04T14:25:00-05:00
+ * @Last modified time: 2018-10-07T05:04:42-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -40,13 +40,14 @@ class UserMdl {
   constructor(args) {
     // If the value of a requested arg is an undefined value, does not create a
     // field for it (this is useful for the updating method).
-    if (args.stud_code !== undefined) this.stud_code = args.stud_code;
+    if (args.user_code !== undefined) this.user_code = args.user_code;
     if (args.name !== undefined) this.name = args.name;
     if (args.middle_name !== undefined) this.middle_name = args.middle_name;
     if (args.flastname !== undefined) this.flastname = args.flastname;
     if (args.mlastname !== undefined) this.mlastname = args.mlastname;
     if (args.email !== undefined) this.email = args.email;
     if (args.password !== undefined) this.password = args.password;
+    if (args.privilages !== undefined) this.privilages = args.privilages;
     if (args.exist !== undefined) this.exist = args.exist;
   }
 
@@ -56,13 +57,14 @@ class UserMdl {
    */
   static get validColumns() {
     return [
-      'stud_code',
+      'user_code',
       'name',
       'middle_name',
       'flastname',
       'mlastname',
       'email',
       'password',
+      'privilages',
       'exist',
     ];
   }
@@ -112,7 +114,7 @@ class UserMdl {
    *                      the user does not exist]
    */
   static async validUser(id) {
-    await db.get('user', 'stud_code', `stud_code = ${id}`)
+    await db.get('user', 'user_code', `user_code = ${id}`)
       .then((results) => {
         this.result = results.length;
       })
@@ -149,22 +151,30 @@ class UserMdl {
    * @return {Promise}           [description: Return the requested data]
    */
   static async get(columns, id, condition) {
-    let queryCondition = `stud_code = ${id}`;
+    let queryCondition = `user_code = ${id}`;
     if (condition.length > 1) {
       queryCondition = UserMdl.processConditions(condition);
     }
     await db.get('user', columns, queryCondition)
       .then((results) => {
-        this.result = results;
+        this.result = UserMdl.processResult(results);
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
   }
 
-  static async del(condition) {
-    await db.del('user', condition)
-      .then((results) => {
-        this.result = results;
+  static async del(id, condition) {
+    let queryCondition = `user_code = ${id}`;
+    if (condition.length > 1) {
+      queryCondition = UserMdl.processConditions(condition);
+    }
+    await db.logicalDel('user', queryCondition)
+      .then((results1) => {
+        db.chainedDel(`user_code = ${id}`)
+          .then((results2) => {
+            this.result = results1 + results2;
+          })
+          .catch(e => console.error(`.catch(${e})`));
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
@@ -176,17 +186,15 @@ class UserMdl {
         this.result = results;
       })
       .catch(e => console.error(`.catch(${e}})`));
-    return this.result;
   }
 
-  async update(id) {
-    const condition = `stud_code = ${id}`;
+  async update() {
+    const condition = `user_code = ${this.user_code}`;
     await db.update('user', this, condition)
       .then((results) => {
         this.result = results;
       })
       .catch(e => console.error(`.catch(${e}})`));
-    return this.result;
   }
 
   /**
@@ -219,7 +227,7 @@ class UserMdl {
    * [getStudCode description]
    * @return {[type]} returns the user's identifier (primary key)
    */
-  getStudCode() { return this.stud_code; }
+  getStudCode() { return this.user_code; }
 
   /**
    * [getEmail description]

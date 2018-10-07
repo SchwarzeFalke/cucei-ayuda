@@ -2,10 +2,30 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-04T14:26:13-05:00
+ * @Last modified time: 2018-10-07T03:32:12-05:00
  */
 
-const { UserMdl } = require('../models');
+const { UserMdl } = require('../models'); // for model handling
+
+/**
+ * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
+ *                                 METHODS
+ * constructor()  ->  Defines the JSON responses & method bindings
+ * -----------------------------------------------------------------------------
+ * Getters:
+ * ---> getAll(req, res)        ->  Returns a full name
+ * ---> getUser(req, res)       ->  Returns a student code
+ * ---> getRoads(req, res)      ->  Return an email
+ * ---> getSchedule(req, res)   ->  Returns an user ID validation
+ * ---> getPosts(req, res)      ->
+ * -----------------------------------------------------------------------------
+ * Data Handling:
+ * ---> insert(req, res)        ->  Returns all database users
+ * ---> del(req, res)           ->  Deletes by a condition
+ * ---> save(req, res)          ->  Saves the object into database
+ * ---> update(req, res)        ->  Updates the requested user
+ * -----------------------------------------------------------------------------
+ */
 
 class UserCtrl {
   constructor() {
@@ -105,7 +125,7 @@ class UserCtrl {
   async getRoads(req, res) {
     try {
       if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `stud_code = ${req.params.userId}`;
+        const condition = `user_code = ${req.params.userId}`;
         await UserMdl.get('*', condition)
           .then((data) => {
             console.log(data);
@@ -127,7 +147,7 @@ class UserCtrl {
   async getSchedule(req, res) {
     try {
       if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `stud_code = ${req.params.userId}`;
+        const condition = `user_code = ${req.params.userId}`;
         await UserMdl.get('*', condition)
           .then((data) => {
             this.requestJSON.data = data;
@@ -147,7 +167,7 @@ class UserCtrl {
 
   async getPosts(req, res) {
     try {
-      const condition = `stud_code = ${req.params.userId}`;
+      const condition = `user_code = ${req.params.userId}`;
       await UserMdl.get('*', condition)
         .then((data) => {
           this.requestJSON.data = data;
@@ -181,8 +201,7 @@ class UserCtrl {
 
   async del(req, res) {
     try {
-      const condition = `stud_code = ${req.params.userId}`;
-      await UserMdl.del(condition)
+      await UserMdl.del(req.params.userId, req.query)
         .then((data) => {
           this.modifyJSON.data = data;
           this.modifyJSON.response = 'Deleted';
@@ -199,7 +218,7 @@ class UserCtrl {
   async update(req, res) {
     const updateUser = new UserMdl({ ...req.body });
     try {
-      await updateUser.update(req.params.userId)
+      await updateUser.update()
         .then((data) => {
           this.info = data;
           this.modifyJSON.response = 'Updated';

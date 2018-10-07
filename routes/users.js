@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-02T04:41:46-05:00
+ * @Last modified time: 2018-10-07T04:38:16-05:00
  */
 
 const { Router } = require('express');
@@ -10,6 +10,8 @@ const { Router } = require('express');
 const middleWares = require('../middlewares');
 
 const { usersCtrl } = require('../controllers');
+
+const userFaker = require('../factory');
 
 const router = Router();
 
@@ -22,6 +24,11 @@ const router = Router();
  GET /users/userId/schedule
  GET /users/userId/posts
 */
+
+router.get('/fakeData/:amount', (req, res) => {
+  userFaker.fakeUsers(req.params.amount);
+  res.send('Ok');
+});
 
 /**
  * GET users/
