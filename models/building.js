@@ -10,6 +10,7 @@ class buildingMdl{
     this.exist = exist;
   }
 
+  //colums valid in table buildings
   static get validColumns(){
     const params = [
       'building_id',
@@ -22,6 +23,7 @@ class buildingMdl{
     return params;
   }
 
+  //proccess result sent by database
   static processResult(data) {
    this.result = [];
    data.forEach((res) => {
@@ -30,6 +32,7 @@ class buildingMdl{
    return this.result;
   }
 
+  //valid if a specific id building exist
   static async validBuilding(id) {
       await db.get('building', 'building_id', `building_id = ${id}`)
         .then((results) => {
@@ -40,6 +43,7 @@ class buildingMdl{
     return this.false;
   }
 
+  //request all data in table buildings
   static async getAll() {
     let condition = '';
     await db.get('building', '*',  condition)
@@ -50,6 +54,7 @@ class buildingMdl{
      return this.result;
   }
 
+  //request a specific data building
   static async get(columns, id, condition) {
     await db.get('building', columns, id)
     .then((results) => {
@@ -59,6 +64,7 @@ class buildingMdl{
     return this.result;
   }
 
+  //insert data a building in database
   async save() {
     await db.insert('building', this)
     .then((results) => {
@@ -69,6 +75,7 @@ class buildingMdl{
     return this.result;
   }
 
+  //modify a specific building in database
   async update(id) {
     const condition = `building_id = ${id}`;
     await db.update('building', this, condition)
@@ -80,6 +87,7 @@ class buildingMdl{
     return this.result;
   }
 
+  //logic detele a specific building
   async logDel(id) {
     const condition = `building_id = ${id}`;
     await db.logDel('building', condition)

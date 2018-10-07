@@ -13,8 +13,16 @@ const middleWares = require('../middlewares');
 
 const router = Router();
 
+/*These is Get methods needing for routes maps
+ * Get/map
+ * Get/map/building/:buildingId
+ */
+ //this method return all buildings
 router.get('/', mapCtrl.get);
 
+/*this get method need a middleware for validate
+ *if id building is a int and return a buildings with id specific
+ */
 router.get('/building/:buildingId', (req, res, next) => {
     const request = middleWares.validator.code(req.params.buildingId);
     if(!request) {
@@ -26,6 +34,5 @@ router.get('/building/:buildingId', (req, res, next) => {
 
 },buildingCtrl.getBuild);
 
-//router.get('/building/:buildingId/', if(req.query) {buildingCtrl.getClasses}else {buildingCtrl.getBuild});
-
+//esport routes maps
 module.exports = router;

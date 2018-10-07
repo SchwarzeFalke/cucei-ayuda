@@ -1,22 +1,25 @@
 const { MapsMdl } = require('../models');
+
  class MapCtrl {
   constructor() {
+    // Binding class methods of the controller
     this.get = this.get.bind(this);
 
+    //Defines a format to give a success response at requesting
     this.okJSON = {
       status: 200,
       response: 'Ok',
       message: null,
       data: null,
     };
-
+    //Defines a format to give a no content response at requesting
     this.noContentJSON = {
       status: 204,
       response: null,
       message: 'No Content',
       data: null,
     };
-
+    //Defines a format to give a forbidden response at requesting
     this.forbiddenJSON = {
       status: 403,
       response: 'Forbidden',
@@ -26,6 +29,9 @@ const { MapsMdl } = require('../models');
 
   };
 
+  /*Validate if database does have content and returns
+   *all buildings data
+   */
   async get(req, res) {
    try {
      await MapsMdl.get()

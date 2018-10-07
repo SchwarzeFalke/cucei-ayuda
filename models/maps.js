@@ -10,6 +10,7 @@ class mapsMdl{
     this.exist = exist;
   }
 
+  //Processes result sent by database
   static processResult(data) {
    this.result = [];
    data.forEach((res) => {
@@ -18,6 +19,7 @@ class mapsMdl{
    return this.result;
   }
 
+  //request all data in table buildings
   static async get() {
     let condition = '';
     await db.get('building', '*',  condition)

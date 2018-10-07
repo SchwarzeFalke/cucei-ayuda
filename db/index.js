@@ -84,18 +84,6 @@ class DB {
     });
   }
 
-  logDel(table, data, condition) {
-   return new Promise((resolve, reject) => {
-     let query = 'UPDATE ?? SET exist = 0';
-     if (condition) {
-       query += `WHERE ${condition};`;
-     } else { query += ';'; }
-     this.connection.query(query, [table, data], (err, results) => {
-       if (err) return reject(err);
-       return resolve(results);
-     });
-   });
- }
 
 }
  module.exports = new DB();

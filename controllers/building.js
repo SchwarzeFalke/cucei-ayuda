@@ -1,12 +1,14 @@
 const { BuildingMdl } = require('../models');
 class BuildingCrtl {
   constructor() {
+    // Binding class methods of the controller
     this.getAll = this.getAll.bind(this);
     this.getBuild = this.getBuild.bind(this);
     this.insert = this.insert.bind(this);
     this.modify = this.modify.bind(this);
     this.logDel = this.logDel.bind(this);
 
+    //Defines a format to give a success response at requesting
     this.okJSON = {
       status: 200,
       response: 'Ok',
@@ -14,6 +16,7 @@ class BuildingCrtl {
       data: null,
     };
 
+    //Defines a format to give a create response at requesting
     this.createJSON = {
       status: 201,
       response: null,
@@ -21,6 +24,7 @@ class BuildingCrtl {
       data: null,
     };
 
+    //Defines a format to give a no content response at requesting
     this.noContentJSON = {
       status: 204,
       response: null,
@@ -28,6 +32,7 @@ class BuildingCrtl {
       data: null,
     };
 
+    //Defines a format to give a bad request response at requesting
     this.badRequestJSON = {
       status: 400,
       response: null,
@@ -35,6 +40,7 @@ class BuildingCrtl {
       data: null,
     };
 
+    //Defines a format to give a forbidden response at requesting
     this.forbiddenJSON = {
       status: 403,
       response: 'Forbidden',
@@ -42,6 +48,7 @@ class BuildingCrtl {
       data: null,
     };
 
+    //Defines a format to give a not found response at requesting
     this.notFoundJSON = {
       status: 404,
       response: null,
@@ -51,6 +58,9 @@ class BuildingCrtl {
 
   }
 
+  /*Validate if database does have content and returns
+   *all buildings data
+   */
   async getAll(req, res) {
    try {
      await BuildingMdl.getAll()
@@ -71,6 +81,9 @@ class BuildingCrtl {
    }
  }
 
+/*Validate if a specific id building exist and
+ *return data building
+ */
  async getBuild(req, res) {
     try {
       await BuildingMdl.validBuilding(req.params.buildingId)
@@ -96,6 +109,9 @@ class BuildingCrtl {
     }
   }
 
+  /*Insert data building if new id building dont exist
+   *and send a response with result
+   */
    async insert(req, res) {
      const newBuilding = new BuildingMdl({ ...req.body });
      try {
@@ -124,6 +140,9 @@ class BuildingCrtl {
     }
   }
 
+  /*Modify data a specific building
+   *and send a response with result
+   */
   async modify(req, res) {
     const modifyBuilding = new BuildingMdl({ ...req.body });
     try {
@@ -151,13 +170,16 @@ class BuildingCrtl {
     }
   }
 
+  /*Logic detele data a specific building
+   *and send a response with result
+   */
   async logDel(req, res) {
     const updateBuilding = new BuildingMdl({ ...req.body });
     try {
       await BuildingMdl.validBuilding(req.params.buildingId)
       .then((exists) => {
         if(exists) {
-          updateBuilding.logDel(req.params.buildingId)
+          updateBuilding.logicalDel(req.params.buildingId)
           .then((data) => {
             console.log('You delete a building');
             this.okJSON.response = 'Deleted';
