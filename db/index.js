@@ -12,14 +12,15 @@ const mysql = require('mysql');
 
    get(table, columns, condition) {
     return new Promise((resolve, reject) => {
-      let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
+      let query = 'SELECT ?? FROM ?? WHERE exist = TRUE';
       const data = [columns, table];
       if (condition.length > 1) {
-        query += ` &&  ${condition};`;
+        query += ` && ${condition};`;
       } else { query += ';'; }
-       this.connection.query(query, data, (err, results) => {
-        if (err) throw reject(err);
-        resolve(results);
+
+        this.connection.query(query, data, (err, results) => {
+          if (err) throw reject(err);
+          resolve(results);
       });
     });
   }
@@ -63,5 +64,19 @@ const mysql = require('mysql');
       });
     });
   }
+
+  logDel(table, data, condition) {
+   return new Promise((resolve, reject) => {
+     let query = 'UPDATE ?? SET exist = 0';
+     if (condition) {
+       query += `WHERE ${condition};`;
+     } else { query += ';'; }
+     this.connection.query(query, [table, data], (err, results) => {
+       if (err) return reject(err);
+       return resolve(results);
+     });
+   });
+ }
+
 }
  module.exports = new DB();

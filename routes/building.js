@@ -22,6 +22,8 @@ router.get('/:buildingId/classes', buildingCtrl.getClasses);
 
 router.post('/', buildingCtrl.insert);
 
-router.put('/:buildingId', buildingCtrl.update);
+router.put('/:buildingId', buildingCtrl.modify);
+
+router.delete('/:buildingId', buildingCtrl.logDel);
 
 module.exports = router;

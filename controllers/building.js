@@ -5,7 +5,8 @@ class BuildingCrtl {
     this.getBuild = this.getBuild.bind(this);
     this.getClasses = this.getClasses.bind(this);
     this.insert = this.insert.bind(this);
-    this.update = this.update.bind(this);
+    this.modify = this.modify.bind(this);
+    this.logDel = this.logDel.bind(this);
 
     this.okJSON = {
       status: 200,
@@ -53,49 +54,46 @@ class BuildingCrtl {
 
   async getAll(req, res) {
    try {
-     await BuildingMdl.getAll(req.query)
-       .then((data) => {
-        if(data.length === 0){
-           res.status(this.noContentJSON.status).send(this.noContentJSON);
-         }else{
-           console.log('You see all buildings');
-           this.okJSON.message = 'You see all buildings';
-           this.okJSON.data = data;
-           res.status(this.okJSON.status).send(this.okJSON);
-         }
-       })
-       .catch((e) => { throw e });
+     await BuildingMdl.getAll()
+      .then((data) => {
+         if(data.length === 0){
+            res.status(this.noContentJSON.status).send(this.noContentJSON);
+          }else{
+            console.log('You see all buildings');
+            this.okJSON.message = 'You see all buildings';
+            this.okJSON.data = data;
+            res.status(this.okJSON.status).send(this.okJSON);
+          }
+        })
+        .catch(e => console.error(`We have a error!(${e})`));
    } catch (e) {
-      res.status(this.notFoundJSON.status).send(this.notFoundJSON);
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
       console.error(`We have a error!(${e})`);
    }
  }
-
-
-
 
  async getBuild(req, res) {
     try {
       await BuildingMdl.validBuilding(req.params.buildingId)
       .then((exists) => {
         if(exists) {
-           let Search = `building_id = ${req.params.buildingId}`;
+          let Search = `building_id = ${req.params.buildingId}`;
           BuildingMdl.get('*', Search, req.query)
           .then((data) => {
-            console.log(`You see building with id: ${req.params.buildingId}`);
-            this.okJSON.data = data;
-            res.status(this.okJSON.status).send(this.okJSON);
+              console.log(`You see building with id: ${req.params.buildingId}`);
+              this.okJSON.data = data;
+              res.status(this.okJSON.status).send(this.okJSON);
           })
-          .catch((e) => { throw e });
+          .catch(e => console.error(`We have a error!(${e})`));
         }else {
-          this.notFoundJSON.message = 'The requested building cannot be found';
+          this.notFoundJSON.message = 'The requested building dont exist';
           res.status(this.notFoundJSON.status).send(this.notFoundJSON);
         }
       })
-      .catch((e) => { throw e });
+      .catch(e => console.error(`We have a error!(${e})`));
     } catch (e) {
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
       console.error(`We have a error!(${e})`);
-      res.status(this.noContentJSON.status).send(this.noContentJSON);
     }
   }
 
@@ -106,18 +104,21 @@ class BuildingCrtl {
          if(exists) {
            let Search = `building_id = ${req.params.buildingId}`;
            const condition = `building_id = ${req.params.buildingId}`;
-           BuildingMdl.get('num_max_class', Search, condition)
-             .then((data) => {
-               console.log(data);
-               this.okJSON.data = data;
-               res.status(this.okJSON.status).send(this.okJSON);
+           BuildingMdl.get('num_class', Search, condition)
+           .then((data) => {
+                console.log('You see building and their classes');
+                this.okJSON.data = data;
+                res.status(this.okJSON.status).send(this.okJSON);
              })
-             .catch(e => console.error(`.catch(${e})`));
+             .catch(e => console.error(`We have a error!(${e})`));
+         }else {
+           this.notFoundJSON.message = 'The requested building dont exist';
+           res.status(this.notFoundJSON.status).send(this.notFoundJSON);
          }
        })
-       .catch(e => console.error(`.catch(${e})`));
+       .catch(e => console.error(`We have a error!(${e})`));
      } catch (e) {
-       res.status(this.noContentJSON.status).send(this.noContentJSON);
+       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
        console.error(`We have a error!(${e})`);
      }
    }
@@ -130,53 +131,80 @@ class BuildingCrtl {
          if(!exists) {
            newBuilding.save()
            .then((data) => {
-               console.log(`Crated new building: ${req.body.building_id}`);
+               console.log(`Crated new building with id: ${req.body.building_id}`);
                this.info = data;
                this.createJSON.response = 'Created';
                this.createJSON.message = 'Created new building';
                this.createJSON.data = newBuilding;
                res.status(this.createJSON.status).send(this.createJSON);
              })
-             .catch(e => console.error(`.catch(${e})`));
+             .catch(e => console.error(`We have a error!(${e})`));
           }else {
-            console.log('This id buildingId used');
-            this.badRequestJSON.message = 'Created new building';
+            this.badRequestJSON.message = 'we have a building with this id';
             res.status(this.badRequestJSON.status).send(this.badRequestJSON);
           }
         })
-        .catch(e => console.error(`.catch(${e})`));
+        .catch(e => console.error(`We have a error!(${e})`));
     } catch (e) {
-      console.error(`We have a error!(${e})`);
       res.status(this.badRequestJSON.status).send(this.badRequestJSON);
+      console.error(`We have a error!(${e})`);
     }
   }
 
-  async update(req, res) {
-   const updateBuilding = new BuildingMdl({ ...req.body });
-   try {
-     await BuildingMdl.validBuilding(req.params.buildingId)
-     .then((exists) => {
-       if(exists) {
-         console.log(req.params.buildingId);
-         updateBuilding.update(req.params.buildingId)
-           .then((data) => {
-             this.okJSON.response = 'Updated';
-             this.okJSON.message = 'You update a building';
-             this.okJSON.data = data;
-             res.status(this.okJSON.status).send(this.okJSON);
+  async modify(req, res) {
+    const modifyBuilding = new BuildingMdl({ ...req.body });
+    try {
+      await BuildingMdl.validBuilding(req.params.buildingId)
+      .then((exists) => {
+        if(exists) {
+          modifyBuilding.update(req.params.buildingId)
+          .then((data) => {
+            console.log('You modify a building');
+            this.okJSON.response = 'Updated';
+            this.okJSON.message = 'You modify a building';
+            this.okJSON.data = data;
+            res.status(this.okJSON.status).send(this.okJSON);
            })
-           .catch(e => console.error(`.catch(${e})`));
-       }else {
-         this.okJSON.message = ' updated from database';
-         res.status(this.okJSON.status).send(this.okJSON);
-       }
-     })
-     .catch(e => console.error(`.catch(${e})`));
+           .catch(e => console.error(`We have a error!(${e})`));
+         }else {
+           this.notFoundJSON.message = 'The requested building dont exist';
+           res.status(this.notFoundJSON.status).send(this.notFoundJSON);
+         }
+      })
+   .catch(e => console.error(`We have a error!(${e})`));
    } catch (e) {
+     res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
      console.error(`We have a error!(${e})`);
-     res.status(this.badRequestJSON.status).send(this.badRequestJSON);
-   }
- }
+    }
+  }
+
+  async logDel(req, res) {
+    const updateBuilding = new BuildingMdl({ ...req.body });
+    try {
+      await BuildingMdl.validBuilding(req.params.buildingId)
+      .then((exists) => {
+        if(exists) {
+          updateBuilding.logDel(req.params.buildingId)
+          .then((data) => {
+            console.log('You delete a building');
+            this.okJSON.response = 'Deleted';
+            this.okJSON.message = 'You delete a building';
+            this.okJSON.data = data;
+            res.status(this.okJSON.status).send(this.okJSON);
+           })
+           .catch(e => console.error(`We have a error!(${e})`));
+         }else {
+           this.notFoundJSON.message = 'The requested building dont exist';
+           res.status(this.notFoundJSON.status).send(this.notFoundJSON);
+         }
+      })
+   .catch(e => console.error(`We have a error!(${e})`));
+   } catch (e) {
+     res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+     console.error(`We have a error!(${e})`);
+    }
+  }
+
 }
 
 module.exports =  new BuildingCrtl();

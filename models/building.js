@@ -1,23 +1,23 @@
 const db = require('../db');
 
 class buildingMdl{
-  constructor({building_id, name, num_min_class, num_max_class, longitude, latitude}) {
+  constructor({building_id, name, num_class, longitude, latitude, exist}) {
     this.building_id = building_id;
     this.name = name;
-    this.num_min_class = num_min_class;
-    this.num_max_class = num_max_class;
+    this.num_class = num_class;
     this.longitude = longitude;
     this.latitude = latitude;
+    this.exist = exist;
   }
 
   static get validColumns(){
     const params = [
       'building_id',
       'name',
-      'num_min_class',
-      'num_max_class',
+      'num_class',
       'latitude',
       'longitude',
+      'exist',
     ];
     return params;
   }
@@ -29,6 +29,7 @@ class buildingMdl{
    });
    return this.result;
   }
+
   static checkUndefined(data) {
    this.result = [];
    this.forEach((dae) => {
@@ -44,7 +45,7 @@ class buildingMdl{
         .then((results) => {
           this.result = results.length;
         })
-        .catch(e => console.error(`.catch(${e})`));
+        .catch(e => console.error(`We have a error!(${e})`));
         return this.result;
     return this.false;
   }
@@ -68,46 +69,57 @@ class buildingMdl{
     return data;
   }
 
-  static async getAll(condition) {
-   await db.get('building', '*',  condition)
-     .then((results) => {
-       this.result = buildingMdl.processResult(results);
-     }).catch((e) => {
-       throw e;
-     });
-   return this.result;
+  static async getAll() {
+    let condition = '';
+    await db.get('building', '*',  condition)
+      .then((results) => {
+        this.result = buildingMdl.processResult(results);
+     })
+     .catch(e => console.error(`We have a error!(${e})`));
+     return this.result;
   }
 
   static async get(columns, id, condition) {
     await db.get('building', columns, id)
-      .then((results) => {
+    .then((results) => {
         this.result = results;
-      })
-      .catch(e => console.error(`.catch(${e})`));
+    })
+    .catch(e => console.error(`We have a error!(${e})`));
     return this.result;
- }
+  }
 
- async save() {
-  await db.insert('building', this)
+  async save() {
+    await db.insert('building', this)
     .then((results) => {
       this.result = results;
       return this.result;
     })
-    .catch(e => console.error(`.catch(${e}})`));
-  return this.result;
-}
+    .catch(e => console.error(`We have a error!(${e})`));
+    return this.result;
+  }
 
   async update(id) {
-   //console.log(buildingMdl.checkUndefined(this));
-   const condition = `building_id = ${id}`;
-   await db.update('building', this, condition)
-     .then((results) => {
+    const condition = `building_id = ${id}`;
+    await db.update('building', this, condition)
+    .then((results) => {
+      this.result = results;
+      return this.result;
+    })
+    .catch(e => console.error(`We have a error!(${e})`));
+    return this.result;
+  }
+
+  async logDel(id) {
+    const condition = `building_id = ${id}`;
+    await db.logDel('building', condition)
+    .then((results) => {
        this.result = results;
        return this.result;
-     })
-     .catch(e => console.error(`.catch(${e}})`));
-   return this.result;
+    })
+    .catch(e => console.error(`We have a error!(${e})`));
+    return this.result;
   }
+
 }
 
 module.exports = buildingMdl;
