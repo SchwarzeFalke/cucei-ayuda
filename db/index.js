@@ -33,7 +33,10 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) reject(err);
+        if (err) {
+          // console.log('Error en catch databasebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+          reject(err);
+        }
         return resolve(results);
       });
     });
@@ -45,7 +48,6 @@ class DB {
       if (condition) {
         query += ` WHERE ${condition};`;
       } else { query += ';'; }
-      console.log(query);
       this.connection.query(query, [table, data], (err, results) => {
         if (err) reject(err);
         return resolve(results);
@@ -57,8 +59,9 @@ class DB {
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
       if (condition) {
-        query += `WHERE ${condition};`;
+        query += ` WHERE ${condition};`;
       } else { query += ';'; }
+      console.log(query);
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         return resolve(results);

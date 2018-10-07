@@ -1,4 +1,5 @@
 const db = require('../db');
+const { PostMdl } = require('../models');
 
 class ThreadMdl {
   constructor({
@@ -21,10 +22,10 @@ class ThreadMdl {
   static processRequest(data, topicId) {
     this.condition = ` && topic_id = ${topicId}`;
     if (data.q) {
-      this.condition = ` && subject = '%${data.q}%'`;
+      this.condition = ` && subject LIKE '%${data.q}%'`;
     }
     if (data.sort) {
-      this.condition += ` ORDER BY date ${data.sort}`;
+      this.condition += ` ORDER BY created ${data.sort}`;
     }
     if (data.count) {
       this.condition += ` LIMIT ${data.count}`;
@@ -46,59 +47,85 @@ class ThreadMdl {
   }
 
   static async getAll(topicId) {
+    let res;
     const condition = ` && topic_id = ${topicId}`;
     await db.get('thread', '*', condition).then((results) => {
-      this.res = this.processData(results);
+      res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
     });
-    return this.res;
+    return res;
   }
 
   static async find(data, topicId) {
     let condition;
+    let response;
     if (data.q || data.page || data.count || data.sort) {
       condition = this.processRequest(data, topicId);
     } else {
       condition = ` && thread_id = ${Object.values(data)}`;
     }
     await db.get('thread', '*', condition).then((result) => {
-      this.thread = this.processData(result);
+      response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return this.thread;
+    return response;
   }
 
   async save() {
     delete this.thread_id;
+    let results;
     if (this.required()) {
       await db.insert('thread', this).then((result) => {
-        this.result = result;
+        results = result;
       }).catch((e) => {
         console.error(`.catch(${e})`);
+        return undefined;
       });
-      return this.result;
+      return results;
     }
     return 1;
   }
 
   async modify(threadId) {
+    let data;
     const condition = `thread_id = ${threadId}`;
     const obj = {};
     obj.subject = this.subject;
     obj.created = this.created;
     await db.update('thread', obj, condition).then((result) => {
-      this.data = result;
+      data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
+      return undefined;
     });
     console.log(this.data);
-    return this.data;
+    return data;
   }
 
   async delete(id) {
+    let data;
     const condition = `thread_id = ${id}`;
+    await db.del('thread', condition).then((result) => {
+      if (data !== undefined) {
+        data = result;
+      } else {
+        data = undefined;
+      }
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
+    return data;
+  }
+
+  async deleteAll(condition) {
+    const condition2 = `thread_id = ${id}`;
+    await PostMdl.deleteAll(condition2).then((result) => {
+      this.result = result;
+    }).catch((e) => {
+      console.error(`.catch(${e})`);
+    });
     await db.del('thread', condition).then((result) => {
       this.result = result;
     }).catch((e) => {

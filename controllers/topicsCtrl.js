@@ -78,6 +78,9 @@ class TopicCtrl {
       console.error(`error!! ${e}`);
       res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     });
+    if (this.response === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
     if (this.response === 1) {
       res.status(400).send({ message: 'Not enough data' });
     }
@@ -122,10 +125,14 @@ class TopicCtrl {
       console.error(`error!! ${e}`);
       res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
-    if (this.deleted.affectedRows === 0) {
-      res.status(400).send({ message: 'todo mal' });
+    if (this.deleted === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
-    res.status(204).send({ message: 'todo bien' });
+    if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
+      res.status(400).send({ message: 'todo mal' });
+    } else {
+      res.status(204).send({ message: 'todo bien' });
+    }
   }
 }
 module.exports = new TopicCtrl();

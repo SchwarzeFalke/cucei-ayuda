@@ -14,9 +14,8 @@ router.get('/', topicCtrl.getAll);
 router.get('/:topicId', topicCtrl.get);
 router.get('/:topicId/threads', threadCtrl.getAll);
 router.get('/:topicId/threads/:threadId', threadCtrl.get);
-// router.get('/:topicId/threads/posts/:postId', threadCtrl.getPost);
-// router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
-// router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPostThread);
+router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
+router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPost);
 
 /**
  * ALL POST methods for the forum

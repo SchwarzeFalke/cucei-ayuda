@@ -1,4 +1,5 @@
 const db = require('../db');
+const { ThreadMdl } = require('../models');
 
 class TopicMdl {
   constructor(obj) {
@@ -41,70 +42,73 @@ class TopicMdl {
   }
 
   static async getAll() {
+    let res;
     await db.get('topic', '*').then((results) => {
-      this.res = this.processData(results);
+      res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
     });
-    return this.res;
+    return res;
   }
 
   static async find(data) {
     let condition;
+    let response;
     if (data.q || data.page || data.count || data.sort) {
       condition = this.processRequest(data);
     } else {
       condition = `&& topic_id = ${Object.values(data)}`
     }
-    // if (Object.keys(data) == 'name') {
-    //   condition = this.processRequest(data);
-    //   // condition = `${Object.keys(data)} = '${Object.values(data)}'`;
-    // } else {
-    //   condition = `topic_id = ${Object.values(data)}`;
-    // }
-    console.log(condition);
     await db.get('topic', '*', condition).then((result) => {
-      this.topic = this.processData(result);
+      response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return this.topic;
+    return response;
   }
 
   async save() {
+    let results;
     delete this.topic_id;
     if (this.required()) {
       await db.insert('topic', this).then((result) => {
-        this.result = result;
+        results = result;
       }).catch((e) => {
         console.error(`.catch(${e})`);
       });
-      return this.result;
+      return results;
     }
     return 1;
   }
 
   async modify(id) {
+    let data;
     const condition = `topic_id = ${id}`;
     const obj = {};
     obj.name = this.name;
     obj.descript = this.descript;
     await db.update('topic', obj, condition).then((result) => {
-      this.data = result;
+      data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return this.data;
+    return data;
   }
 
   async delete(id) {
+    let data;
     const condition = `topic_id = ${id}`;
+    try {
+      ThreadMdl.deleteAll()
+    } catch (e) {
+
+    }
     await db.del('topic', condition).then((result) => {
-      this.result = result;
+      data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return this.result;
+    return data;
   }
 }
 module.exports = TopicMdl;

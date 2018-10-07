@@ -13,91 +13,80 @@ class ThreadCtrl {
   async getAll(req, res) {
     const query = req.query;
     const { topicId } = req.params;
+    let data;
     //  GET All
     if (Object.keys(query).length === 0 && query.constructor === Object) {
       await ThreadMdl.getAll(topicId).then((result) => {
-        this.data = result;
+        data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
         res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
       });
-      if (this.data === undefined || this.data.length === 0) {
+      if (data === undefined || data.length === 0) {
         res.status(404).send({
           error: 'you don´t have any data',
         });
       } else {
-        res.send(this.data);
+        res.send(data);
       }
       //  GET query Data
     } else {
       await ThreadMdl.find(query, topicId).then((result) => {
-        this.data = result;
+        data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
         res.status(404).send({
           error: 'No se encontró el dato',
         });
       });
-      if (this.data === undefined || this.data.length === 0) {
+      if (data === undefined || data.length === 0) {
         res.status(404).send({
           error: 'No se encontró el dato',
         });
       } else {
-        res.send(this.data);
+        res.send(data);
       }
     }
-    // try {
-    //   this.data = await ThreadMdl.getAll();
-    // } catch (e) {
-    //   console.log(e);
-    //   res.status(404).send({
-    //     code: 404,
-    //     error: 'you don´t have any data',
-    //   });
-    // }
-    // if (this.data === undefined || this.data.length === 0 || this.data === 0) {
-    //   res.status(404).send({
-    //     code: 404,
-    //     error: 'you don´t have any data',
-    //   });
-    // } else {
-    //   res.send(this.data);
-    // }
   }
 
   async get(req, res) {
     const { threadId } = req.params;
+    let data;
     try {
-      this.data = await ThreadMdl.find(threadId);
+      data = await ThreadMdl.find(threadId);
     } catch (e) {
-      if (this.data === undefined || this.data.length === 0) {
-        res.status(404).send({
-          error: 'data not found',
-        });
-      }
+      res.status(404).send({
+        error: 'data not found',
+      });
     }
-    if (this.data === undefined || this.data.length === 0) {
+    if (data === undefined || data.length === 0) {
       res.status(404).send({
         error: 'data not found',
       });
     } else {
-      res.send(this.data);
+      res.send(data);
     }
   }
 
   async create(req, res) {
     req.body.topic_id = req.params.topicId;
     const thread = new ThreadMdl(req.body);
+    let response;
     await thread.save().then((result) => {
-      this.response = result;
+      response = result;
     }).catch((e) => {
       console.error(`error!! ${e}`);
       res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     });
-    if (this.response === 1) {
+    if (response === undefined) {
+      res.status(400).send({
+        error: 'Something went wrong, data not saved',
+      });
+    }
+    if (response === 1) {
       res.status(400).send({ message: 'Not enough data' });
     }
-    const id = this.response.insertId;
+    const id = response.insertId;
     if (id === undefined) {
       res.status(400).send({
         error: 'Something went wrong, data not saved',
@@ -114,9 +103,10 @@ class ThreadCtrl {
 
   async modify(req, res) {
     const thread = new ThreadMdl(req.body);
+    let topicModify;
     try {
       await thread.modify(req.params.threadId).then((result) => {
-        this.topicModify = result;
+        topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
         res.status(400).send({ error: 'todo mal' });
@@ -124,7 +114,7 @@ class ThreadCtrl {
     } catch (e) {
       res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
-    if (this.topicModify === undefined) {
+    if (topicModify === undefined) {
       res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
     res.send({ message: 'Modificado Correctamente' });
@@ -132,34 +122,82 @@ class ThreadCtrl {
 
   async delete(req, res) {
     const thread = new ThreadMdl(req.body);
-    this.deleted = await thread.delete(req.params.threadId);
-    if (this.deleted === 1) {
-      res.status(200).send({ message: 'Eliminado correctamente' });
-    } else {
-      res.status(400).send({ error: 'No se ha podido eliminar el elemento' });
+    let deleted;
+    try {
+      await thread.delete(req.params.topicId).then((result) => {
+        deleted = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status().send();
+      });
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
+    if (deleted === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    if (deleted.affectedRows === 0) {
+      res.status(400).send({ message: 'todo mal' });
+    }
+    res.status(204).send({ message: 'todo bien' });
   }
+
 /**
   Aqui empiezan las funciones de los posts
  */
 
-//obtiene todos los post de un thread
+//  obtiene todos los post de un thread
   async getAllPosts(req, res) {
-    const data = await PostMdl.getAll(req.params.threadId);
-    if (data === undefined || data.length === 0) {
-      res.status(404).send({
-        error: 'you don´t have any data',
+    const query = req.query;
+    const { threadId } = req.params;
+    let data;
+    //  GET All
+    if (Object.keys(query).length === 0 && query.constructor === Object) {
+      await PostMdl.getAll(threadId).then((result) => {
+        data = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
       });
+      if (data === undefined || data.length === 0) {
+        res.status(404).send({
+          error: 'you don´t have any data',
+        });
+      } else {
+        res.send(data);
+      }
+      //  GET query Data
     } else {
-      res.send(data);
+      await PostMdl.find(query, threadId).then((result) => {
+        data = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(404).send({
+          error: 'No se encontró el dato',
+        });
+      });
+      if (data === undefined || data.length === 0) {
+        res.status(404).send({
+          error: 'No se encontró el dato',
+        });
+      } else {
+        res.send(data);
+      }
     }
   }
 
 //obtiene un post en especifico
   async getPost(req, res) {
-    const postId = req.params.postId;
-    console.log("ESTE ES UN POSTid: ", postId);
-    const data = await PostMdl.find(postId);
+    const { postId } = req.params;
+    let data;
+    try {
+      data = await ThreadMdl.find(postId);
+    } catch (e) {
+      res.status(404).send({
+        error: 'data not found',
+      });
+    }
     if (data === undefined || data.length === 0) {
       res.status(404).send({
         error: 'data not found',
@@ -170,36 +208,81 @@ class ThreadCtrl {
   }
 
   async createPost(req, res) {
-    this.hola = 1;
-    const posts = new PostMdl(req.body);
-    const response = await posts.save(req.params.threadId);
-    if (response === 'bad reques') {
+
+    req.body.thread_id = req.params.threadId;
+    console.log(req.body);
+    const post = new PostMdl(req.body);
+    let response;
+    await post.save().then((result) => {
+      response = result;
+    }).catch((e) => {
+      console.log('error en controller aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      console.error(`error!! ${e}`);
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    });
+    if (response === undefined) {
       res.status(400).send({
-        error: 'bad reques',
+        error: 'Something went wrong, data not saved',
       });
-    } else if (response === 1) {
+    }
+    if (response === 1) {
+      res.status(400).send({ message: 'Not enough data' });
+    }
+    const id = response.insertId;
+    if (id === undefined) {
+      res.status(400).send({
+        error: 'Something went wrong, data not saved',
+      });
+    }
+    if (id > 0) {
       res.status(200).send({ message: 'Registrado Correctamente' });
     } else {
-      res.status(409).send({ error: 'No se pudo crear.' });
+      res.status(400).send({
+        error: 'Something went wrong, data not saved',
+      });
     }
   }
 
   async updatePost(req, res) {
     const post = new PostMdl(req.body);
-    this.response = await post.modify(req.params.postId);
-    res.status(200).send(this.response);
+    let topicModify;
+    try {
+      await post.modify(req.params.postId).then((result) => {
+        topicModify = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status(400).send({ error: 'todo mal' });
+      });
+    } catch (e) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    if (topicModify === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    res.send({ message: 'Modificado Correctamente' });
   }
 
   async deletePost(req, res) {
     const post = new PostMdl(req.body);
-    this.delete = await post.delete(req.params.postId);
-    if (this.delete === 1) {
-      res.status(200).send({ message: 'Eliminado correctamente' });
-    } else {
-      res.status(400).send({ error: 'No se ha podido eliminar el elemento' });
+    let deleted;
+    try {
+      await post.delete(req.params.postId).then((result) => {
+        deleted = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        res.status().send();
+      });
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
     }
+    if (deleted === undefined) {
+      res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+    }
+    if (deleted.affectedRows === 0) {
+      res.status(400).send({ message: 'todo mal' });
+    }
+    res.status(204).send({ message: 'todo bien' });
   }
-  //   this.modifyComment = this.modifyComment.bind(this);
-  // this.deleteComment = this.deleteComment.bind(this);
 }
 module.exports = new ThreadCtrl();
