@@ -192,7 +192,8 @@ class ThreadCtrl {
     const { postId } = req.params;
     let data;
     try {
-      data = await ThreadMdl.find(postId);
+      console.log(postId);
+      data = await PostMdl.find(postId);
     } catch (e) {
       res.status(404).send({
         error: 'data not found',

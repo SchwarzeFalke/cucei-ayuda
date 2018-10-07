@@ -50,6 +50,7 @@ class PostMdl {
 
   static async find(data, threadId) {
     let condition;
+    let response;
     if (data.q || data.sort) {
       condition = this.processRequest(data, threadId);
     } else {
@@ -60,6 +61,7 @@ class PostMdl {
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
+    console.log(response);
     return response;
   }
 

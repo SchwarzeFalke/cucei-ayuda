@@ -58,7 +58,7 @@ class TopicMdl {
     if (data.q || data.page || data.count || data.sort) {
       condition = this.processRequest(data);
     } else {
-      condition = `&& topic_id = ${Object.values(data)}`
+      condition = `&& topic_id = ${Object.values(data)}`;
     }
     await db.get('topic', '*', condition).then((result) => {
       response = this.processData(result);
