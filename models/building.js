@@ -29,17 +29,7 @@ class buildingMdl{
    });
    return this.result;
   }
-
-  static checkUndefined(data) {
-   this.result = [];
-   this.forEach((dae) => {
-     if (data !== undefined) {
-       console.log(dae);
-     }
-   });
-   return this.result;
-  }
-
+  
   static async validBuilding(id) {
       await db.get('building', 'building_id', `building_id = ${id}`)
         .then((results) => {
