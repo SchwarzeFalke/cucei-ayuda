@@ -15,23 +15,23 @@ class TopicMdl {
   }
 
   static processRequest(data) {
-    this.condition = '';
-    if (data.q) {
-      this.condition = ` && name LIKE '%${data.q}%'`;
-    }
+    // this.condition = '';
+    // if (data.q) {
+    //   this.condition = ` && name LIKE '%${data.q}%'`;
+    // }
+    let condition = '';
     if (data.sort) {
-      this.condition += ` ORDER BY name ${data.sort}`;
+      condition = ` ORDER BY name ${data.sort}`;
     }
     if (data.count) {
-      this.condition += ` LIMIT ${data.count}`;
+      condition += ` LIMIT ${data.count}`;
     } else {
-      this.condition += ' LIMIT 15';
+      condition += ' LIMIT 15';
     }
     if (data.page) {
-      this.condition += ` OFFSET ${data.page - 1} `;
+      condition += ` OFFSET ${data.page - 1} `;
     }
-    console.log(this.condition);
-    return this.condition;
+    return condition;
   }
 
   static processData(data) {
@@ -44,7 +44,7 @@ class TopicMdl {
 
   static async getAll() {
     let res;
-    await db.get('topic', '*').then((results) => {
+    await db.get('topic', '*', '').then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -54,13 +54,20 @@ class TopicMdl {
 
   static async find(data) {
     let condition;
+    let order;
     let response;
     if (data.q || data.page || data.count || data.sort) {
-      condition = this.processRequest(data);
+      this.condition = '';
+      if (data.q) {
+        this.condition = `name LIKE '%${data.q}%'`;
+      }
+      condition = this.condition;
+      order = this.processRequest(data);
+      console.log(order);
     } else {
-      condition = `&& topic_id = ${Object.values(data)}`;
+      condition = `topic_id = ${Object.values(data)}`;
     }
-    await db.get('topic', '*', condition).then((result) => {
+    await db.get('topic', '*', condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);

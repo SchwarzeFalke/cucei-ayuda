@@ -18,15 +18,12 @@ class PostMdl {
     && this.thread_id !== undefined && this.date !== undefined);
   }
 
-  static processRequest(data, threadId) {
-    this.condition = ` && thread_id = ${threadId}`;
-    if (data.q) {
-      this.condition = ` && subject LIKE '%${data.q}%'`;
-    }
+  static processRequest(data) {
+    let condition = '';
     if (data.sort) {
-      this.condition += ` ORDER BY date ${data.sort}`;
+      condition += ` ORDER BY date ${data.sort}`;
     }
-    return this.condition;
+    return condition;
   }
 
   static processData(data) {
@@ -39,8 +36,8 @@ class PostMdl {
 
   static async getAll(threadId) {
     let res;
-    const condition = ` && thread_id = ${threadId}`;
-    await db.get('post', '*').then((results) => {
+    const condition = `thread_id = ${threadId}`;
+    await db.get('post', '*', condition).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -50,13 +47,19 @@ class PostMdl {
 
   static async find(data, threadId) {
     let condition;
+    let order;
     let response;
     if (data.q || data.sort) {
-      condition = this.processRequest(data, threadId);
+      this.condition = `thread_id = ${threadId}`;
+      if (data.q) {
+        this.condition += ` && content LIKE '%${data.q}%'`;
+      }
+      condition = this.condition;
+      order = this.processRequest(data);
     } else {
-      condition = ` && post_id = ${Object.values(data)}`;
+      condition = ` post_id = ${Object.values(data)}`;
     }
-    await db.get('post', '*', condition).then((result) => {
+    await db.get('post', '*', condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);

@@ -12,16 +12,19 @@ class DB {
     this.connection.connect();
   }
 
-  get(table, columns, condition) {
+  get(table, columns, condition, order) {
     return new Promise((resolve, reject) => {
-      let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
       const data = [columns, table];
-      if (condition) {
-        query += `${condition};`;
-      } else { query += ';'; }
+      let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
+      query += ' WHERE exist = TRUE';
+
+      if (condition.length > 1) query += ` && ${condition}`;
+      if (order) query += order;
+      query += ';';
+      console.log(query);
       this.connection.query(query, data, (err, results) => {
         if (err) reject(err);
-        return resolve(results);
+        resolve(results);
       });
     });
   }
