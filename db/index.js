@@ -21,14 +21,14 @@ class DB {
 
   get(table, columns, condition) {
     return new Promise((resolve, reject) => {
-      let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
+      let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
       const data = [columns, table];
       if (condition) {
-        query += `&& ${condition};`;
+        query += `WHERE ${condition};`;
       } else { query += ';'; }
 
       this.connection.query(query, data, (err, results) => {
-        if (err) throw reject(err);
+        if (err) reject(err);
         resolve(results);
       });
     });
@@ -41,7 +41,7 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -54,7 +54,7 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
-        if (err) return reject(err);
+        if (err) reject(err);
         return resolve(results);
       });
     });
@@ -67,7 +67,7 @@ class DB {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
       this.connection.query(query, table, (err, results) => {
-        if (err) throw reject(err);
+        if (err) reject(err);
         resolve(results);
       });
     });
