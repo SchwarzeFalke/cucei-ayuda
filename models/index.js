@@ -4,11 +4,13 @@
  * @Last modified by:   schwarze_falke
  * @Last modified time: 2018-09-21T19:39:30-05:00
  */
-exports.user = require('./user');
-exports.ThreadMdl = require('./thread');
-exports.TopicMdl = require('./topic');
-exports.PostMdl = require('./post');
-exports.TeacherMdl = require('./teacher');
-// module.exports = {
-//   ThreadMdl
-// }
+const ThreadMdl = require('./thread');
+const TopicMdl = require('./topic');
+const PostMdl = require('./post');
+const UserMdl = require('./user');
+const Schedule = require('./schedule');
+
+module.exports = {
+  UserMdl, Schedule, ThreadMdl, TopicMdl, PostMdl
+};
+

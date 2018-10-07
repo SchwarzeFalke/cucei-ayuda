@@ -2,14 +2,16 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-09-24T12:11:57-05:00
+ * @Last modified time: 2018-10-07T04:38:16-05:00
  */
 
 const { Router } = require('express');
 
-// const middleWares = require('../middlewares');
+const middleWares = require('../middlewares');
 
 const { usersCtrl } = require('../controllers');
+
+const userFaker = require('../factory');
 
 const router = Router();
 
@@ -18,14 +20,15 @@ const router = Router();
  includes the next resources:
  GET /users
  GET /users/userId
- GET /users/userId/map
  GET /users/userId/routes
  GET /users/userId/schedule
  GET /users/userId/posts
- GET /users/userId/posts/postId
- Block code beggining line: 29
- Block code ending line: 234
 */
+
+router.get('/fakeData/:amount', (req, res) => {
+  userFaker.fakeUsers(req.params.amount);
+  res.send('Ok');
+});
 
 /**
  * GET users/
@@ -37,32 +40,31 @@ router.get('/', usersCtrl.getAll);
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', usersCtrl.get);
-
-/**
- * GET users/userId/map
- * @type {Object} Returns the identifier of an specific user's map
- */
-router.get('/:userId/map', usersCtrl.get);
+router.get('/:userId', (req, res, next) => {
+  const request = middleWares.validator.code(req.params.userId);
+  if (!request) {
+    next();
+  } else { res.send(request); console.log(request); }
+}, usersCtrl.getUser);
 
 /**
  * GET users/userId/routes
  * @type {Array} Returns all routes from a specific user through its identifier
  * "start" and "end" attributes reffers to a starting point and an ending point
  */
-router.get('/:userId/routes', usersCtrl.get);
+router.get('/:userId/roads', usersCtrl.getRoads);
 
 /**
  * GET users/userId/schedule
  * @type {Object} Returns the schedule's identifier from an specific user
  */
-router.get('/:userId/schedule', usersCtrl.get);
+router.get('/:userId/schedule', usersCtrl.getSchedule);
 
 /**
  * GET users/userId/posts
  * @type {Array} Returns all publications by the given user
  */
-router.get('/:userId/posts', usersCtrl.get);
+router.get('/:userId/posts', usersCtrl.getPosts);
 
 /**
  * The next block code reffers to all modification methods of USERS resource,
@@ -70,8 +72,6 @@ router.get('/:userId/posts', usersCtrl.get);
  * POST /users
  * PUT /users
  * DELETE /users
- * Block code beggining line: 247
- * Block code ending line: 234
  */
 
 /**
@@ -80,6 +80,8 @@ router.get('/:userId/posts', usersCtrl.get);
  * and a password. Returns an ok response.
  */
 router.post('/', usersCtrl.insert);
+
+router.put('/:userId', usersCtrl.update);
 
 router.delete('/:userId', usersCtrl.del);
 
