@@ -17,7 +17,7 @@ class TopicMdl {
   static processRequest(data) {
     this.condition = '';
     if (data.q) {
-      this.condition = ` && name = '${data.q}'`;
+      this.condition = ` && name LIKE '%${data.q}%'`;
     }
     if (data.sort) {
       this.condition += ` ORDER BY name ${data.sort}`;
@@ -30,6 +30,7 @@ class TopicMdl {
     if (data.page) {
       this.condition += ` OFFSET ${data.page - 1} `;
     }
+    console.log(this.condition);
     return this.condition;
   }
 

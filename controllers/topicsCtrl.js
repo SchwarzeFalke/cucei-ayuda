@@ -17,7 +17,7 @@ class TopicCtrl {
         this.data = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
-        res.status(400).send({ message: 'Something went wrong! Monkeys working on it' });
+        res.status(400).send({ error: 'Something went wrong! Monkeys working on it' });
       });
       if (this.data === undefined || this.data.length === 0) {
         res.status(404).send({
