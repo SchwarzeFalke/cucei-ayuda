@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T10:18:54-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T02:49:28-05:00
+ * @Last modified time: 2018-10-07T12:52:57-05:00
  */
 
 const mysql = require('mysql');
@@ -19,13 +19,16 @@ class DB {
     this.connection.connect();
   }
 
-  get(table, columns, condition) {
+  get(table, columns, condition, order) {
     return new Promise((resolve, reject) => {
-      let query = 'SELECT ?? FROM ?? WHERE exist = TRUE'; // avoid logical deleted data
       const data = [columns, table];
-      if (condition.length > 1) {
-        query += ` && ${condition};`;
-      } else { query += ';'; }
+      let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
+
+      if (order) query += order;
+      query += 'WHERE exist = TRUE';
+
+      if (condition.length > 1) query += ` && ${condition};`;
+      else query += ';';
 
       this.connection.query(query, data, (err, results) => {
         if (err) throw reject(err);
@@ -85,19 +88,6 @@ class DB {
       });
     });
   }
-
-  // chainedDel(id) {
-  //   return new Promise((resolve, reject) => {
-  //     let query = 'UPDATE ?? SET exist = 0';
-  //     if (condition) {
-  //       query += `WHERE ${condition}`;
-  //     }
-  //     this.connection.query(query, table, (err, results) => {
-  //       if (err) throw reject(err);
-  //       resolve(results);
-  //     });
-  //   });
-  // }
 }
 
 module.exports = new DB();

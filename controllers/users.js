@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T03:32:12-05:00
+ * @Last modified time: 2018-10-07T12:54:24-05:00
  */
 
 const { UserMdl } = require('../models'); // for model handling
@@ -124,19 +124,21 @@ class UserCtrl {
 
   async getRoads(req, res) {
     try {
-      if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `user_code = ${req.params.userId}`;
-        await UserMdl.get('*', condition)
-          .then((data) => {
-            console.log(data);
-            this.requestJSON.data = data;
-            res.status(this.requestJSON.status).send(this.requestJSON);
-          })
-          .catch(e => console.error(`.catch(${e})`));
-      } else {
-        this.forbiddenJSON.message = 'The requested user cannot be found';
-        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-      }
+      await UserMdl.validUser(req.params.userId)
+        .then((exists) => {
+          if (exists) {
+            UserMdl.get('*', req.params.userId, req.query)
+              .then((data) => {
+                this.requestJSON.data = data;
+                res.status(this.requestJSON.status).send(this.requestJSON);
+              })
+              .catch(e => console.error(`.catch(${e})`));
+          } else {
+            this.forbiddenJSON.message = 'The requested user cannot be found';
+            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+          }
+        })
+        .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
       this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
