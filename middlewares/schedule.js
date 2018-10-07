@@ -116,15 +116,33 @@ class scheduleM {
     }
   }
 
+  static validateSection(req, res, next) {
+    const test = /^D\d\d$/;
+    try {
+      if (req.body.section === undefined) {
+        forbiddenJSON.message = 'Invalid Section';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+      if (test.test(req.body.section)) {
+        next();
+      } else {
+        forbiddenJSON.message = 'Invalid Section';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   static validateCR(req, res, next) {
     const test = /^\d+$/;
     try {
-      if (req.body.CR === undefined) {
+      if (req.body.credits === undefined) {
         forbiddenJSON.message = 'Invalid Credits';
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
-      if (test.test(req.body.CR)) {
-        if (Number(req.body.CR < 4) || Number(req.body.CR > 30)) {
+      if (test.test(req.body.credits)) {
+        if (Number(req.body.credits < 4) || Number(req.body.credits > 30)) {
           forbiddenJSON.message = 'Invalid Credits';
           res.status(forbiddenJSON.status).send(forbiddenJSON);
         } else {

@@ -3,7 +3,7 @@
 const db = require('../db');
 
 class Schedule {
-  constructor(...args) {
+  constructor(args) {
     this.nrc = args.nrc;
     this.name = args.name;
     this.first_day = args.first_day;

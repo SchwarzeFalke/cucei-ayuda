@@ -82,6 +82,7 @@ class ScheduleCtrl {
   }
 
   async insert(req, res) {
+    console.log(req.body);
     const newSchedule = new Schedule({ ...req.body });
     try {
       await newSchedule.save()
