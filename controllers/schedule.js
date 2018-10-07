@@ -130,8 +130,8 @@ class ScheduleCtrl {
         .then((data) => {
           this.modifyJSON.response = 'Updated';
           this.modifyJSON.message += ' updated from database';
-          this.createdJSON.data = data;
-          res.status(this.createdJSON.status).send(this.createdJSON);
+          this.modifyJSON.data = data;
+          res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch((e) => {
           console.error(`.catch(${e})`);

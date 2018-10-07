@@ -91,7 +91,6 @@ class Schedule {
   }
 
   async update(nrc) {
-    console.log(this);
     const condition = `nrc = ${nrc}`;
     await db.update('subject', this, condition)
       .then((results) => {

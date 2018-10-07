@@ -48,6 +48,7 @@ class DB {
   }
 
   update(table, data, condition) {
+    console.log(data);
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
       if (condition) {

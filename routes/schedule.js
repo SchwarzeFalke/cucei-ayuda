@@ -32,9 +32,9 @@ router.get('/:nrc', scheduleCtrl.getSubject);
 router.post('/', [middleWares.scheduleM.validateNrc, middleWares.scheduleM.validateName, middleWares.scheduleM.validateFirstDay, middleWares.scheduleM.validateSecDay, middleWares.scheduleM.validateSection, middleWares.scheduleM.validateClass, middleWares.scheduleM.validateCR, middleWares.scheduleM.validateBuilding, middleWares.scheduleM.validateTeacher], scheduleCtrl.insert);
 
 // PUT /schedule/:scheduleId
-router.put('/:scheduleId', scheduleCtrl.update);
+router.put('/:nrc', [middleWares.scheduleM.validateNrc, middleWares.scheduleM.validateName, middleWares.scheduleM.validateFirstDay, middleWares.scheduleM.validateSecDay, middleWares.scheduleM.validateSection, middleWares.scheduleM.validateClass, middleWares.scheduleM.validateCR, middleWares.scheduleM.validateBuilding, middleWares.scheduleM.validateTeacher], scheduleCtrl.update);
 
 // DELETE /schedule/:scheduleId
-router.delete('/:scheduleId', scheduleCtrl.del);
+router.delete('/:nrc', scheduleCtrl.del);
 
 module.exports = router;
