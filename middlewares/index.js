@@ -6,3 +6,4 @@
  */
 
 exports.validator = require('./validator');
+exports.scheduleM = require('./schedule');
