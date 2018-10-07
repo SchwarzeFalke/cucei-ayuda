@@ -3,7 +3,6 @@ class BuildingCrtl {
   constructor() {
     this.getAll = this.getAll.bind(this);
     this.getBuild = this.getBuild.bind(this);
-    this.getClasses = this.getClasses.bind(this);
     this.insert = this.insert.bind(this);
     this.modify = this.modify.bind(this);
     this.logDel = this.logDel.bind(this);
@@ -96,32 +95,6 @@ class BuildingCrtl {
       console.error(`We have a error!(${e})`);
     }
   }
-
-  async getClasses(req, res) {
-     try {
-       await BuildingMdl.validBuilding(req.params.buildingId)
-       .then((exists) => {
-         if(exists) {
-           let Search = `building_id = ${req.params.buildingId}`;
-           const condition = `building_id = ${req.params.buildingId}`;
-           BuildingMdl.get('num_class', Search, condition)
-           .then((data) => {
-                console.log('You see building and their classes');
-                this.okJSON.data = data;
-                res.status(this.okJSON.status).send(this.okJSON);
-             })
-             .catch(e => console.error(`We have a error!(${e})`));
-         }else {
-           this.notFoundJSON.message = 'The requested building dont exist';
-           res.status(this.notFoundJSON.status).send(this.notFoundJSON);
-         }
-       })
-       .catch(e => console.error(`We have a error!(${e})`));
-     } catch (e) {
-       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-       console.error(`We have a error!(${e})`);
-     }
-   }
 
    async insert(req, res) {
      const newBuilding = new BuildingMdl({ ...req.body });

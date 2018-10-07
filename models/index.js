@@ -8,8 +8,9 @@
 const UserMdl = require('./user');
 const Schedule = require('./schedule');
 const BuildingMdl = require('./building');
+const MapsMdl = require('./maps');
 
 
 module.exports = {
-UserMdl, Schedule, BuildingMdl,
+UserMdl, Schedule, BuildingMdl, MapsMdl,
 };

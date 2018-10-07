@@ -29,7 +29,7 @@ class buildingMdl{
    });
    return this.result;
   }
-  
+
   static async validBuilding(id) {
       await db.get('building', 'building_id', `building_id = ${id}`)
         .then((results) => {
@@ -38,25 +38,6 @@ class buildingMdl{
         .catch(e => console.error(`We have a error!(${e})`));
         return this.result;
     return this.false;
-  }
-
-  static async seeQuery(data) {
-    this.condition = '';
-    if (data.q) {
-      this.condition = ` && name = '${data.q}'`;
-    }
-    if (data.sort) {
-      this.condition += ` ORDER BY name ${data.sort}`;
-    }
-    if (data.count) {
-      this.condition += ` LIMIT ${data.count}`;
-    } else {
-      this.condition += ' LIMIT 15';
-    }
-    if (data.page) {
-      this.condition += ` OFFSET ${data.page - 1} `;
-    }
-    return data;
   }
 
   static async getAll() {

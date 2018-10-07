@@ -8,15 +8,24 @@
 const { Router } = require('express');
 
 const { mapCtrl } = require('../controllers');
+const { buildingCtrl } = require('../controllers');
+const middleWares = require('../middlewares');
 
 const router = Router();
 
-router.get('/', mapCtrl.getAll);
+router.get('/', mapCtrl.get);
 
-router.get('/:mapId', mapCtrl.get);
+router.get('/building/:buildingId', (req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if(!request) {
+      next();
+    }else {
+      res.send(request);
+      console.log(request);
+    }
 
-router.post('/', mapCtrl.insert);
+},buildingCtrl.getBuild);
 
-router.put('/mapId', mapCtrl.update);
+//router.get('/building/:buildingId/', if(req.query) {buildingCtrl.getClasses}else {buildingCtrl.getBuild});
 
 module.exports = router;

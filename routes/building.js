@@ -15,10 +15,7 @@ router.get('/:buildingId', (req, res, next) => {
       res.send(request);
       console.log(request);
     }
-
 },buildingCtrl.getBuild);
-
-router.get('/:buildingId/classes', buildingCtrl.getClasses);
 
 router.post('/', buildingCtrl.insert);
 
