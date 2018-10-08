@@ -95,7 +95,10 @@ class ForumMid {
   }
 
   static noEmptySearch(req, res, next) {
-    if (req.query.length) {
+    if (Object.keys(req.query).length > 0) {
+      if (req.query.q === '') {
+        res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+      }
       if (req.query.count) {
         if (req.query.count <= 0 || !(/^\d+$/.test(req.query.count))) {
           res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
@@ -107,10 +110,23 @@ class ForumMid {
         }
       }
       if (req.query.sort) {
-        if (req.query.sort !== 'ASC' || req.query.sort !== 'DESC') {
+        let lower = req.query.sort
+        lower = lower.toLowerCase();
+        if (lower === 'asc' || lower === 'desc') {
+        } else {
           res.status(400).send({ error: 'We just accept DESC or ASC' });
         }
       }
+      next();
+    } else {
+      next();
+    }
+  }
+
+  static noEmptyUpdate(req, res, next) {
+    if (req.params.postId === '') {
+      badRequestJSON.message = 'invalid topic id';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }

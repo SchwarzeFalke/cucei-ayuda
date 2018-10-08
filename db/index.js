@@ -19,6 +19,7 @@ class DB {
       if (condition) query += ` && ${condition}`;
       if (order) query += order;
       query += ';';
+      console.log(query);
       this.connection.query(query, data, (err, results) => {
         if (err) reject(err);
         resolve(results);

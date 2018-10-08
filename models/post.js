@@ -23,6 +23,9 @@ class PostMdl {
     if (data.sort) {
       condition += ` ORDER BY date ${data.sort}`;
     }
+    else {
+      condition += ' ORDER BY date';
+    }
     return condition;
   }
 
@@ -35,9 +38,11 @@ class PostMdl {
   }
 
   static async getAll(threadId) {
+    let all = ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'];
+    const order = ' ORDER BY date';
     let res;
     const condition = `thread_id = ${threadId}`;
-    await db.get('post', '*', condition).then((results) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -57,15 +62,14 @@ class PostMdl {
       condition = this.condition;
       order = this.processRequest(data);
     } else {
-      condition = ` post_id = ${Object.values(data)}`;
+      condition = ` post_id = ${data} && thread_id = ${threadId}`;
     }
     console.log(condition);
-    await db.get('post', '*', condition, order).then((result) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    console.log(response);
     return response;
   }
 
@@ -85,9 +89,9 @@ class PostMdl {
     return 1;
   }
 
-  async modify(postId) {
+  async modify(postId, threadId) {
     let data;
-    const condition = `post_id = ${postId}`;
+    const condition = `post_id = ${postId} && thread_id = ${threadId}`;
     const obj = {};
     obj.content = this.content;
     obj.date = this.date;
@@ -114,8 +118,8 @@ class PostMdl {
     return data;
   }
 
-  async deleteAll(condition) {
-    await db.del('post', condition).then((result) => {
+  static async deleteAll(condition) {
+    await db.physicalDel('post', condition).then((result) => {
       this.result = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);

@@ -11,11 +11,11 @@ const router = Router();
 
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
-router.get('/:topicId/threads', threadCtrl.getAll);
+router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);
 router.get('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread], threadCtrl.get);
-router.get('/:topicId/threads/:threadId/posts',
-threadCtrl.getAllPosts);
+router.get('/:topicId/threads/:threadId/posts', [forumMid.noEmptySearch,
+  forumMid.validateNumberParams, forumMid.validateNumberParamsThread], threadCtrl.getAllPosts);
 router.get('/:topicId/threads/:threadId/posts/:postId', [
   forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
   forumMid.validateNumberParamsPost], threadCtrl.getPost);
@@ -44,9 +44,7 @@ router.put('/:topicId', [forumMid.validateNumberParams], topicCtrl.modify);
 router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread], threadCtrl.modify);
 router.put('/:topicId/threads/:threadId/posts/:postId',
-  [forumMid.validateNumberParams,
-    forumMid.validateNumberParamsThread,
-    forumMid.validateNumberParamsPost], threadCtrl.updatePost);
+   threadCtrl.updatePost);
 
 /**
  * delete routes

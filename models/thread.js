@@ -44,9 +44,10 @@ class ThreadMdl {
   }
 
   static async getAll(topicId) {
+    let all = ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'];
     let res;
     const condition = `topic_id = ${topicId}`;
-    await db.get('thread', '*', condition).then((results) => {
+    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'], condition).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -66,9 +67,9 @@ class ThreadMdl {
       condition = this.condition;
       order = this.processRequest(data);
     } else {
-      condition = `thread_id = ${Object.values(data)}`;
+      condition = `thread_id = ${data} && topic_id = ${topicId}`;
     }
-    await db.get('thread', '*', condition, order).then((result) => {
+    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
@@ -91,9 +92,9 @@ class ThreadMdl {
     return 1;
   }
 
-  async modify(threadId) {
+  async modify(threadId, topicId) {
     let data;
-    const condition = `thread_id = ${threadId}`;
+    const condition = `thread_id = ${threadId} && topic_id = ${topicId}`;
     const obj = {};
     obj.subject = this.subject;
     obj.created = this.created;
@@ -123,7 +124,7 @@ class ThreadMdl {
   async deleteReal(id) {
     let data;
     const condition = `thread_id = ${id}`;
-    await db.del('thread', condition).then((result) => {
+    await db.physicalDel('thread', condition).then((result) => {
       if (data !== undefined) {
         data = result;
       } else {
@@ -133,21 +134,6 @@ class ThreadMdl {
       console.error(`.catch(${e})`);
     });
     return data;
-  }
-
-  async deleteAll(condition) {
-    const condition2 = `thread_id = ${id}`;
-    await PostMdl.deleteAll(condition2).then((result) => {
-      this.result = result;
-    }).catch((e) => {
-      console.error(`.catch(${e})`);
-    });
-    await db.del('thread', condition).then((result) => {
-      this.result = result;
-    }).catch((e) => {
-      console.error(`.catch(${e})`);
-    });
-    return this.result;
   }
 }
 module.exports = ThreadMdl;
