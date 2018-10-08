@@ -54,7 +54,7 @@ class Subject {
   }
 
   static async getAll() {
-    await db.get('subject', '*')
+    await db.get('subject', ['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'])
       .then((results) => {
         this.result = Subject.processResult(results);
       })
