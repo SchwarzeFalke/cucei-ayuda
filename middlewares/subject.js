@@ -199,6 +199,7 @@ class subjectM {
           forbiddenJSON.message = 'Invalid Teacher';
           res.status(forbiddenJSON.status).send(forbiddenJSON);
         } else {
+          console.log('entering validate teacher');
           next();
         }
       } else {
