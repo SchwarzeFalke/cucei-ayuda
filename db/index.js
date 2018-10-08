@@ -28,7 +28,7 @@ class DB {
     });
   }
 
-  insert(table, data, condition) {
+   insert(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'INSERT INTO ?? SET ?';
       if (condition) {
@@ -42,7 +42,7 @@ class DB {
       });
     });
   }
-        
+
   update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
@@ -55,7 +55,7 @@ class DB {
       });
     });
   }
-        
+
 
   physicalDel(table, condition) {
     return new Promise((resolve, reject) => {
@@ -69,7 +69,7 @@ class DB {
       });
     });
   }
-        
+
   logicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';

@@ -13,10 +13,12 @@ const usersRouter = require('./users');
 const scheduleRouter = require('./schedule');
 const forumRouter = require('./forum');
 const mapRouter = require('./map');
+const buildingRouter = require('./building');
+
 
 const router = Router();
 
-router.use(bodyParser.json()); // for parsing routerlication/json
+router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => res.send('Welcome to QCInf!'));
@@ -25,5 +27,6 @@ router.use('/users', usersRouter);
 router.use('/schedule', scheduleRouter);
 router.use('/topics', forumRouter);
 router.use('/map', mapRouter);
+router.use('/building', buildingRouter);
 
 module.exports = router;
