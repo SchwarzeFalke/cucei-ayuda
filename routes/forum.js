@@ -40,11 +40,14 @@ router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
 
  */
 
-router.put('/:topicId', [forumMid.validateNumberParams], topicCtrl.modify);
+router.put('/:topicId', [forumMid.validateNumberParams,
+  forumMid.noEmptyUT], topicCtrl.modify);
 router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread], threadCtrl.modify);
-router.put('/:topicId/threads/:threadId/posts/:postId',
-   threadCtrl.updatePost);
+  forumMid.validateNumberParamsThread, forumMid.noEmptyUTh], threadCtrl.modify);
+router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread, forumMid.validateNumberParamsPost,
+  forumMid.noEmptyUP],
+  threadCtrl.updatePost);
 
 /**
  * delete routes

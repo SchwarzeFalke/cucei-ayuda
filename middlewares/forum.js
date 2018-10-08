@@ -8,7 +8,10 @@ const badRequestJSON = {
 
 class ForumMid {
   static validateNumberParams(req, res, next) {
-    if (req.params.topicId <= 0 || !(/^\d+$/.test(req.params.topicId))) {
+    if (req.params.topicId === undefined) {
+      badRequestJSON.message = 'topic id undefined';
+      res.status(400).send(badRequestJSON);
+    } else if (req.params.topicId <= 0 || !(/^\d+$/.test(req.params.topicId))) {
       badRequestJSON.message = 'invalid topic id';
       res.status(400).send(badRequestJSON);
     } else {
@@ -16,8 +19,11 @@ class ForumMid {
     }
   }
 
-  static validateNumberParamsThread(err, req, res, next) {
-    if (req.params.threadId <= 0 || !(/^\d+$/.test(req.params.threadId))) {
+  static validateNumberParamsThread(req, res, next) {
+    if (req.params.threadId === undefined) {
+      badRequestJSON.message = 'thread id undefined';
+      res.status(400).send(badRequestJSON);
+    } else if (req.params.threadId <= 0 || !(/^\d+$/.test(req.params.threadId))) {
       badRequestJSON.message = 'invalid thread id';
       res.status(400).send(badRequestJSON);
     } else {
@@ -26,7 +32,10 @@ class ForumMid {
   }
 
   static validateNumberParamsPost(req, res, next) {
-    if (req.params.postId <= 0 || !(/^\d+$/.test(req.params.postId))) {
+    if (req.params.postId === undefined) {
+      badRequestJSON.message = 'post id undefined';
+      res.status(400).send(badRequestJSON);
+    } else if (req.params.postId <= 0 || !(/^\d+$/.test(req.params.postId))) {
       badRequestJSON.message = 'invalid post id';
       res.status(400).send(badRequestJSON);
     } else {
@@ -35,15 +44,15 @@ class ForumMid {
   }
 
   static noEmptyPostTopic(req, res, next) {
-    const empty = 0;
+    let empty = 0;
+    if (req.body.name === undefined || req.body.descript === undefined) {
+      empty = 1;
+    }
     for (var i in req.body){
       if (i === 'name' && req.body[i] === '') {
         empty = 1;
       }
       if (i === 'descript' && req.body[i] === '') {
-        empty = 1;
-      }
-      if (i === 'exist' && req.body[i] === '') {
         empty = 1;
       }
     }
@@ -55,7 +64,10 @@ class ForumMid {
   }
 
   static noEmptyPostThread(req, res, next) {
-    const empty = 0;
+    let empty = 0;
+    if (req.body.subject === undefined || req.body.stud_code === undefined) {
+      empty = 1;
+    }
     for (var i in req.body){
       if (i === 'subject' && req.body[i] === '') {
         empty = 1;
@@ -63,24 +75,22 @@ class ForumMid {
       if (i === 'stud_code' && req.body[i] === '') {
         empty = 1;
       }
-      if (i === 'exist' && req.body[i] === '') {
-        empty = 1;
-      }
     }
     if (empty > 0) {
-      res.status(400).send({ error: 'dejaste un campo vacio' });
+      badRequestJSON.message = 'dejaste un campo vacio';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }
   }
 
   static noEmptyPost(req, res, next) {
-    const empty = 0;
+    let empty = 0;
+    if (req.body.content === undefined || req.body.stud_code === undefined) {
+      empty = 1;
+    }
     for (var i in req.body){
       if (i === 'content' && req.body[i] === '') {
-        empty = 1;
-      }
-      if (i === 'exist' && req.body[i] === '') {
         empty = 1;
       }
       if (i === 'stud_code' && req.body[i] === '') {
@@ -98,15 +108,18 @@ class ForumMid {
     if (Object.keys(req.query).length > 0) {
       if (req.query.q === '') {
         res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+        return;
       }
       if (req.query.count) {
         if (req.query.count <= 0 || !(/^\d+$/.test(req.query.count))) {
           res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          return;
         }
       }
       if (req.query.page) {
         if (req.query.page <= 0 || !(/^\d+$/.test(req.query.page))) {
           res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          return;
         }
       }
       if (req.query.sort) {
@@ -123,9 +136,27 @@ class ForumMid {
     }
   }
 
-  static noEmptyUpdate(req, res, next) {
-    if (req.params.postId === '') {
-      badRequestJSON.message = 'invalid topic id';
+  static noEmptyUT(req, res, next) {
+    if (req.body.name === undefined || req.body.descript === undefined) {
+      badRequestJSON.message = 'you are missing a field';
+      res.status(400).send(badRequestJSON);
+    } else {
+      next();
+    }
+  }
+
+  static noEmptyUTh(req, res, next) {
+    if (req.body.subject === undefined) {
+      badRequestJSON.message = 'you are missing a field';
+      res.status(400).send(badRequestJSON);
+    } else {
+      next();
+    }
+  }
+
+  static noEmptyUP(req, res, next) {
+    if (req.body.content === undefined) {
+      badRequestJSON.message = 'you are missing a field';
       res.status(400).send(badRequestJSON);
     } else {
       next();

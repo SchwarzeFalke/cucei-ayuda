@@ -7,7 +7,7 @@ class TopicMdl {
     this.topic_id = obj.topic_id;
     this.name = obj.name;
     this.descript = obj.descript;
-    this.exist = obj.exist;
+    this.exist = 1;
   }
 
   required() {
@@ -17,16 +17,19 @@ class TopicMdl {
 
   static processRequest(data) {
     let condition = '';
+    let count = 10;
+
     if (data.sort) {
       condition = ` ORDER BY name ${data.sort}`;
     }
     if (data.count) {
       condition += ` LIMIT ${data.count}`;
+      if (data.count !== count) count = data.count;
     } else {
       condition += ' LIMIT 15';
     }
     if (data.page) {
-      condition += ` OFFSET ${data.page - 1} `;
+      condition += ` OFFSET ${(data.page - 1) * count} `;
     }
     return condition;
   }

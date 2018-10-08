@@ -3,10 +3,10 @@ const { PostMdl } = require('../models');
 
 class ThreadMdl {
   constructor({
-    thread_id, subject, created, stud_code, topic_id, exist
+    thread_id, subject, created, stud_code, topic_id
   }) {
     this.thread_id = thread_id;
-    this.exist = exist;
+    this.exist = 1;
     this.subject = subject;
     this.created = created;
     this.stud_code = stud_code;
@@ -21,16 +21,20 @@ class ThreadMdl {
 
   static processRequest(data) {
     let condition = '';
+    let count = 10;
     if (data.sort) {
       condition += ` ORDER BY created ${data.sort}`;
+    } else {
+      condition = ' ORDER BY created';
     }
     if (data.count) {
       condition += ` LIMIT ${data.count}`;
+      if (data.count !== count) count = data.count;
     } else {
-      condition += ' LIMIT 15';
+      condition += ` LIMIT ${count}`;
     }
     if (data.page) {
-      condition += ` OFFSET ${data.page - 1} `;
+      condition += ` OFFSET ${(data.page - 1) * count} `;
     }
     return condition;
   }
@@ -46,8 +50,9 @@ class ThreadMdl {
   static async getAll(topicId) {
     let all = ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'];
     let res;
+    const order = ' ORDER BY created';
     const condition = `topic_id = ${topicId}`;
-    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'], condition).then((results) => {
+    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'stud_code', 'topic_id'], condition, order).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
