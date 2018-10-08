@@ -19,7 +19,7 @@ class Subject {
     this.section = args.section;
     this.credits = args.credits;
     this.building = args.building;
-    this.exist = args.exist;
+    this.exist = '1';
     this.taught_by = args.taught_by;
   }
 
