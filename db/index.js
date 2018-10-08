@@ -83,8 +83,8 @@ class DB {
       let query = 'UPDATE ?? SET exist = 0';
       if (condition) query += ` WHERE ${condition}`;
       this.connection.query(query, table, (err, results) => {
-        if (err) reject(err);
         if (results.affectedRows === 0) reject('Doesnt exist');
+        if (err) reject(err);
         resolve(results);
       });
     });
