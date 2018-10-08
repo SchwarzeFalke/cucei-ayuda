@@ -35,7 +35,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate NRC ${e}`);
     }
   }
 
@@ -53,7 +53,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate Name ${e}`);
     }
   }
 
@@ -71,7 +71,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate first_day ${e}`);
     }
   }
 
@@ -96,7 +96,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate second day ${e}`);
     }
   }
 
@@ -119,7 +119,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate class ${e}`);
     }
   }
 
@@ -137,7 +137,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate section ${e}`);
     }
   }
 
@@ -160,7 +160,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate CR ${e}`);
     }
   }
 
@@ -183,7 +183,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate building ${e}`);
     }
   }
 
@@ -206,7 +206,7 @@ class subjectM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate Teacher ${e}`);
     }
   }
 }
