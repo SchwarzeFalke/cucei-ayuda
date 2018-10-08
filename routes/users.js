@@ -2,7 +2,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T04:38:16-05:00
+ * @Last modified time: 2018-10-07T13:44:40-05:00
  */
 
 const { Router } = require('express');
@@ -79,7 +79,9 @@ router.get('/:userId/posts', usersCtrl.getPosts);
  * @type {Object} Create a new user by given name, middle name, last name, email
  * and a password. Returns an ok response.
  */
-router.post('/', usersCtrl.insert);
+router.post('/', usersCtrl.insertUser);
+
+router.post('/:userId/schedule', usersCtrl.insertSchedule);
 
 router.put('/:userId', usersCtrl.update);
 
