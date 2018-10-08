@@ -1,3 +1,10 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-07T13:20:58-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-07T14:08:46-05:00
+ */
+
 // Models for using the schedule class
 
 const db = require('../db');
@@ -101,6 +108,23 @@ class Schedule {
         throw e;
       });
     return this.result;
+  }
+
+  async createRelation(nrc, userId) {
+    if (Schedule.validSchedule(nrc)) {
+      const scheduleItem = {
+        stud_id: nrc,
+        subject_id: userId,
+      };
+      await db.insert('subject_lists', scheduleItem)
+        .then((results) => {
+          this.result = results;
+          return this.result;
+        })
+        .catch((e) => {
+          throw e;
+        });
+    }
   }
 }
 

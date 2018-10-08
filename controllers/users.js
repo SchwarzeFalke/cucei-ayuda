@@ -2,10 +2,12 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T12:54:24-05:00
+ * @Last modified time: 2018-10-07T14:14:51-05:00
  */
 
 const { UserMdl } = require('../models'); // for model handling
+
+const { ScheduleMdl } = require('../models');
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -35,7 +37,8 @@ class UserCtrl {
     this.getRoads = this.getRoads.bind(this);
     this.getSchedule = this.getSchedule.bind(this);
     this.getPosts = this.getPosts.bind(this);
-    this.insert = this.insert.bind(this);
+    this.insertUser = this.insertUser.bind(this);
+    this.insertSchedule = this.insertSchedule.bind(this);
     this.del = this.del.bind(this);
 
     /**
@@ -182,7 +185,7 @@ class UserCtrl {
     }
   }
 
-  async insert(req, res) {
+  async insertUser(req, res) {
     const newUser = new UserMdl({ ...req.body });
     try {
       await newUser.save()
@@ -194,6 +197,28 @@ class UserCtrl {
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      this.forbiddenJSON.data = e;
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async insertSchedule(req, res) {
+    try {
+      await UserMdl.validUser(req.params.userId)
+        .then((exists) => {
+          if (exists) {
+            const subjects = req.body;
+            subjects.forEach((subject) => {
+              ScheduleMdl.createRelation(req.params.userId, subject.nrc)
+                .then((results) => {
+                  this.result += results;
+                })
+                .catch(e => console.error(`.catch(${e})`));
+            });
+          }
+        });
     } catch (e) {
       console.error(`try/catch(${e})`);
       this.forbiddenJSON.data = e;
