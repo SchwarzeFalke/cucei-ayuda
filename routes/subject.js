@@ -1,10 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T22:23:28-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:55:26-05:00
- */
-
 /*
  * Definition of subject routing
  */
@@ -37,7 +30,7 @@ router.get('/:nrc', subjectCtrl.getSubject);
 
 // POST /subject
 // [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher],
-router.post('/', subjectCtrl.insert);
+router.post('/', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher] ,subjectCtrl.insert);
 
 // PUT /subject/:subjectId
 router.put('/:nrc', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher], subjectCtrl.update);
