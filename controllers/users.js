@@ -2,12 +2,12 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T21:25:59-05:00
+ * @Last modified time: 2018-10-08T00:46:03-05:00
  */
 
 const { UserMdl } = require('../models'); // for model handling
-
 const { ScheduleMdl } = require('../models');
+const { Subject } = require('../models');
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -152,9 +152,10 @@ class UserCtrl {
   async getSchedule(req, res) {
     try {
       if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `user_code = ${req.params.userId}`;
-        await UserMdl.get('*', condition)
+        const condition = `stud_id = ${req.params.userId}`;
+        await ScheduleMdl.get('subject_id', condition)
           .then((data) => {
+            console.log(data);
             this.requestJSON.data = data;
             res.status(this.requestJSON.status).send(this.requestJSON);
           })
@@ -209,14 +210,14 @@ class UserCtrl {
       await UserMdl.validUser(req.params.userId)
         .then((exists) => {
           if (exists) {
-            const subjects = req.body;
-            subjects.forEach((subject) => {
-              ScheduleMdl.createRelation(req.params.userId, subject.nrc)
-                .then((results) => {
-                  this.result += results;
-                })
-                .catch(e => console.error(`.catch(${e})`));
-            });
+            Subject.createRelation(req.params.userId, req.body.nrc)
+              .then((results) => {
+                this.modifyJSON.response = 'Created';
+                this.modifyJSON.message = `New subject on user ${req.params.userId} schedule successfully created`;
+                this.modifyJSON.data = results;
+                res.status(this.modifyJSON.status).send(this.modifyJSON);
+              })
+              .catch(e => console.error(`.catch(${e})`));
           }
         });
     } catch (e) {
@@ -247,11 +248,14 @@ class UserCtrl {
     try {
       await updateUser.update(req.params.userId)
         .then((data) => {
-          console.log(data);
-          this.modifyJSON.response = 'Updated';
-          this.modifyJSON.message = 'User successfully updated from database';
-          this.modifyJSON.data = updateUser + data;
-          res.status(this.modifyJSON.status).send(this.modifyJSON);
+          const dataJSON = {
+            status: 201,
+            response: 'Updated',
+            message: 'User successfully updated from database',
+            data: updateUser,
+            modified: data,
+          };
+          res.status(dataJSON.status).send(dataJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {

@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T21:20:52-05:00
+ * @Last modified time: 2018-10-07T21:37:02-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -189,11 +189,9 @@ class UserMdl {
 
   async update(id) {
     const condition = `user_code = ${id}`;
-    console.log(this);
     await db.update('user', this, condition)
       .then((results) => {
         this.result = results;
-        console.log(this.result);
         return this.result;
       })
       .catch(e => console.error(`.catch(${e}})`));
