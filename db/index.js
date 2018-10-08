@@ -1,4 +1,9 @@
-
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-07T20:34:36-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-07T21:22:30-05:00
+ */
 
 const mysql = require('mysql');
 
@@ -28,7 +33,7 @@ class DB {
     });
   }
 
-   insert(table, data, condition) {
+  insert(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'INSERT INTO ?? SET ?';
       if (condition) {
@@ -46,7 +51,7 @@ class DB {
   update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
-      if (condition) query += `WHERE ${condition};`;
+      if (condition) query += ` WHERE ${condition};`;
       else query += ';';
       this.connection.query(query, [table, data], (err, results) => {
         if (results.affectedRows === 0) reject(new Error('Doesnt exist'));
@@ -56,16 +61,14 @@ class DB {
     });
   }
 
-
   physicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
-      if (condition) query += `WHERE ${condition};`;
+      if (condition) query += ` WHERE ${condition};`;
       else query += ';';
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);
-
       });
     });
   }
@@ -73,7 +76,7 @@ class DB {
   logicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
-      if (condition) query += `WHERE ${condition}`;
+      if (condition) query += ` WHERE ${condition}`;
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);

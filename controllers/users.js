@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T14:14:51-05:00
+ * @Last modified time: 2018-10-07T21:25:59-05:00
  */
 
 const { UserMdl } = require('../models'); // for model handling
@@ -232,7 +232,7 @@ class UserCtrl {
         .then((data) => {
           this.modifyJSON.data = data;
           this.modifyJSON.response = 'Deleted';
-          this.modifyJSON.message += 'User successfully deleted from database';
+          this.modifyJSON.message = 'User successfully deleted from database';
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -245,12 +245,12 @@ class UserCtrl {
   async update(req, res) {
     const updateUser = new UserMdl({ ...req.body });
     try {
-      await updateUser.update()
+      await updateUser.update(req.params.userId)
         .then((data) => {
-          this.info = data;
+          console.log(data);
           this.modifyJSON.response = 'Updated';
           this.modifyJSON.message = 'User successfully updated from database';
-          this.modifyJSON.data = updateUser;
+          this.modifyJSON.data = updateUser + data;
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
