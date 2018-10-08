@@ -2,30 +2,31 @@
   "name": "cucei-ayuda",
   "version": "0.0.1",
   "decription": "",
-  "main": "app.js",
+  "main": "router.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SchwarzeFalke/cucei-ayuda.git"
   },
-  "author": "Tyler Ruiz <ruiztyler97@gmail.com>",
+  "author": "Julio Mariscal <julio.mariscal.bautista@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
+    "eslint-config-airbnb-base": "^13.1.0",
     "express": "^4.16.3",
-    "mysql": "^2.16.0",
+    "eslinter": "^3.2.1",
     "faker": "^4.1.0",
-    "body-parser": "^1.18.3"
+    "mysql": "^2.16.0"
   },
   "devDependencies": {
-    "eslint": "^5.5.0",
+    "eslint": "^5.6.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1",
-    "eslinter": "^3.2.1",
     "nodemon": "^1.18.4"
   },
   "description": "API"
