@@ -53,7 +53,7 @@ class Schedule {
   }
 
   static async getAll() {
-    await db.get('subject', ['nrc','name','first_day','sec_day','classroom','section','credits','building','exist','taught_by']);
+    await db.get('subject', ['nrc','name','first_day','sec_day','classroom','section','credits','building','exist','taught_by'])
       .then((results) => {
         this.result = Schedule.processResult(results);
       })
