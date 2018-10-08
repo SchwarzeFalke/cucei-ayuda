@@ -1,3 +1,11 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-08T14:34:11-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-08T14:37:54-05:00
+ */
+
+
 
 const mysql = require('mysql');
 
@@ -16,6 +24,7 @@ class DB {
     return new Promise((resolve, reject) => {
       const data = [columns, table];
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
+      if (columns === '*') query = 'SELECT * FROM ??';
       query += ' WHERE exist = TRUE';
       if (condition) query += ` && ${condition}`;
       if (order) query += order;
