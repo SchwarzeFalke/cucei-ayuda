@@ -7,4 +7,6 @@
  */
 
 exports.validator = require('./validator');
+exports.forumMid = require('./forum');
 exports.subjectM = require('./subject');
+
