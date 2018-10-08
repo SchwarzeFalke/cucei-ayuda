@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:19:18-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T20:36:49-05:00
+ * @Last modified time: 2018-10-08T02:04:36-05:00
  */
 require('dotenv').config();
 
@@ -14,4 +14,4 @@ const router = require('./routes');
 
 app.use(router);
 
-app.listen(process.env.PORT, () => console.log(`CUCEI AYUDA IS RUNNING ON PORT ${process.env.PORT}!`));
+app.listen(3000, () => console.log(`CUCEI AYUDA IS RUNNING ON PORT ${process.env.PORT}!`));
