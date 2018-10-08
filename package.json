@@ -13,7 +13,7 @@
   "author": "Julio Mariscal <julio.mariscal.bautista@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "10.9.0",
+    "node": "10.9.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
