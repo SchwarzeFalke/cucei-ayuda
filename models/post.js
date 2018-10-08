@@ -52,7 +52,7 @@ class PostMdl {
     if (data.q || data.sort) {
       this.condition = `thread_id = ${threadId}`;
       if (data.q) {
-        this.condition += `content LIKE '%${data.q}%'`;
+        this.condition += `&& content LIKE '%${data.q}%'`;
       }
       condition = this.condition;
       order = this.processRequest(data);
@@ -72,6 +72,7 @@ class PostMdl {
   async save() {
     delete this.post_id;
     let results;
+    console.log(this);
     if (this.required()) {
       await db.insert('post', this).then((result) => {
         results = result;

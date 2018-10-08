@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
-const { forumMid } = require('../middlewares')
+const { forumMid } = require('../middlewares');
 
 const router = Router();
 
@@ -12,17 +12,24 @@ const router = Router();
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
 router.get('/:topicId/threads', threadCtrl.getAll);
-router.get('/:topicId/threads/:threadId', threadCtrl.get);
-router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
-router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPost);
+router.get('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.get);
+router.get('/:topicId/threads/:threadId/posts',
+threadCtrl.getAllPosts);
+router.get('/:topicId/threads/:threadId/posts/:postId', [
+  forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
+  forumMid.validateNumberParamsPost], threadCtrl.getPost);
 
 /**
  * ALL POST methods for the forum
  */
 
-router.post('/', forumMid.noEmptyPost, topicCtrl.create);
-router.post('/:topicId/threads', threadCtrl.create);
-router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
+router.post('/', forumMid.noEmptyPostTopic, topicCtrl.create);
+router.post('/:topicId/threads', [forumMid.noEmptyPostThread,
+  forumMid.validateNumberParams], threadCtrl.create);
+router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
+  forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.createPost);
 
 /**
  * This are all the PUT methods for the forum page.
@@ -33,9 +40,13 @@ router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
 
  */
 
-router.put('/:topicId', topicCtrl.modify);
-router.put('/:topicId/threads/:threadId', threadCtrl.modify);
-router.put('/:topicId/threads/:threadId/posts/:postId', threadCtrl.updatePost);
+router.put('/:topicId', [forumMid.validateNumberParams], topicCtrl.modify);
+router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.modify);
+router.put('/:topicId/threads/:threadId/posts/:postId',
+  [forumMid.validateNumberParams,
+    forumMid.validateNumberParamsThread,
+    forumMid.validateNumberParamsPost], threadCtrl.updatePost);
 
 /**
  * delete routes
@@ -44,9 +55,12 @@ router.put('/:topicId/threads/:threadId/posts/:postId', threadCtrl.updatePost);
  * DELETE /:topicId/threads/:threadId/posts/:postId
  */
 
-router.delete('/:topicId', topicCtrl.delete);
-router.delete('/:topicId/threads/:threadId', threadCtrl.delete);
-router.delete('/:topicId/threads/:threadId/posts/:postId', threadCtrl.deletePost);
+router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.delete);
+router.delete('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.delete);
+router.delete('/:topicId/threads/:threadId/posts/:postId',
+  [forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
+    forumMid.validateNumberParamsPost], threadCtrl.deletePost);
 
 
 module.exports = router;

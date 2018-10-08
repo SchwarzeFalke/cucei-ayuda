@@ -8,11 +8,11 @@ class ThreadCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
-    this.getAllPosts = this.getAll.bind(this);
-    this.getPost = this.get.bind(this);
-    this.createPost = this.create.bind(this);
-    this.updatePost = this.modify.bind(this);
-    this.deletePost = this.delete.bind(this);
+    this.getAllPosts = this.getAllPosts.bind(this);
+    this.getPost = this.getPost.bind(this);
+    this.createPost = this.createPost.bind(this);
+    this.updatePost = this.updatePost.bind(this);
+    this.deletePost = this.deletePost.bind(this);
     this.modifyJSON = {
       status: 201,
       response: null,
@@ -108,6 +108,8 @@ class ThreadCtrl {
 
   async create(req, res) {
     req.body.topic_id = req.params.topicId;
+    const date = new Date().toJSON().slice(0, 19).replace('T', ' ')
+    req.body.created = date;
     const thread = new ThreadMdl(req.body);
     let response;
     await thread.save().then((result) => {
@@ -134,7 +136,7 @@ class ThreadCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
@@ -142,6 +144,8 @@ class ThreadCtrl {
   }
 
   async modify(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.created = date;
     const thread = new ThreadMdl(req.body);
     let topicModify;
     try {
@@ -256,6 +260,8 @@ class ThreadCtrl {
   }
 
   async createPost(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.date = date;
     req.body.thread_id = req.params.threadId;
     const post = new PostMdl(req.body);
     let response;
@@ -283,7 +289,7 @@ class ThreadCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
@@ -291,6 +297,8 @@ class ThreadCtrl {
   }
 
   async updatePost(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.date = date;
     const post = new PostMdl(req.body);
     let topicModify;
     try {

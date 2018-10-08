@@ -61,7 +61,7 @@ class ThreadMdl {
     if (data.q || data.page || data.count || data.sort) {
       this.condition = `topic_id = ${topicId}`;
       if (data.q) {
-        this.condition = `subject LIKE '%${data.q}%'`;
+        this.condition += `&& subject LIKE '%${data.q}%'`;
       }
       condition = this.condition;
       order = this.processRequest(data);
