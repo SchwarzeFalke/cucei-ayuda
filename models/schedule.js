@@ -19,7 +19,7 @@ class ScheduleMdl {
 
   static async getSubject(data) {
     return new Promise(async (resolve, reject) => {
-      await db.get('subject', '*', `nrc = ${data.subject_id}`)
+      await db.get('subject', ['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'], `nrc = ${data.subject_id}`)
         .then((results) => {
           this.result = results;
         })
