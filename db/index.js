@@ -1,9 +1,11 @@
 /**
  * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:36-05:00
+ * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T23:49:23-05:00
+ * @Last modified time: 2018-10-08T14:41:47-05:00
  */
+
+
 
 const mysql = require('mysql');
 
@@ -20,13 +22,16 @@ class DB {
 
   get(table, columns, condition, order) {
     return new Promise((resolve, reject) => {
-      const data = [columns, table];
+      // const data = [columns, table];
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
+      if (columns === '*') query = 'SELECT * FROM ??';
+      else query = `SELECT ${columns} FROM ??`;
       query += ' WHERE exist = TRUE';
       if (condition) query += ` && ${condition}`;
       if (order) query += order;
       query += ';';
-      this.connection.query(query, data, (err, results) => {
+      console.log(query);
+      this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);
       });
@@ -84,4 +89,5 @@ class DB {
     });
   }
 }
+
 module.exports = new DB();

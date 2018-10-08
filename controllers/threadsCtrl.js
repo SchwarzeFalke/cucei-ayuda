@@ -8,11 +8,11 @@ class ThreadCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
-    this.getAllPosts = this.getAll.bind(this);
-    this.getPost = this.get.bind(this);
-    this.createPost = this.create.bind(this);
-    this.updatePost = this.modify.bind(this);
-    this.deletePost = this.delete.bind(this);
+    this.getAllPosts = this.getAllPosts.bind(this);
+    this.getPost = this.getPost.bind(this);
+    this.createPost = this.createPost.bind(this);
+    this.updatePost = this.updatePost.bind(this);
+    this.deletePost = this.deletePost.bind(this);
     this.modifyJSON = {
       status: 201,
       response: null,
@@ -90,7 +90,7 @@ class ThreadCtrl {
     const { threadId } = req.params;
     let data;
     try {
-      data = await ThreadMdl.find(threadId);
+      data = await ThreadMdl.find(threadId, req.params.topicId);
     } catch (e) {
       console.error('error!');
       this.notFoundJSON.message = 'you don´t have any data';
@@ -108,6 +108,8 @@ class ThreadCtrl {
 
   async create(req, res) {
     req.body.topic_id = req.params.topicId;
+    const date = new Date().toJSON().slice(0, 19).replace('T', ' ');
+    req.body.created = date;
     const thread = new ThreadMdl(req.body);
     let response;
     await thread.save().then((result) => {
@@ -134,7 +136,7 @@ class ThreadCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
@@ -142,10 +144,12 @@ class ThreadCtrl {
   }
 
   async modify(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.created = date;
     const thread = new ThreadMdl(req.body);
     let topicModify;
     try {
-      await thread.modify(req.params.threadId).then((result) => {
+      await thread.modify(req.params.threadId, req.params.topicId).then((result) => {
         topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
@@ -159,10 +163,11 @@ class ThreadCtrl {
     if (topicModify === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully modified';
+      this.requestJSON.data = topicModify;
+      res.status(200).send(this.requestJSON);
     }
-    this.requestJSON.message = 'Data succesfully modified';
-    this.requestJSON.data = topicModify;
-    res.status(200).send(this.requestJSON);
   }
 
   async delete(req, res) {
@@ -184,14 +189,14 @@ class ThreadCtrl {
     if (deleted === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
-    }
-    if (deleted.affectedRows === 0) {
+    } else if (deleted.affectedRows === 0) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully deleted';
+      this.requestJSON.data = deleted;
+      res.status(200).send(this.requestJSON);
     }
-    this.requestJSON.message = 'Data succesfully deleted';
-    this.requestJSON.data = deleted;
-    res.status(200).send(this.requestJSON);
   }
 
 //  obtiene todos los post de un thread
@@ -211,11 +216,12 @@ class ThreadCtrl {
       if (data === undefined || data.length === 0) {
         this.notFoundJSON.message = 'you don´t have any data';
         res.status(404).send(this.notFoundJSON);
+      } else {
+        const message = 'Data succesfully retrieve';
+        this.requestJSON.message = message;
+        this.requestJSON.data = data;
+        res.send(this.requestJSON);
       }
-      const message = 'Data succesfully retrieve';
-      this.requestJSON.message = message;
-      this.requestJSON.data = data;
-      res.send(this.requestJSON);
       //  GET query Data
     } else {
       await PostMdl.find(query, threadId).then((result) => {
@@ -229,7 +235,8 @@ class ThreadCtrl {
         this.notFoundJSON.message = 'you don´t have any data';
         res.status(404).send(this.notFoundJSON);
       } else {
-        this.requestJSON.message = 'Data succesfully retrieve';
+        const message = 'Data succesfully retrieve';
+        this.requestJSON.message = message;
         this.requestJSON.data = data;
         res.send(this.requestJSON);
       }
@@ -240,7 +247,7 @@ class ThreadCtrl {
     const { postId } = req.params;
     let data;
     try {
-      data = await PostMdl.find(postId);
+      data = await PostMdl.find(postId, req.params.threadId);
     } catch (e) {
       this.notFoundJSON.message = 'you don´t have any data';
       res.status(404).send(this.notFoundJSON);
@@ -256,6 +263,8 @@ class ThreadCtrl {
   }
 
   async createPost(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.date = date;
     req.body.thread_id = req.params.threadId;
     const post = new PostMdl(req.body);
     let response;
@@ -283,7 +292,7 @@ class ThreadCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
@@ -291,10 +300,12 @@ class ThreadCtrl {
   }
 
   async updatePost(req, res) {
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    req.body.date = date;
     const post = new PostMdl(req.body);
     let topicModify;
     try {
-      await post.modify(req.params.postId).then((result) => {
+      await post.modify(req.params.postId, req.params.threadId).then((result) => {
         topicModify = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);
@@ -308,10 +319,11 @@ class ThreadCtrl {
     if (topicModify === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully modified';
+      this.requestJSON.data = topicModify;
+      res.status(200).send(this.requestJSON);
     }
-    this.requestJSON.message = 'Data succesfully modified';
-    this.requestJSON.data = topicModify;
-    res.status(200).send(this.requestJSON);
   }
 
   async deletePost(req, res) {
@@ -333,14 +345,14 @@ class ThreadCtrl {
     if (deleted === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
-    }
-    if (deleted.affectedRows === 0) {
+    } else if (deleted.affectedRows === 0) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully deleted';
+      this.requestJSON.data = deleted;
+      res.status(200).send(this.requestJSON);
     }
-    this.requestJSON.message = 'Data succesfully deleted';
-    this.requestJSON.data = deleted;
-    res.status(200).send(this.requestJSON);
   }
 }
 module.exports = new ThreadCtrl();

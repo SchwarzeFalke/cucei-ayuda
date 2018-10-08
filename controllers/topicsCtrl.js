@@ -1,4 +1,6 @@
 const { TopicMdl } = require('../models');
+const { ThreadMdl } = require('../models');
+const { PostMdl } = require('../models');
 
 class TopicCtrl {
   constructor() {
@@ -125,7 +127,7 @@ class TopicCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = this.response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
       res.status(400).send(this.badRequestJSON);
@@ -157,6 +159,43 @@ class TopicCtrl {
 
   async delete(req, res) {
     const topic = new TopicMdl(req.body);
+    try {
+      await topic.delete(req.params.topicId).then((result) => {
+        this.deleted = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        this.badRequestJSON.message = 'One field is missings or data is wrong';
+        res.status(400).send(this.badRequestJSON);
+      });
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
+    }
+    if (this.deleted === undefined) {
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
+    }
+    if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully deleted';
+      this.requestJSON.data = this.deleted;
+      res.status(200).send(this.requestJSON);
+    }
+  }
+
+  async deleteAll(req, res) {
+    const topic = new TopicMdl(req.body);
+    let res;
+    try {
+      res = await deleteAll(req.params.topic_id);
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      res.status(400).send(this.badRequestJSON);
+    }
     try {
       await topic.delete(req.params.topicId).then((result) => {
         this.deleted = result;
