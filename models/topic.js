@@ -1,5 +1,6 @@
 const db = require('../db');
 const { ThreadMdl } = require('../models');
+const { PostMdl } = require('../models');
 
 class TopicMdl {
   constructor(obj) {
@@ -39,8 +40,9 @@ class TopicMdl {
   }
 
   static async getAll() {
+    let all = ['topic_id', 'name', 'descript', 'exist'];
     let res;
-    await db.get('topic', '*').then((results) => {
+    await db.get('topic', ['topic_id', 'name', 'descript', 'exist']).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -63,7 +65,7 @@ class TopicMdl {
     } else {
       condition = `topic_id = ${Object.values(data)}`;
     }
-    await db.get('topic', '*', condition, order).then((result) => {
+    await db.get('topic', ['topic_id', 'name', 'descript', 'exist'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
@@ -126,19 +128,23 @@ class TopicMdl {
     return data;
   }
 
-  //   let data;
-  //   const condition = `topic_id = ${id}`;
-  //   try {
-  //     ThreadMdl.deleteAll()
-  //   } catch (e) {
-  //
-  //   }
-  //   await db.del('topic', condition).then((result) => {
-  //     data = result;
-  //   }).catch((e) => {
-  //     console.error(`.catch(${e})`);
-  //   });
-  //   return data;
-  // }
+  async deleteAll(id) {
+    await ThreadMdl.getAll(id).then((result) => {
+      this.threadsToDelete = result;
+    }).catch((e) => {
+      console.log(`Error: ${e}`);
+    });
+    let ls = [];
+    for (var i of this.threadsToDelete){
+      console.log(i);
+      await PostMdl.deleteAll(`thread_id = ${i.thread_id}`).then((res) => {
+        ls.push(res);
+      }).catch((e) => {
+        console.log(`Error: ${e}`);
+      });
+      await ThreadMdl.delete(i.thread_id);
+    }
+    return ls;
+  }
 }
 module.exports = TopicMdl;

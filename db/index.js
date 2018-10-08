@@ -1,9 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T23:49:23-05:00
- */
 
 const mysql = require('mysql');
 
@@ -26,6 +20,7 @@ class DB {
       if (condition) query += ` && ${condition}`;
       if (order) query += order;
       query += ';';
+      console.log(query);
       this.connection.query(query, data, (err, results) => {
         if (err) reject(err);
         resolve(results);
@@ -84,4 +79,5 @@ class DB {
     });
   }
 }
+
 module.exports = new DB();
