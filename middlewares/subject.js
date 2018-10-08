@@ -188,7 +188,7 @@ class subjectM {
   }
 
   static validateTeacher(req, res, next) {
-    const test = /^\d+$/;
+    const test = /^[A-Za-z]+$/;
     try {
       if (req.body.taught_by === undefined) {
         forbiddenJSON.message = 'Invalid Teacher';
