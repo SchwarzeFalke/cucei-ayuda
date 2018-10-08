@@ -76,7 +76,7 @@ class Subject {
   }
 
   static async del(condition) {
-    await db.del('subject', condition)
+    await db.logicalDel('subject', condition)
       .then((results) => {
         this.result = results;
       })
