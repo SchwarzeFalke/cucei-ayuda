@@ -56,7 +56,7 @@ class DB {
   update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
-      if (condition) query += ` WHERE ${condition};`;
+      if (condition) query += ` WHERE ${condition} && exist = 1;`;
       else query += ';';
       this.connection.query(query, [table, data], (err, results) => {
         if (results.affectedRows === 0) reject(new Error('Doesnt exist'));
