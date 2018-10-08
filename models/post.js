@@ -101,7 +101,7 @@ class PostMdl {
   async delete(id) {
     let data;
     const condition = `post_id = ${id}`;
-    await db.del('post', condition).then((result) => {
+    await db.physicalDel('post', condition).then((result) => {
       if (data !== undefined) {
         data = result;
       } else {

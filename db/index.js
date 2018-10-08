@@ -1,5 +1,3 @@
-
-
 const mysql = require('mysql');
 
 class DB {
@@ -42,7 +40,7 @@ class DB {
       });
     });
   }
-        
+
   update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
@@ -55,7 +53,6 @@ class DB {
       });
     });
   }
-        
 
   physicalDel(table, condition) {
     return new Promise((resolve, reject) => {
@@ -65,11 +62,10 @@ class DB {
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);
-
       });
     });
   }
-        
+
   logicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
@@ -81,4 +77,5 @@ class DB {
     });
   }
 }
+
 module.exports = new DB();

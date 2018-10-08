@@ -1,8 +1,7 @@
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
-
-// const middlewares = require('../middlewares/forum')
+const { forumMid } = require('../middlewares')
 
 const router = Router();
 
@@ -10,8 +9,8 @@ const router = Router();
  * ALL GET methods for the forum
  */
 
-router.get('/', topicCtrl.getAll);
-router.get('/:topicId', topicCtrl.get);
+router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
+router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
 router.get('/:topicId/threads', threadCtrl.getAll);
 router.get('/:topicId/threads/:threadId', threadCtrl.get);
 router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
@@ -21,7 +20,7 @@ router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPost);
  * ALL POST methods for the forum
  */
 
-router.post('/', topicCtrl.create);
+router.post('/', forumMid.noEmptyPost, topicCtrl.create);
 router.post('/:topicId/threads', threadCtrl.create);
 router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
 
