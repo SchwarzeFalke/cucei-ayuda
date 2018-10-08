@@ -62,7 +62,7 @@ class SubjectCtrl {
         .then((exists) => {
           if (exists) {
             const condition = `nrc = ${req.params.nrc}`;
-            Subject.get('*', condition)
+            Subject.get(['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'], condition)
               .then((data) => {
                 this.requestJSON.data = data;
                 res.status(this.requestJSON.status).send(this.requestJSON);
