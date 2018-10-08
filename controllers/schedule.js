@@ -1,9 +1,15 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-07T13:20:58-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-07T13:36:24-05:00
+ */
+
 // controller for the schedule class
 
 const { Schedule } = require('../models');
 
 class ScheduleCtrl {
-
   constructor() {
     this.getAll = this.getAll.bind(this);
     this.insert = this.insert.bind(this);

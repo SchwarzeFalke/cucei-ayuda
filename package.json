@@ -2,7 +2,7 @@
   "name": "cucei-ayuda",
   "version": "0.0.1",
   "decription": "",
-  "main": "app.js",
+  "main": "router.js",
   "scripts": {
     "start": "node app.js"
   },
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/SchwarzeFalke/cucei-ayuda.git"
   },
-  "author": "Tyler Ruiz <ruiztyler97@gmail.com>",
+  "author": "Julio Mariscal <julio.mariscal.bautista@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",

@@ -9,8 +9,10 @@ const TopicMdl = require('./topic');
 const PostMdl = require('./post');
 const UserMdl = require('./user');
 const Schedule = require('./schedule');
+const BuildingMdl = require('./building');
+const MapsMdl = require('./maps');
+
 
 module.exports = {
-  UserMdl, Schedule, ThreadMdl, TopicMdl, PostMdl
+  UserMdl, Schedule, ThreadMdl, TopicMdl, PostMdl, BuildingMdl, MapsMdl,
 };
-
