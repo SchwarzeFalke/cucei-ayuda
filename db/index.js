@@ -22,6 +22,7 @@ class DB {
       if (order) query += order;
       query += ';';
       this.connection.query(query, data, (err, results) => {
+        console.log('Entering log');
         if (err) reject(err);
         resolve(results);
       });
