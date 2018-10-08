@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-07T20:34:36-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T23:49:23-05:00
+ * @Last modified time: 2018-10-08T03:16:46-05:00
  */
 
 const mysql = require('mysql');
@@ -15,7 +15,11 @@ class DB {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     });
-    this.connection.connect();
+    try {
+      this.connection.connect();
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+    }
   }
 
   get(table, columns, condition, order) {
