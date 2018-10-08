@@ -1,3 +1,4 @@
+
 const mysql = require('mysql');
 
 class DB {
@@ -45,7 +46,7 @@ class DB {
   update(table, data, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
-      if (condition) query += `WHERE ${condition};`;
+      if (condition) query += ` WHERE ${condition};`;
       else query += ';';
       this.connection.query(query, [table, data], (err, results) => {
         if (results.affectedRows === 0) reject(new Error('Doesnt exist'));
@@ -58,7 +59,7 @@ class DB {
   physicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
-      if (condition) query += `WHERE ${condition};`;
+      if (condition) query += ` WHERE ${condition};`;
       else query += ';';
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
@@ -70,7 +71,7 @@ class DB {
   logicalDel(table, condition) {
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
-      if (condition) query += `WHERE ${condition}`;
+      if (condition) query += ` WHERE ${condition}`;
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
         resolve(results);

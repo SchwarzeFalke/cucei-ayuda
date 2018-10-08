@@ -2,10 +2,12 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T12:54:24-05:00
+ * @Last modified time: 2018-10-08T00:46:03-05:00
  */
 
 const { UserMdl } = require('../models'); // for model handling
+const { ScheduleMdl } = require('../models');
+const { Subject } = require('../models');
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -35,7 +37,8 @@ class UserCtrl {
     this.getRoads = this.getRoads.bind(this);
     this.getSchedule = this.getSchedule.bind(this);
     this.getPosts = this.getPosts.bind(this);
-    this.insert = this.insert.bind(this);
+    this.insertUser = this.insertUser.bind(this);
+    this.insertSchedule = this.insertSchedule.bind(this);
     this.del = this.del.bind(this);
 
     /**
@@ -149,9 +152,10 @@ class UserCtrl {
   async getSchedule(req, res) {
     try {
       if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `user_code = ${req.params.userId}`;
-        await UserMdl.get('*', condition)
+        const condition = `stud_id = ${req.params.userId}`;
+        await ScheduleMdl.get('subject_id', condition)
           .then((data) => {
+            console.log(data);
             this.requestJSON.data = data;
             res.status(this.requestJSON.status).send(this.requestJSON);
           })
@@ -182,7 +186,7 @@ class UserCtrl {
     }
   }
 
-  async insert(req, res) {
+  async insertUser(req, res) {
     const newUser = new UserMdl({ ...req.body });
     try {
       await newUser.save()
@@ -201,13 +205,35 @@ class UserCtrl {
     }
   }
 
+  async insertSchedule(req, res) {
+    try {
+      await UserMdl.validUser(req.params.userId)
+        .then((exists) => {
+          if (exists) {
+            Subject.createRelation(req.params.userId, req.body.nrc)
+              .then((results) => {
+                this.modifyJSON.response = 'Created';
+                this.modifyJSON.message = `New subject on user ${req.params.userId} schedule successfully created`;
+                this.modifyJSON.data = results;
+                res.status(this.modifyJSON.status).send(this.modifyJSON);
+              })
+              .catch(e => console.error(`.catch(${e})`));
+          }
+        });
+    } catch (e) {
+      console.error(`try/catch(${e})`);
+      this.forbiddenJSON.data = e;
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
   async del(req, res) {
     try {
       await UserMdl.del(req.params.userId, req.query)
         .then((data) => {
           this.modifyJSON.data = data;
           this.modifyJSON.response = 'Deleted';
-          this.modifyJSON.message += 'User successfully deleted from database';
+          this.modifyJSON.message = 'User successfully deleted from database';
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
@@ -220,13 +246,16 @@ class UserCtrl {
   async update(req, res) {
     const updateUser = new UserMdl({ ...req.body });
     try {
-      await updateUser.update()
+      await updateUser.update(req.params.userId)
         .then((data) => {
-          this.info = data;
-          this.modifyJSON.response = 'Updated';
-          this.modifyJSON.message = 'User successfully updated from database';
-          this.modifyJSON.data = updateUser;
-          res.status(this.modifyJSON.status).send(this.modifyJSON);
+          const dataJSON = {
+            status: 201,
+            response: 'Updated',
+            message: 'User successfully updated from database',
+            data: updateUser,
+            modified: data,
+          };
+          res.status(dataJSON.status).send(dataJSON);
         })
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {

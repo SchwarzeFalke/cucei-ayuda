@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T11:03:23-05:00
+ * @Last modified time: 2018-10-07T21:37:02-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -169,12 +169,9 @@ class UserMdl {
       queryCondition = UserMdl.processConditions(condition);
     }
     await db.logicalDel('user', queryCondition)
-      .then((results1) => {
-        db.chainedDel(`user_code = ${id}`)
-          .then((results2) => {
-            this.result = results1 + results2;
-          })
-          .catch(e => console.error(`.catch(${e})`));
+      .then((results) => {
+        this.result = results;
+        return this.result;
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
@@ -184,17 +181,21 @@ class UserMdl {
     await db.insert('user', this)
       .then((results) => {
         this.result = results;
+        return this.result;
       })
       .catch(e => console.error(`.catch(${e}})`));
+    return this.result;
   }
 
-  async update() {
-    const condition = `user_code = ${this.user_code}`;
+  async update(id) {
+    const condition = `user_code = ${id}`;
     await db.update('user', this, condition)
       .then((results) => {
         this.result = results;
+        return this.result;
       })
       .catch(e => console.error(`.catch(${e}})`));
+    return this.result;
   }
 
   /**

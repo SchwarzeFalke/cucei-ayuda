@@ -8,21 +8,31 @@
 const { Router } = require('express');
 
 const { mapCtrl } = require('../controllers');
+const { buildingCtrl } = require('../controllers');
+const middleWares = require('../middlewares');
 
 const router = Router();
 
-router.get('/', mapCtrl.getAll);
+/*These is Get methods needing for routes maps
+ * Get/map
+ * Get/map/building/:buildingId
+ */
+ //this method return all buildings
+router.get('/', mapCtrl.get);
 
-router.get('/:mapId', mapCtrl.get);
+/*this get method need a middleware for validate
+ *if id building is a int and return a buildings with id specific
+ */
+router.get('/building/:buildingId', (req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if(!request) {
+      next();
+    }else {
+      res.send(request);
+      console.log(request);
+    }
 
-router.get('/buildings', mapCtrl.getAll);
+},buildingCtrl.getBuild);
 
-router.get('/:buildingId', mapCtrl.get);
-
-router.get('/:buildingId/classes', mapCtrl.getClasses);
-
-router.get('/routes', mapCtrl.getAll);
-
-router.get('/:routeId', mapCtrl.get);
-
+//esport routes maps
 module.exports = router;
