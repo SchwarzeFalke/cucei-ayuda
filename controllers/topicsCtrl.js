@@ -127,7 +127,7 @@ class TopicCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = this.response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
       res.status(400).send(this.badRequestJSON);
