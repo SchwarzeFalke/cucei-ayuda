@@ -84,6 +84,7 @@ class DB {
       if (condition) query += ` WHERE ${condition}`;
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
+        if (results.affectedRows === 0) reject(new error('Doesnt exist'));
         resolve(results);
       });
     });
