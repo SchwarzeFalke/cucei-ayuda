@@ -50,6 +50,9 @@ This module allows to create users into database as well as handle the schedules
 All the users can create schedules from the subject resource, but only that. Higher privilages are required to make another actions with the subject table.
 
 ### 2- MAP MODULE
+
+This module is only used to see buildings and retrieve a specific building
+
 ### 3- SUBECT MODULE
 
 This module is only for the administrator user; allows to create new subjects to create schedules for the users. This model is related to the building model, because it needs information about the bulding where the class is given.
