@@ -44,8 +44,18 @@ To use heroku you first need to create an account on heroku's official website h
 Use heroku open to open the app
 
 ### 1- USERS MODULE
+
+This module allows to create users into database as well as handle the schedules and roads (for the map resource). Also, allows the user to request for its posts on the forum resource.
+
+All the users can create schedules from the subject resource, but only that. Higher privilages are required to make another actions with the subject table.
+
 ### 2- MAP MODULE
 ### 3- SUBECT MODULE
+
+This module is only for the administrator user; allows to create new subjects to create schedules for the users. This model is related to the building model, because it needs information about the bulding where the class is given.
+
+The normal user cannot manipulate the data from this model.
+
 ### 4- FORUM MODULE
 
 The forum allows user to create topics, which is usually a word describing the main theme of the topic. ej "Comida"
@@ -62,6 +72,14 @@ For more information about the forum:
   + [Threads](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Threads)
   + [Posts](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Posts)
 
+## POSTMAN
+
+### Collection
+
+To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/be0fff6d8a618111c276)
+
+### API Documentation
+To see more documentation about the project, please visit [this link](https://web.postman.co/collections/5136276-1bb78b75-96bb-49ed-a2d0-88b9fd52ee6f?workspace=7082d4e1-6a80-4677-8399-27e29b9fc02e#introduction)
 
 ## Authors
 
