@@ -1,3 +1,9 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T01:15:15-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:00:14-05:00
+ */
 
 const badRequestJSON = {
   status: 400,
@@ -57,7 +63,8 @@ class ForumMid {
       }
     }
     if (empty > 0) {
-      res.status(400).send({ error: 'dejaste un campo vacio' });
+      badRequestJSON.message = 'dejaste un campo vacio';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }
@@ -65,14 +72,14 @@ class ForumMid {
 
   static noEmptyPostThread(req, res, next) {
     let empty = 0;
-    if (req.body.subject === undefined || req.body.stud_code === undefined) {
+    if (req.body.subject === undefined || req.body.user_code === undefined) {
       empty = 1;
     }
     for (var i in req.body){
       if (i === 'subject' && req.body[i] === '') {
         empty = 1;
       }
-      if (i === 'stud_code' && req.body[i] === '') {
+      if (i === 'user_code' && req.body[i] === '') {
         empty = 1;
       }
     }
@@ -86,19 +93,20 @@ class ForumMid {
 
   static noEmptyPost(req, res, next) {
     let empty = 0;
-    if (req.body.content === undefined || req.body.stud_code === undefined) {
+    if (req.body.content === undefined || req.body.user_code === undefined) {
       empty = 1;
     }
     for (var i in req.body){
       if (i === 'content' && req.body[i] === '') {
         empty = 1;
       }
-      if (i === 'stud_code' && req.body[i] === '') {
+      if (i === 'user_code' && req.body[i] === '') {
         empty = 1;
       }
     }
     if (empty > 0) {
-      res.status(400).send({ error: 'dejaste un campo vacio' });
+      badRequestJSON.message = 'dejaste un campo vacio';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }
@@ -107,18 +115,21 @@ class ForumMid {
   static noEmptySearch(req, res, next) {
     if (Object.keys(req.query).length > 0) {
       if (req.query.q === '') {
-        res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+        badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+        res.status(400).send(badRequestJSON);
         return;
       }
       if (req.query.count) {
         if (req.query.count <= 0 || !(/^\d+$/.test(req.query.count))) {
-          res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+          res.status(400).send(badRequestJSON);
           return;
         }
       }
       if (req.query.page) {
         if (req.query.page <= 0 || !(/^\d+$/.test(req.query.page))) {
-          res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+          res.status(400).send(badRequestJSON);
           return;
         }
       }
@@ -127,7 +138,8 @@ class ForumMid {
         lower = lower.toLowerCase();
         if (lower === 'asc' || lower === 'desc') {
         } else {
-          res.status(400).send({ error: 'We just accept DESC or ASC' });
+          badRequestJSON.message = 'We just accept asc or desc';
+          res.status(400).send(badRequestJSON);
         }
       }
       next();
