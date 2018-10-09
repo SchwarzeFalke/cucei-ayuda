@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T06:03:13-05:00
+ * @Last modified time: 2018-10-09T06:07:20-05:00
  */
 
 const mysql = require('mysql');
@@ -35,7 +35,7 @@ class DB {
       query += ';';
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
-        this.connection.end();
+        this.connection.destroy();
         resolve(results);
       });
     });
@@ -57,7 +57,7 @@ class DB {
         if (err) {
           reject(err);
         }
-        this.connection.end();
+        this.connection.destroy();
         return resolve(results);
       });
     });
@@ -77,7 +77,7 @@ class DB {
       this.connection.query(query, [table, data], (err, results) => {
         if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
         if (err) reject(err);
-        this.connection.end();
+        this.connection.destroy();
         return resolve(results);
       });
     });
@@ -96,7 +96,7 @@ class DB {
       else query += ';';
       this.connection.query(query, table, (err, results) => {
         if (err) reject(err);
-        this.connection.end();
+        this.connection.destroy();
         resolve(results);
       });
     });
@@ -115,7 +115,7 @@ class DB {
       this.connection.query(query, table, (err, results) => {
         if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
         if (err) reject(err);
-        this.connection.end();
+        this.connection.destroy();
         resolve(results);
       });
     });
