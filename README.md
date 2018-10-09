@@ -5,6 +5,16 @@ QCInf RESTful API designed for the Web Programming course (2018-B).
 ### Description
 
 This is the RESTful API for the CUCEI's help application. It is designed for giving all the information related to scheduling and orientation (maps) for students inside the campus. Also, it gives the information with regard to teachers, doubts and/or recommendations through a forum resource.
+
+### REQUIRED
+
+The app need some packages or specific programs to run, here is a list of all the dependencies:
+
++ "body-parser"
++ "dotenv"
++ "express"
++ "mysql"
+
 ### 1- USERS MODULE
 ### 2- MAP MODULE
 ### 3- SCHEDULE MODULE
