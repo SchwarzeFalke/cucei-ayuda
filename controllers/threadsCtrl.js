@@ -275,25 +275,21 @@ class ThreadCtrl {
       res.status(403).send(this.forbiddenJSON);
     });
     if (response === undefined) {
-      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      this.badRequestJSON.message = 'Something went wrong!';
       res.status(400).send(this.badRequestJSON);
     }
     if (response === 1) {
-      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      this.badRequestJSON.message = 'One field is missings.';
       res.status(400).send(this.badRequestJSON);
     }
     const id = response.insertId;
-    if (id === undefined) {
-      this.badRequestJSON.message = 'One field is missings or data is wrong';
-      res.status(400).send(this.badRequestJSON);
-    }
     if (id > 0) {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = response;
       this.requestJSON.code = 201;
       res.status(201).send(this.requestJSON);
     } else {
-      this.badRequestJSON.message = 'One field is missings or data is wrong';
+      this.badRequestJSON.message = 'Nothing was saved';
       res.status(400).send(this.badRequestJSON);
     }
   }
