@@ -171,10 +171,9 @@ class ThreadCtrl {
   }
 
   async delete(req, res) {
-    const thread = new ThreadMdl(req.body);
     let deleted;
     try {
-      await thread.delete(req.params.topicId).then((result) => {
+      await ThreadMdl.deleteReal(req.params.threadId).then((result) => {
         deleted = result;
       }).catch((e) => {
         console.error(`error!! ${e}`);

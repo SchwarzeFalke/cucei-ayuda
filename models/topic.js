@@ -1,6 +1,6 @@
 const db = require('../db');
-const { ThreadMdl } = require('../models');
-const { PostMdl } = require('../models');
+const ThreadMdl = require('./thread');
+const PostMdl = require('./post');
 
 class TopicMdl {
   constructor(obj) {
