@@ -1,10 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:12-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:54:49-05:00
- */
-
 // middleware class for subject error handling
 
 const forbiddenJSON = {
