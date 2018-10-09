@@ -57,7 +57,8 @@ class ForumMid {
       }
     }
     if (empty > 0) {
-      res.status(400).send({ error: 'dejaste un campo vacio' });
+      badRequestJSON.message = 'dejaste un campo vacio';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }
@@ -98,7 +99,8 @@ class ForumMid {
       }
     }
     if (empty > 0) {
-      res.status(400).send({ error: 'dejaste un campo vacio' });
+      badRequestJSON.message = 'dejaste un campo vacio';
+      res.status(400).send(badRequestJSON);
     } else {
       next();
     }
@@ -107,18 +109,21 @@ class ForumMid {
   static noEmptySearch(req, res, next) {
     if (Object.keys(req.query).length > 0) {
       if (req.query.q === '') {
-        res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+        badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+        res.status(400).send(badRequestJSON);
         return;
       }
       if (req.query.count) {
         if (req.query.count <= 0 || !(/^\d+$/.test(req.query.count))) {
-          res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+          res.status(400).send(badRequestJSON);
           return;
         }
       }
       if (req.query.page) {
         if (req.query.page <= 0 || !(/^\d+$/.test(req.query.page))) {
-          res.status(400).send({ error: 'Letters not allow and numbers equal or below 0' });
+          badRequestJSON.message = 'Letters not allow and numbers equal or below 0';
+          res.status(400).send(badRequestJSON);
           return;
         }
       }
@@ -127,7 +132,8 @@ class ForumMid {
         lower = lower.toLowerCase();
         if (lower === 'asc' || lower === 'desc') {
         } else {
-          res.status(400).send({ error: 'We just accept DESC or ASC' });
+          badRequestJSON.message = 'We just accept asc or desc';
+          res.status(400).send(badRequestJSON);
         }
       }
       next();
