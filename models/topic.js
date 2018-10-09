@@ -66,7 +66,7 @@ class TopicMdl {
       order = this.processRequest(data);
       console.log(order);
     } else {
-      condition = `topic_id = ${Object.values(data)}`;
+      condition = `topic_id = ${data}`;
     }
     await db.get('topic', ['topic_id', 'name', 'descript', 'exist'], condition, order).then((result) => {
       response = this.processData(result);
