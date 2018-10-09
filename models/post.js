@@ -1,20 +1,29 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T01:15:15-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:15:00-05:00
+ */
+
+
+
 const db = require('../db');
 
 class PostMdl {
   constructor({
-    post_id, content, stud_code, thread_id, date
+    post_id, content, user_code, thread_id, date
   }) {
     this.post_id = post_id;
     this.content = content;
     this.exist = 1;
-    this.stud_code = stud_code;
+    this.user_code = user_code;
     this.thread_id = thread_id;
     this.date = date;
   }
 
   required() {
     return (this.content !== undefined
-    && this.exist !== undefined && this.stud_code !== undefined
+    && this.exist !== undefined && this.user_code !== undefined
     && this.thread_id !== undefined && this.date !== undefined);
   }
 
@@ -37,11 +46,11 @@ class PostMdl {
   }
 
   static async getAll(threadId) {
-    let all = ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'];
+    let all = ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'];
     const order = ' ORDER BY date';
     let res;
     const condition = `thread_id = ${threadId}`;
-    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((results) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'], condition, order).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -63,7 +72,7 @@ class PostMdl {
     } else {
       condition = ` post_id = ${data} && thread_id = ${threadId}`;
     }
-    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);

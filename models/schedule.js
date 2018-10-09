@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-07T23:16:18-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-08T00:48:04-05:00
+ * @Last modified time: 2018-10-09T02:38:53-05:00
  */
 
 const db = require('../db');
@@ -19,7 +19,7 @@ class ScheduleMdl {
 
   static async getSubject(data) {
     return new Promise(async (resolve, reject) => {
-      await db.get('subject', ['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'], `nrc = ${data.subject_id}`)
+      await db.get('subject', '*', `nrc = ${data.subject_id}`)
         .then((results) => {
           this.result = results;
         })

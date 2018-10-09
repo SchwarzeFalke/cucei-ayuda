@@ -2,10 +2,8 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-08T14:41:47-05:00
+ * @Last modified time: 2018-10-09T01:15:22-05:00
  */
-
-
 
 const mysql = require('mysql');
 

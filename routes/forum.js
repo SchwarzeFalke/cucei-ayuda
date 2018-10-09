@@ -1,3 +1,10 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T02:00:56-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:01:51-05:00
+ */
+
 const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
