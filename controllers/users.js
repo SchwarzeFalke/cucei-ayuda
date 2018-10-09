@@ -2,12 +2,14 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-08T00:46:03-05:00
+ * @Last modified time: 2018-10-09T03:56:12-05:00
  */
+const db = require('../db'); // for database handling
 
 const { UserMdl } = require('../models'); // for model handling
 const { ScheduleMdl } = require('../models');
 const { Subject } = require('../models');
+const { RoadMdl } = require('../models');
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -127,21 +129,21 @@ class UserCtrl {
 
   async getRoads(req, res) {
     try {
-      await UserMdl.validUser(req.params.userId)
-        .then((exists) => {
-          if (exists) {
-            UserMdl.get('*', req.params.userId, req.query)
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_id = ${req.params.userId}`;
+        await RoadMdl.getBuildings('subject_id', condition)
+          .then(async (buildings) => {
+            await RoadMdl.getRoad(buildings)
               .then((data) => {
-                this.requestJSON.data = data;
+                this.requestJSON.data = [data, buildings];
                 res.status(this.requestJSON.status).send(this.requestJSON);
               })
               .catch(e => console.error(`.catch(${e})`));
-          } else {
-            this.forbiddenJSON.message = 'The requested user cannot be found';
-            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-          }
-        })
-        .catch(e => console.error(`.catch(${e})`));
+          });
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
     } catch (e) {
       console.error(`try/catch(${e})`);
       this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
@@ -174,7 +176,7 @@ class UserCtrl {
   async getPosts(req, res) {
     try {
       const condition = `user_code = ${req.params.userId}`;
-      await UserMdl.get('*', condition)
+      await db.get('post', '*', condition)
         .then((data) => {
           this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
