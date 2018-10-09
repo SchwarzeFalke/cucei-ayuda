@@ -21,7 +21,6 @@ To install npm refer to this official website with all the details https://www.n
 
 For example to install body-parser use the following command in your terminal window:
 
-	```
   npm install body-parser
   
   
