@@ -58,6 +58,7 @@ class DB {
       let query = 'UPDATE ?? SET ?';
       if (condition) query += ` WHERE ${condition} && exist = 1;`;
       else query += ';';
+      console.log(query);
       this.connection.query(query, [table, data], (err, results) => {
         if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
         if (err) reject(err);

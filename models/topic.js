@@ -99,6 +99,7 @@ class TopicMdl {
     await db.update('topic', obj, condition).then((result) => {
       data = result;
     }).catch((e) => {
+      console.log('qie esta pasando?');
       console.error(`.catch(${e})`);
     });
     return data;
@@ -114,20 +115,6 @@ class TopicMdl {
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return data;
-  }
-
-  async deleteReal(id) {
-    let data;
-    const condition = `topic_id = ${id}`;
-    const obj = {};
-    obj.exist = 0;
-    await db.update('topic', obj, condition).then((result) => {
-      data = result;
-    }).catch((e) => {
-      console.error(`.catch(${e})`);
-    });
-    console.log(data);
     return data;
   }
 

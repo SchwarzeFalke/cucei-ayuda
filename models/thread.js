@@ -128,13 +128,14 @@ class ThreadMdl {
 
   async deleteReal(id) {
     let data;
+    await PostMdl.deleteAll(`thread_id = ${id}`).then((result) => {
+      data = result;
+    }).catch((e) => {
+      console.error(`Error:${e}`);
+    });
     const condition = `thread_id = ${id}`;
     await db.physicalDel('thread', condition).then((result) => {
-      if (data !== undefined) {
-        data = result;
-      } else {
-        data = undefined;
-      }
+      data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
