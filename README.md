@@ -58,7 +58,7 @@ The normal user cannot manipulate the data from this model.
 
 ### 4- FORUM MODULE
 
-The forum allows user to create topics, which is usually a word describing the main theme of the topic. ej "Comida"
+The forum allow users to create topics, which is usually a word describing the main theme of the topic. ej "Comida"
 
 Inside each Topics users can create threads, the threads are composed by a sentences that describes his/her problem
 or opinion related to the topic.
