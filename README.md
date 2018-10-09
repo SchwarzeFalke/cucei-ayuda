@@ -62,6 +62,14 @@ For more information about the forum:
   + [Threads](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Threads)
   + [Posts](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Posts)
 
+## POSTMAN
+
+### Collection
+
+To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/be0fff6d8a618111c276)
+
+### API Documentation
+To see more documentation about the project, please visit [this link](https://web.postman.co/collections/5136276-1bb78b75-96bb-49ed-a2d0-88b9fd52ee6f?workspace=7082d4e1-6a80-4677-8399-27e29b9fc02e#introduction)
 
 ## Authors
 
