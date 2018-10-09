@@ -63,7 +63,6 @@ class PostMdl {
     } else {
       condition = ` post_id = ${data} && thread_id = ${threadId}`;
     }
-    console.log(condition);
     await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
@@ -75,14 +74,12 @@ class PostMdl {
   async save() {
     delete this.post_id;
     let results;
-    console.log(this);
     if (this.required()) {
       await db.insert('post', this).then((result) => {
         results = result;
       }).catch((e) => {
         console.error(`.catch(${e})`);
       });
-      console.log(results);
       return results;
     }
     return 1;
@@ -106,11 +103,7 @@ class PostMdl {
     let data;
     const condition = `post_id = ${id}`;
     await db.physicalDel('post', condition).then((result) => {
-      if (data !== undefined) {
         data = result;
-      } else {
-        data = undefined;
-      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
