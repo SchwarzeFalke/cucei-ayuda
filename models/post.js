@@ -88,6 +88,7 @@ class PostMdl {
         results = result;
       }).catch((e) => {
         console.error(`.catch(${e})`);
+        results = e;
       });
       return results;
     }
