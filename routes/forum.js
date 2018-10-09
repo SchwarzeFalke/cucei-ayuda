@@ -56,7 +56,7 @@ router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumber
  * DELETE /:topicId/threads/:threadId/posts/:postId
  */
 
-router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.delete);
+router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.deleteAll);
 router.delete('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread], threadCtrl.delete);
 router.delete('/:topicId/threads/:threadId/posts/:postId',

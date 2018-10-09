@@ -1,5 +1,5 @@
 const db = require('../db');
-const { PostMdl } = require('../models');
+const PostMdl = require('./post');
 
 class ThreadMdl {
   constructor({
@@ -113,7 +113,7 @@ class ThreadMdl {
     return data;
   }
 
-  async delete(id) {
+  static async delete(id) {
     let data;
     const condition = `thread_id = ${id}`;
     const obj = {};
@@ -126,15 +126,17 @@ class ThreadMdl {
     return data;
   }
 
-  async deleteReal(id) {
+  static async deleteReal(id) {
     let data;
+    console.log(id);
+    await PostMdl.deleteAll(`thread_id = ${id}`).then((result) => {
+      data = result;
+    }).catch((e) => {
+      console.error(`Error:${e}`);
+    });
     const condition = `thread_id = ${id}`;
     await db.physicalDel('thread', condition).then((result) => {
-      if (data !== undefined) {
-        data = result;
-      } else {
-        data = undefined;
-      }
+      data = result;
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
