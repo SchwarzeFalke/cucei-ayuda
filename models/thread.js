@@ -85,6 +85,7 @@ class ThreadMdl {
   async save() {
     delete this.thread_id;
     let results;
+    console.log(this);
     if (this.required()) {
       await db.insert('thread', this).then((result) => {
         results = result;

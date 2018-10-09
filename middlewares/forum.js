@@ -67,18 +67,21 @@ class ForumMid {
   static noEmptyPostThread(req, res, next) {
     let empty = 0;
     if (req.body.subject === undefined || req.body.stud_code === undefined) {
+      badRequestJSON.message = 'a';
       empty = 1;
     }
     for (var i in req.body){
       if (i === 'subject' && req.body[i] === '') {
+        badRequestJSON.message = 'b';
         empty = 1;
       }
       if (i === 'stud_code' && req.body[i] === '') {
+        badRequestJSON.message = 'stud';
         empty = 1;
       }
     }
     if (empty > 0) {
-      badRequestJSON.message = 'dejaste un campo vacio';
+      badRequestJSON.message += 'dejaste un campo vacio';
       res.status(400).send(badRequestJSON);
     } else {
       next();
