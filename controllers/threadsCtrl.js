@@ -276,10 +276,17 @@ class ThreadCtrl {
     });
     if (response === undefined) {
       this.badRequestJSON.message = 'Something went wrong!';
+      this.badRequestJSON.data = response;
       res.status(400).send(this.badRequestJSON);
     }
     if (response === 1) {
       this.badRequestJSON.message = 'One field is missings.';
+      this.badRequestJSON.data = response;
+      res.status(400).send(this.badRequestJSON);
+    }
+    if (response.insertId === undefined) {
+      this.badRequestJSON.message = 'One field is missings.';
+      this.badRequestJSON.data = response;
       res.status(400).send(this.badRequestJSON);
     }
     const id = response.insertId;
@@ -290,6 +297,7 @@ class ThreadCtrl {
       res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'Nothing was saved';
+      this.badRequestJSON.data = response;
       res.status(400).send(this.badRequestJSON);
     }
   }
