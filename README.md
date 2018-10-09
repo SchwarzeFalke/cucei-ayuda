@@ -20,7 +20,9 @@ All of these packages are installed using node package manager.
 To install npm refer to this official website with all the details https://www.npmjs.com/get-npm
 
 For example to install body-parser use the following command in your terminal window:
+
 	```npm install body-parser```
+  
 And do the same with all the other dependencies.
 
 ### DEPLOYMENT
