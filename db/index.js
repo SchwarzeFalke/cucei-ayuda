@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T05:13:10-05:00
+ * @Last modified time: 2018-10-09T05:19:33-05:00
  */
 
 const mysql = require('mysql');
@@ -15,10 +15,10 @@ class DB {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     });
-    this.connection.connect();
   }
 
   get(table, columns, condition, order) {
+    this.connection.connect();
     return new Promise((resolve, reject) => {
       // const data = [columns, table];
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
@@ -37,6 +37,7 @@ class DB {
   }
 
   insert(table, data, condition) {
+    this.connection.connect();
     return new Promise((resolve, reject) => {
       let query = 'INSERT INTO ?? SET ?';
       if (condition) {
@@ -53,6 +54,7 @@ class DB {
   }
 
   update(table, data, condition) {
+    this.connection.connect();
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
       if (condition) query += ` WHERE ${condition} && exist = 1;`;
@@ -67,6 +69,7 @@ class DB {
   }
 
   physicalDel(table, condition) {
+    this.connection.connect();
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
       if (condition) query += ` WHERE ${condition};`;
@@ -80,6 +83,7 @@ class DB {
   }
 
   logicalDel(table, condition) {
+    this.connection.connect();
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
       if (condition) query += ` WHERE ${condition}`;
