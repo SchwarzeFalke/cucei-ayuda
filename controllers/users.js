@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T03:56:12-05:00
+ * @Last modified time: 2018-10-11T01:10:18-05:00
  */
 const db = require('../db'); // for database handling
 
@@ -210,10 +210,11 @@ class UserCtrl {
   async insertSchedule(req, res) {
     try {
       await UserMdl.validUser(req.params.userId)
-        .then((exists) => {
+        .then(async (exists) => {
           if (exists) {
-            Subject.createRelation(req.params.userId, req.body.nrc)
+            await Subject.createRelation(req.params.userId, req.body.nrc)
               .then((results) => {
+                console.log(results);
                 this.modifyJSON.response = 'Created';
                 this.modifyJSON.message = `New subject on user ${req.params.userId} schedule successfully created`;
                 this.modifyJSON.data = results;
