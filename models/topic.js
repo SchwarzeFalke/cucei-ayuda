@@ -125,9 +125,10 @@ class TopicMdl {
     await db.update('topic', obj, condition).then((result) => {
       if (result === undefined) {
         data = undefined;
-      }
-      data = {
-        topicId: id,
+      } else {
+        data = {
+          topicId: id,
+        }
       }
     }).catch((e) => {
       console.error(`.catch(${e})`);
@@ -142,7 +143,7 @@ class TopicMdl {
       console.log(`Error: ${e}`);
     });
     let ls = [];
-    if (this.threadsToDelete === undefined || this.threadsToDelete.isEmpty()) {
+    if (this.threadsToDelete === undefined || this.threadsToDelete.length === 0) {
       ls = 1;
     } else {
       for (var i of this.threadsToDelete){
