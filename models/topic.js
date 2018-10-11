@@ -142,14 +142,18 @@ class TopicMdl {
       console.log(`Error: ${e}`);
     });
     let ls = [];
-    for (var i of this.threadsToDelete){
-      console.log(i);
-      await PostMdl.deleteAll(`thread_id = ${i.thread_id}`).then((res) => {
-        ls.push(res);
-      }).catch((e) => {
-        console.log(`Error: ${e}`);
-      });
-      await ThreadMdl.delete(i.thread_id);
+    if (this.threadsToDelete === undefined) {
+      ls = 1;
+    } else {
+      for (var i of this.threadsToDelete){
+        await PostMdl.deleteAll(`thread_id = ${i.thread_id}`).then((res) => {
+          ls.push(res);
+        }).catch((e) => {
+          ls = 1;
+          console.log(`Error: ${e}`);
+        });
+        await ThreadMdl.delete(i.thread_id);
+      }
     }
     return ls;
   }

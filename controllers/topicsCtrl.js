@@ -192,12 +192,11 @@ class TopicCtrl {
     const topic = new TopicMdl(req.body);
     let changed = 0;
     let resultado;
-    console.log(req.params.topicId)
     try {
       resultado = await topic.deleteAll(req.params.topicId);
     } catch (e) {
       console.error(`error!! ${e}`);
-      if (changed === 0) {
+      if (resultado === 1) {
         this.badRequestJSON.message = 'One field is missings or data is wrong';
         changed = 1;
         res.status(400).send(this.badRequestJSON);
