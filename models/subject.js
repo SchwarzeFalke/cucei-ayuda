@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-07T13:20:58-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T08:24:02-05:00
+ * @Last modified time: 2018-10-11T01:11:56-05:00
  */
 
 // Models for using the Subject class
@@ -112,15 +112,19 @@ class Subject {
   }
 
   static async createRelation(userId, nrc) {
-    if (Subject.validSubject(nrc)) {
+    if (await Subject.validSubject(nrc)) {
+      const newId = `${userId}${nrc}`;
       const SubjectItem = {
+        id: newId,
         exist: 1,
         subject_id: nrc,
         stud_id: userId,
       };
+      console.log(SubjectItem);
       await db.insert('subject_lists', SubjectItem)
         .then((results) => {
           this.result = results;
+          console.log(results);
           return SubjectItem;
         })
         .catch((e) => {
