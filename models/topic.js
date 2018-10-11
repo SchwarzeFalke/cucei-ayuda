@@ -142,7 +142,7 @@ class TopicMdl {
       console.log(`Error: ${e}`);
     });
     let ls = [];
-    if (this.threadsToDelete === undefined) {
+    if (this.threadsToDelete === undefined || this.threadsToDelete.isEmpty()) {
       ls = 1;
     } else {
       for (var i of this.threadsToDelete){
