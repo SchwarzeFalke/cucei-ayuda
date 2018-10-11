@@ -227,13 +227,6 @@ class TopicCtrl {
         changed = 1;
         res.status(400).send(this.badRequestJSON);
       }
-    }
-    if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
-      if (changed === 0) {
-        this.badRequestJSON.message = 'One field is missings or data is wrong';
-        changed = 1;
-        res.status(400).send(this.badRequestJSON);
-      }
     } else {
       this.requestJSON.message = 'Data succesfully deleted';
       this.requestJSON.data = this.deleted;
