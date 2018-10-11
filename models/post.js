@@ -82,15 +82,22 @@ class PostMdl {
 
   async save() {
     delete this.post_id;
-    let results;
+    let data;
     if (this.required()) {
       await db.insert('post', this).then((result) => {
-        results = result;
+        if (result === undefined) {
+          data = undefined;
+        }
+        data = {
+          insertId: result.insertId,
+          content: this.content,
+          date: this.date,
+        };
       }).catch((e) => {
         console.error(`.catch(${e})`);
-        results = e;
+        data = e;
       });
-      return results;
+      return data;
     }
     return 1;
   }
@@ -102,7 +109,14 @@ class PostMdl {
     obj.content = this.content;
     obj.date = this.date;
     await db.update('post', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        postId: postId,
+        content: this.content,
+        date: this.date,
+      };
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
@@ -113,7 +127,12 @@ class PostMdl {
     let data;
     const condition = `post_id = ${id}`;
     await db.physicalDel('post', condition).then((result) => {
-        data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        threadId: id,
+      };
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
