@@ -271,7 +271,7 @@ class ThreadCtrl {
       res.status(403).send(this.forbiddenJSON);
     });
     if (response === undefined) {
-      this.badRequestJSON.message = 'Something went wrong!';
+      this.badRequestJSON.message = 'Something went wrong! Maybe thread does not exist';
       this.badRequestJSON.data = response;
       res.status(400).send(this.badRequestJSON);
     }

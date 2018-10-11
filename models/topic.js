@@ -77,15 +77,22 @@ class TopicMdl {
   }
 
   async save() {
-    let results;
+    let data;
     delete this.topic_id;
     if (this.required()) {
       await db.insert('topic', this).then((result) => {
-        results = result;
+        if (result === undefined) {
+          data = undefined;
+        }
+        data = {
+          insertId: result.insertId,
+          name: this.name,
+          description: this.descript,
+        };
       }).catch((e) => {
         console.error(`.catch(${e})`);
       });
-      return results;
+      return data;
     }
     return 1;
   }
@@ -97,9 +104,14 @@ class TopicMdl {
     obj.name = this.name;
     obj.descript = this.descript;
     await db.update('topic', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        name: this.name,
+        description: this.descript,
+      };
     }).catch((e) => {
-      console.log('qie esta pasando?');
       console.error(`.catch(${e})`);
     });
     return data;
@@ -111,7 +123,12 @@ class TopicMdl {
     const obj = {};
     obj.exist = 0;
     await db.update('topic', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        topicId: id,
+      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });

@@ -95,7 +95,7 @@ class PostMdl {
         };
       }).catch((e) => {
         console.error(`.catch(${e})`);
-        data = e;
+        data = undefined;
       });
       return data;
     }
