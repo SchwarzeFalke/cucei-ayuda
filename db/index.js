@@ -76,6 +76,7 @@ class DB {
       if (condition) query += ` WHERE ${condition} && exist = 1;`;
       else query += ';';
       this.connection.query(query, [table, data], (err, results) => {
+        console.log(results);
         if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
         if (err) reject(err);
         this.connection.destroy();
