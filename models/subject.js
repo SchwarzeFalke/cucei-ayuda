@@ -100,6 +100,7 @@ class Subject {
 
   async update(nrc) {
     const condition = `nrc = ${nrc}`;
+    console.log(this);
     await db.update('subject', this, condition)
       .then((results) => {
         this.result = results;
