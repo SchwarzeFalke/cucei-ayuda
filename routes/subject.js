@@ -33,7 +33,7 @@ router.get('/:nrc', subjectCtrl.getSubject);
 router.post('/', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher] ,subjectCtrl.insert);
 
 // PUT /subject/:subjectId
-router.put('/:nrc', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher], subjectCtrl.update);
+router.put('/:nrc', subjectCtrl.update);
 
 // DELETE /subject/:subjectId
 router.delete('/:nrc', subjectCtrl.del);
