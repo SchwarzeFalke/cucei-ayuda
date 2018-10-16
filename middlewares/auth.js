@@ -10,6 +10,9 @@ const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
   register(req, res, next) {
+    bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+      req.body.password = hash;
+    });
     this.newUser = new UserMdl({ ...req.body });
     this.newUser.save()
       .then(() => {
