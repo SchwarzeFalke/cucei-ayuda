@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T10:19:01-05:00
+ * @Last modified time: 2018-10-16T10:42:41-05:00
  */
 
 
@@ -28,11 +28,19 @@ class Token {
     return this.result;
   }
 
+  async sessionTimeOut(token) {
+    const
+  }
+
   async active(user) {
     const query = `status = 1 && user_id = ${user}`;
     await db.get('tokens', '*', query)
       .then((results) => {
-        this.result = results;
+        if (results.status === 1) {
+          this.result = 'ACTIVE';
+        } else {
+          this.result = 'NON-ACTIVE';
+        }
       })
       .cacht(e => console.error(`.catch(${e})`));
     return this.result;
