@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T21:37:02-05:00
+ * @Last modified time: 2018-10-16T02:03:00-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -153,7 +153,7 @@ class UserMdl {
   static async get(columns, id, condition) {
     let queryCondition = `user_code = ${id}`;
     if (condition.length > 1) {
-      queryCondition = UserMdl.processConditions(condition);
+      queryCondition += `&& ${UserMdl.processConditions(condition)}`;
     }
     await db.get('user', columns, queryCondition)
       .then((results) => {

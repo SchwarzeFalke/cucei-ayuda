@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-11T10:21:28-05:00
+ * @Last modified time: 2018-10-16T02:07:03-05:00
  */
 
 
@@ -18,13 +18,23 @@ class Token {
     this.user_id = args.suser.id;
   }
 
-  async get(token){
-    let query = `token = ${token} && status = 1`;
+  async get(token) {
+    const query = `token = ${token} && status = 1`;
     await db.get('tokens', '*', query)
-    .then((results){
-      this.result = results;
-    })
-    .cacht(e => console.error(`.catch(${e})`));
+      .then((results) => {
+        this.result = results;
+      })
+      .cacht(e => console.error(`.catch(${e})`));
+    return this.result;
+  }
+
+  async active(user) {
+    const query = `status = 1 && user_id = ${user}`;
+    await db.get('tokens', '*', query)
+      .then((results) => {
+        this.result = results;
+      })
+      .cacht(e => console.error(`.catch(${e})`));
     return this.result;
   }
 
