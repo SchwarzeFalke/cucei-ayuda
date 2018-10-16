@@ -1,14 +1,35 @@
 /**
- * @Author: schwarze_falke
+ * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T02:14:56-05:00
+ * @Last modified time: 2018-10-16T10:19:34-05:00
  */
+
 const bcrypt = require('bcrypt');
 const { UserMdl } = require('../models'); // for model handling
 const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
+  generate(user) {
+    bcrypt.hash(`${user.name}${this.newUser.user_code}`,
+      process.env.SECRET, (err, hash) => {
+        TokenMdl.create({
+          token: hash,
+          created_at: new Date(),
+          duration: 12,
+          type: 's',
+          active: 1,
+          user_id: this.newUser.id,
+        }).then(() => {
+          res.send({
+            data: {
+              hash,
+            },
+          }).status(201);
+        });
+      });
+  }
+
   register(req, res, next) {
     bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
@@ -16,24 +37,7 @@ class Auth {
     this.newUser = new UserMdl({ ...req.body });
     this.newUser.save()
       .then(() => {
-        // Crear el token
-        bcrypt.hash(`${this.newUser.name}${this.newUser.user_code}`,
-          process.env.SECRET, (err, hash) => {
-            TokenMdl.create({
-              token: hash,
-              created_at: new Date(),
-              duration: 12,
-              type: 's',
-              active: 1,
-              user_id: this.newUser.id,
-            }).then(() => {
-              res.send({
-                data: {
-                  hash,
-                },
-              }).status(201);
-            });
-          });
+
         next();
       })
       .catch((e) => {
@@ -65,6 +69,11 @@ class Auth {
           next(e);
         });
     }
+  }
+
+  session(token, next) {
+    this.statusToken = TokenMdl.get(token);
+    if ()
   }
 }
 
