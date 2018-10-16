@@ -8,8 +8,12 @@ const db = require('../db'); // for database handling
 
 class EmailMdl {
   constructor(args) {
-    if (args.email !== undefined) this.email = args.email;
-    if (args.user_code !== undefined) this.user_code = args.user_code;
+    if (args.email !== undefined) {
+      this.email = args.email;
+    }
+    if (args.user_code !== undefined) {
+      this.user_code = args.user_code;
+    }
   }
 
   static async get(id) {
