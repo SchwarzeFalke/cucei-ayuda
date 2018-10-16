@@ -11,16 +11,16 @@ const db = require('../db');
 
 class Subject {
   constructor(args) {
-    this.nrc = args.nrc;
-    this.name = args.name;
-    this.first_day = args.first_day;
-    this.sec_day = args.sec_day;
-    this.classroom = args.classroom;
-    this.section = args.section;
-    this.credits = args.credits;
-    this.building = args.building;
-    this.exist = '1';
-    this.taught_by = args.taught_by;
+    if (args.nrc !== undefined) this.nrc = args.nrc;
+    if (args.name !== undefined) this.name = args.name;
+    if (args.first_day !== undefined) this.first_day = args.first_day;
+    if (args.sec_day !== undefined) this.sec_day = args.sec_day;
+    if (args.classroom !== undefined) this.classroom = args.classroom;
+    if (args.section !== undefined) this.section = args.section;
+    if (args.credits !== undefined) this.credits = args.credits;
+    if (args.building !== undefined) this.building = args.building;
+    if (args.exist !== undefined) this.exist = '1';
+    if (args.taught_by !== undefined) this.taught_by = args.taught_by;
   }
 
   static processResult(data) {
@@ -100,7 +100,6 @@ class Subject {
 
   async update(nrc) {
     const condition = `nrc = ${nrc}`;
-    console.log(this);
     await db.update('subject', this, condition)
       .then((results) => {
         this.result = results;
