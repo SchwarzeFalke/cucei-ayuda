@@ -27,6 +27,12 @@ For example to install body-parser use the following command in your terminal wi
   
 And do the same with all the other dependencies.
 
+### BUILDING (LOCALLY)
+
+To run this application locally, the user must clone/download this repo into his machine and run the [database script](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Database). The database is a relational database developed with MySQL, but any SQL manager should work with it.
+
+![alt-text](https://i.imgur.com/uho5uU3.png)
+
 ### DEPLOYMENT
 
 To use this app in real time it's necesary to deploy the app to a server, for this app we choosed to use heroku's free app hosting.
@@ -86,10 +92,10 @@ To see more documentation about the project, please visit [this link](https://do
 
 ## Authors
 
-+ Carlos
-+ Brandon
-+ Tyler
-+ Julio 
++ [Carlos Vara](https://github.com/SchwarzeFalke) 
++ [Brandon Diaz](https://github.com/BrandonDiazM) 
++ [Tyler Ruiz](https://github.com/tyler97)
++ [Julio Mariscal](https://github.com/JulioMariscal)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md] file for details
