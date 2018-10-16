@@ -100,4 +100,4 @@ To see more documentation about the project, please visit [this link](https://do
 + [Julio Mariscal](https://github.com/JulioMariscal)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md] file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/SchwarzeFalke/cucei-ayuda/blob/master/LICENSE) file for details
