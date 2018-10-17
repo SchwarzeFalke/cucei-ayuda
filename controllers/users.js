@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
@@ -6,6 +7,7 @@
  */
 const db = require('../db'); // for database handling
 
+// FIXME se pueden cargar todos los modelos de golpe
 const { UserMdl } = require('../models'); // for model handling
 const { ScheduleMdl } = require('../models');
 const { Subject } = require('../models');
@@ -30,6 +32,10 @@ const { RoadMdl } = require('../models');
  * ---> update(req, res)        ->  Updates the requested user
  * -----------------------------------------------------------------------------
  */
+
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
 
 class UserCtrl {
   constructor() {
@@ -97,7 +103,7 @@ class UserCtrl {
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e}})`));
-    } catch (e) {
+    } catch (e) { // FIXME como ya se esta haciendo un catch en el promise, este no es necesario
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
@@ -263,6 +269,7 @@ class UserCtrl {
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
+      // FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }

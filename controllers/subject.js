@@ -2,6 +2,10 @@
 
 const { Subject } = require('../models');
 
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
+
 class SubjectCtrl {
   constructor() {
     this.getAll = this.getAll.bind(this);

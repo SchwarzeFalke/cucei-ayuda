@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-10-11T09:27:15-05:00
@@ -5,6 +6,8 @@
  * @Last modified time: 2018-10-11T09:46:09-05:00
  */
 const bcrypt = require('bcrypt');
+
+// FIXME Todos los metodos deben estar documentados
 
 class Auth {
   register(req, res, next) {

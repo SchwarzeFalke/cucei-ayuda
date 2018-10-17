@@ -40,6 +40,8 @@ class UserMdl {
   constructor(args) {
     // If the value of a requested arg is an undefined value, does not create a
     // field for it (this is useful for the updating method).
+
+    // FIXME este tipo de asignacion se puede hacer this.user_code = args.user_code || null;
     if (args.user_code !== undefined) {
       this.user_code = args.user_code;
     }
