@@ -31,6 +31,7 @@ class Auth {
   }
 
   register(req, res, next) {
+    //  hashear contraseña
     bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
@@ -48,15 +49,17 @@ class Auth {
 
   login(req, res, next) {
     this.user = UserMdl.get('*', req.user_id, `${req.password}`);
-    if (this.user.user_id !== undefined) {
-      TokenMdl.active(this.user.user_id)
-        .then((result) => {
-          console.log(result);
-        })
-        .catch(e => console.error(`.catch(${e})`));
-    } else {
-      next('Wrong user or password');
-    }
+    bcrypt.compare(req.body.password, this.user.password, (err, res) => {
+      if (res === true && this.user.user_id !== undefined){
+        TokenMdl.active(this.user.user_id)
+          .then((result) => {
+            console.log(result);
+          })
+          .catch(e => console.error(`.catch(${e})`));
+      } else {
+        next('Wrong user or password');
+      }
+    });
   }
 
   logout(token, next) {
