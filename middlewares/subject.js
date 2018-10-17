@@ -13,8 +13,7 @@ class subjectM {
     const test = /^\d+$/;
     try {
       if (req.body.nrc === undefined) {
-        forbiddenJSON.message = 'Invalid Nrc';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.nrc)) {
         if (Number(req.body.nrc) < 1) {
@@ -36,8 +35,7 @@ class subjectM {
     const test = /^[A-Za-z]+$/;
     try {
       if (req.body.name === undefined) {
-        forbiddenJSON.message = 'Invalid Name';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.name)) {
         next();
@@ -72,8 +70,7 @@ class subjectM {
     const test = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
     try {
       if (req.body.sec_day === undefined) {
-        forbiddenJSON.message = 'Invalid sec_day';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.sec_day)) {
         const fday = new Date(req.body.first_day);
@@ -97,8 +94,7 @@ class subjectM {
     const test = /^\d+$/;
     try {
       if (req.body.classroom === undefined) {
-        forbiddenJSON.message = 'Invalid Classroom';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.classroom)) {
         if (Number(req.body.classroom) < 1 || Number(req.body.classroom) > 30) {
@@ -120,8 +116,7 @@ class subjectM {
     const test = /^D\d\d$/;
     try {
       if (req.body.section === undefined) {
-        forbiddenJSON.message = 'Invalid Section';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.section)) {
         next();
@@ -138,8 +133,7 @@ class subjectM {
     const test = /^\d+$/;
     try {
       if (req.body.credits === undefined) {
-        forbiddenJSON.message = 'Invalid Credits';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.credits)) {
         if (Number(req.body.credits < 4) || Number(req.body.credits > 30)) {
@@ -161,8 +155,7 @@ class subjectM {
     const test = /^\d+$/;
     try {
       if (req.body.building === undefined) {
-        forbiddenJSON.message = 'Invalid Building';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.building)) {
         if (Number(req.body.building < 1) || Number(req.body.building > 40)) {
@@ -184,8 +177,7 @@ class subjectM {
     const test = /^[A-Za-z]+$/;
     try {
       if (req.body.taught_by === undefined) {
-        forbiddenJSON.message = 'Invalid Teacher';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.taught_by)) {
         if (Number(req.body.taught_by < 1)) {
