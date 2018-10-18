@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T10:42:41-05:00
+ * @Last modified time: 2018-10-16T13:16:15-05:00
  */
 
 
@@ -12,14 +12,14 @@ class Token {
   constructor(args) {
     this.token = args.token;
     this.created_at = args.created_at;
-    this.duration = args.duration;
+    this.expires = new Date(args.created_at.getTime() + args.duration * 60000);
     this.type = args.type;
     this.active = args.active;
     this.user_id = args.suser.id;
   }
 
   async get(token) {
-    const query = `token = ${token} && status = 1`;
+    const query = `token = ${token}`;
     await db.get('tokens', '*', query)
       .then((results) => {
         this.result = results;
@@ -29,20 +29,36 @@ class Token {
   }
 
   async sessionTimeOut(token) {
-    const
+    const query = `token = ${token}`;
+    await db.get('tokens', 'expires', query)
+      .then((result) => {
+        this.session = 'VALID';
+        if (result.expires < new Date()) {
+          Token.destroy(token);
+          this.session = 'EXPIRED';
+        }
+        return this.session;
+      })
+      .catch(e => console.error(`.catch(${e})`));
   }
 
-  async active(user) {
-    const query = `status = 1 && user_id = ${user}`;
+  async active(args) {
+    let query;
+    if (args.user) {
+      query = `user_id = ${args.user}`;
+    } else if (args.token) {
+      query = `token = ${args.token}`;
+    }
     await db.get('tokens', '*', query)
       .then((results) => {
-        if (results.status === 1) {
+        Token.sessionTimeOut(results.token);
+        if (results.exist) {
           this.result = 'ACTIVE';
         } else {
           this.result = 'NON-ACTIVE';
         }
       })
-      .cacht(e => console.error(`.catch(${e})`));
+      .catch(e => console.error(`.catch(${e})`));
     return this.result;
   }
 
@@ -53,7 +69,7 @@ class Token {
   }
 
   async destroy(token) {
-    await db.update('token', 'session(1)', `WHERE token = ${token}`)
+    await db.update('token', 'exist(0)', `WHERE token = ${token}`)
       .then((result) => {
         if (result.affectedRows === 1) {
           this.response = 'Successfully ended session';

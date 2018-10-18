@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T10:37:04-05:00
+ * @Last modified time: 2018-10-16T13:23:22-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -19,7 +19,7 @@ class Auth {
           created_at: new Date(),
           duration: 12,
           type: 's',
-          active: 1,
+          exist: 1,
           user_id: user.id,
         })
           .then(() => hash)
@@ -43,7 +43,11 @@ class Auth {
   login(req, res, next) {
     this.user = UserMdl.get('*', req.user_id, `${req.password}`);
     if (this.user.user_id !== undefined) {
-      TokenMdl.active(this.user.user_id)
+      const data = {
+        user: this.user.userId,
+        token: null,
+      };
+      TokenMdl.active(data)
         .then((result) => {
           if (result === 'NON-ACTIVE') {
             Auth.generate(this.user);
