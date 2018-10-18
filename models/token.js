@@ -29,7 +29,6 @@ class Token {
   }
 
   async sessionTimeOut(token) {
-    const
   }
 
   async active(user) {
@@ -37,9 +36,9 @@ class Token {
     await db.get('tokens', '*', query)
       .then((results) => {
         if (results.status === 1) {
-          this.result = 'ACTIVE';
+          this.result = results;
         } else {
-          this.result = 'NON-ACTIVE';
+          this.result = false;
         }
       })
       .cacht(e => console.error(`.catch(${e})`));

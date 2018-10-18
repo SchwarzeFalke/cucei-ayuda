@@ -10,7 +10,7 @@ const { UserMdl } = require('../models'); // for model handling
 const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
-  generate(user) {
+  generateToken(user) {
     this.key = `${user.name}${user.user_code}ky`;
     bcrypt.hash(this.key,
       process.env.SECRET, (err, hash) => {
@@ -35,7 +35,8 @@ class Auth {
     this.newUser = new UserMdl({ ...req.body });
     this.newUser.save()
       .then(() => {
-        Auth.generate(this.newUser);
+        this.token = Auth.generateToken(this.newUser);
+        res.send(this.token);
         next();
       })
       .catch((e) => {
@@ -48,13 +49,15 @@ class Auth {
     this.user = UserMdl.get('*', req.user_id, `${req.password}`);
     bcrypt.compare(req.body.password, this.user.password, (err, result) => {
       if (result === true && this.user.user_id !== undefined) {
-        TokenMdl.active(this.user.user_id)
-          .then((resu) => {
-            console.log(resu);
-          })
-          .catch(e => console.error(`.catch(${e})`));
-      } else {
-        next('Wrong user or password');
+        this.activeToken = TokenMdl.active(this.user.user_id);
+        if (this.activeToken === false) {
+          this.token = Auth.generateToken(this.user);
+          res.send(this.token);
+          next();
+        } else {
+          res.send(this.token);
+          next();
+        }
       }
     });
   }
