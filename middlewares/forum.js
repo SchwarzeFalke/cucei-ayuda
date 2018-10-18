@@ -1,9 +1,5 @@
-// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-09T01:15:15-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T02:00:14-05:00
+ * @author: sbrandonmdiaz
  */
 
 const badRequestJSON = {
@@ -17,6 +13,14 @@ const badRequestJSON = {
 // FIXME Todos los metodos deben estar documentados
 
 class ForumMid {
+  /**
+   * [validateNumberParams validates that the id given is a number
+   *  and is not udefined
+   * @param  {[Object]}   req  [the request given by the web page]
+   * @param  {[Object]}   res  [the response of the server]
+   * @param  {Function} next [allows the next middleware to be executed]
+   * @return {[void]}
+   */
   static validateNumberParams(req, res, next) {
     if (req.params.topicId === undefined) {
       badRequestJSON.message = 'topic id undefined';
@@ -29,6 +33,14 @@ class ForumMid {
     }
   }
 
+  /**
+   * [validateNumberParamsThread validates that the id given is a number
+   *  and is not udefined
+   * @param  {[Object]}   req  [the request given by the web page]
+   * @param  {[Object]}   res  [the response of the server]
+   * @param  {Function} next [allows the next middleware to be executed]
+   * @return {[void]}
+   */
   static validateNumberParamsThread(req, res, next) {
     if (req.params.threadId === undefined) {
       badRequestJSON.message = 'thread id undefined';
@@ -41,6 +53,14 @@ class ForumMid {
     }
   }
 
+  /**
+   * [validateNumberParams validates that the id given is a number
+   *  and is not udefined
+   * @param  {[Object]}   req  [the request given by the web page]
+   * @param  {[Object]}   res  [the response of the server]
+   * @param  {Function} next [allows the next middleware to be executed]
+   * @return {[void]}
+   */
   static validateNumberParamsPost(req, res, next) {
     if (req.params.postId === undefined) {
       badRequestJSON.message = 'post id undefined';
@@ -53,12 +73,19 @@ class ForumMid {
     }
   }
 
+  /**
+ * [noEmptyPostTopic Checks that the Topic description field isnt empty]
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
   static noEmptyPostTopic(req, res, next) {
     let empty = 0;
     if (req.body.name === undefined || req.body.descript === undefined) {
       empty = 1;
     }
-    for (var i in req.body){
+    for (var i in req.body) {
       if (i === 'name' && req.body[i] === '') {
         empty = 1;
       }
