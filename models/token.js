@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-17T23:54:50-05:00
+ * @Last modified time: 2018-10-18T02:07:33-05:00
  */
 
 
@@ -28,9 +28,9 @@ class Token {
     return this.result;
   }
 
-  async sessionTimeOut(token) {
+  static async sessionTimeOut(token) {
     const query = `token = ${token}`;
-    await db.get('tokens', 'expires', query)
+    await db.get('token', 'expires', query)
       .then((result) => {
         this.session = 'VALID';
         if (result.expires < new Date()) {
@@ -42,30 +42,32 @@ class Token {
       .catch(e => console.error(`.catch(${e})`));
   }
 
-  async active(args) {
-    let query;
-    if (args.user) {
-      query = `user_id = ${args.user}`;
-    } else if (args.token) {
-      query = `token = ${args.token}`;
-    }
-    await db.get('tokens', '*', query)
-      .then((results) => {
-        Token.sessionTimeOut(results.token);
-        if (results.exist) {
-          this.result = 'ACTIVE';
-        } else {
-          this.result = false;
-        }
-      })
-      .catch(e => console.error(`.catch(${e})`));
-    return this.result;
+  static async active(args) {
+    return new Promise(async (resolve, reject) => {
+      let query;
+      if (args.user) {
+        query = `user_id = ${args.user}`;
+      } else if (args.token) {
+        query = `token = ${args.token}`;
+      }
+      await db.get('token', '*', query)
+        .then((results) => {
+          if (results.length > 1) {
+            resolve('ACTIVE');
+          }
+          resolve('NON-ACTIVE');
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    });
   }
 
-  async create() {
-    await db.insert('token', this)
-      .then(() => this.token)
-      .catch(e => console.error(`.catch(${e})`));
+  static async create(data) {
+    return new Promise(async (resolve, reject) => {
+      console.log(data);
+      await db.insert('token', data)
+        .then(() => resolve(data.token))
+        .catch(e => console.error(`.catch(${e})`));
+    });
   }
 
   async destroy(token) {

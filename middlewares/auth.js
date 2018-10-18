@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-17T23:54:49-05:00
+ * @Last modified time: 2018-10-18T02:19:30-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -10,21 +10,25 @@ const { UserMdl } = require('../models'); // for model handling
 const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
-  generateToken(user) {
-    this.key = `${user.name}${user.user_code}ky`;
-    bcrypt.hash(this.key,
-      process.env.SECRET, (err, hash) => {
+  static async generateToken(user) {
+    this.key = `${user[0].name}${user[0].user_code}ky`;
+    console.log(this.key);
+    /// const hash = await bcrypt.hash(this.key, process.env.SECRET);
+    let hashKey;
+    await bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(this.key, salt, (err, hash) => {
         TokenMdl.create({
           token: hash,
           created_at: new Date(),
-          duration: 12,
+          expires: new Date(),
           type: 's',
           exist: 1,
-          user_id: user.id,
+          user_id: user[0].user_code,
         })
           .then(() => hash)
           .catch(e => console.error(`.catch(${e})`));
       });
+    });
   }
 
   register(req, res, next) {
@@ -45,25 +49,21 @@ class Auth {
       });
   }
 
-  login(req, res, next) {
-    this.user = UserMdl.get('*', req.user_id, `${req.password}`);
-    if (this.user.user_id !== undefined) {
+  static async login(req, res, next) {
+    const user = JSON.parse(JSON.stringify(await UserMdl.get('*', `${req.body.user_id}`)));
+    if (user[0].user_code !== undefined) {
       const data = {
-        user: this.user.userId,
+        user: user[0].user_code,
         token: null,
       };
-      TokenMdl.active(data)
-        .then((result) => {
-          if (result === 'NON-ACTIVE') {
-            Auth.generate(this.user);
-          }
-          next();
-        } else {
-          res.send(this.token);
-          next();
-        }
+      const active = await TokenMdl.active(data);
+      if (active === 'NON-ACTIVE') {
+        res.send(await Auth.generateToken(user));
+        next();
+      } else {
+        next();
       }
-    });
+    }
   }
 
   logout(token, next) {
