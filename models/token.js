@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T13:16:15-05:00
+ * @Last modified time: 2018-10-17T23:54:50-05:00
  */
 
 
@@ -55,7 +55,7 @@ class Token {
         if (results.exist) {
           this.result = 'ACTIVE';
         } else {
-          this.result = 'NON-ACTIVE';
+          this.result = false;
         }
       })
       .catch(e => console.error(`.catch(${e})`));

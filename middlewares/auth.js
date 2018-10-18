@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-16T13:23:22-05:00
+ * @Last modified time: 2018-10-17T23:54:49-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -10,7 +10,7 @@ const { UserMdl } = require('../models'); // for model handling
 const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
-  generate(user) {
+  generateToken(user) {
     this.key = `${user.name}${user.user_code}ky`;
     bcrypt.hash(this.key,
       process.env.SECRET, (err, hash) => {
@@ -28,10 +28,15 @@ class Auth {
   }
 
   register(req, res, next) {
+    //  hashear contraseña
+    bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+      req.body.password = hash;
+    });
     this.newUser = new UserMdl({ ...req.body });
     this.newUser.save()
       .then(() => {
-        Auth.generate(this.newUser);
+        this.token = Auth.generateToken(this.newUser);
+        res.send(this.token);
         next();
       })
       .catch((e) => {
@@ -53,11 +58,12 @@ class Auth {
             Auth.generate(this.user);
           }
           next();
-        })
-        .catch(e => console.error(`.catch(${e})`));
-    } else {
-      next('Wrong user or password');
-    }
+        } else {
+          res.send(this.token);
+          next();
+        }
+      }
+    });
   }
 
   logout(token, next) {
