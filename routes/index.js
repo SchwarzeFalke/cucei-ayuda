@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: root
  * @Date:   2018-09-18T09:46:30-05:00
@@ -18,6 +19,7 @@ const buildingRouter = require('./building');
 
 const router = Router();
 
+// FIXME Estos middlewares deben ir en app.js
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 

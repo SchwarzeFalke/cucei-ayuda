@@ -1,13 +1,13 @@
 const db = require('../db');
-const { ThreadMdl } = require('../models');
-const { PostMdl } = require('../models');
+const ThreadMdl = require('./thread');
+const PostMdl = require('./post');
 
 class TopicMdl {
   constructor(obj) {
     this.topic_id = obj.topic_id;
     this.name = obj.name;
     this.descript = obj.descript;
-    this.exist = obj.exist;
+    this.exist = 1;
   }
 
   required() {
@@ -15,18 +15,22 @@ class TopicMdl {
     && this.descript !== undefined);
   }
 
+  // FIXME: los modelos no deben generar logica de base de datos
   static processRequest(data) {
     let condition = '';
+    let count = 10;
+
     if (data.sort) {
       condition = ` ORDER BY name ${data.sort}`;
     }
     if (data.count) {
       condition += ` LIMIT ${data.count}`;
+      if (data.count !== count) count = data.count;
     } else {
       condition += ' LIMIT 15';
     }
     if (data.page) {
-      condition += ` OFFSET ${data.page - 1} `;
+      condition += ` OFFSET ${(data.page - 1) * count} `;
     }
     return condition;
   }
@@ -63,7 +67,7 @@ class TopicMdl {
       order = this.processRequest(data);
       console.log(order);
     } else {
-      condition = `topic_id = ${Object.values(data)}`;
+      condition = `topic_id = ${data}`;
     }
     await db.get('topic', ['topic_id', 'name', 'descript', 'exist'], condition, order).then((result) => {
       response = this.processData(result);
@@ -74,15 +78,22 @@ class TopicMdl {
   }
 
   async save() {
-    let results;
+    let data;
     delete this.topic_id;
     if (this.required()) {
       await db.insert('topic', this).then((result) => {
-        results = result;
+        if (result === undefined) {
+          data = undefined;
+        }
+        data = {
+          insertId: result.insertId,
+          name: this.name,
+          description: this.descript,
+        };
       }).catch((e) => {
         console.error(`.catch(${e})`);
       });
-      return results;
+      return data;
     }
     return 1;
   }
@@ -94,7 +105,13 @@ class TopicMdl {
     obj.name = this.name;
     obj.descript = this.descript;
     await db.update('topic', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        name: this.name,
+        description: this.descript,
+      };
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
@@ -107,24 +124,16 @@ class TopicMdl {
     const obj = {};
     obj.exist = 0;
     await db.update('topic', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      } else {
+        data = {
+          topicId: id,
+        }
+      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
-    return data;
-  }
-
-  async deleteReal(id) {
-    let data;
-    const condition = `topic_id = ${id}`;
-    const obj = {};
-    obj.exist = 0;
-    await db.update('topic', obj, condition).then((result) => {
-      data = result;
-    }).catch((e) => {
-      console.error(`.catch(${e})`);
-    });
-    console.log(data);
     return data;
   }
 
@@ -135,14 +144,18 @@ class TopicMdl {
       console.log(`Error: ${e}`);
     });
     let ls = [];
-    for (var i of this.threadsToDelete){
-      console.log(i);
-      await PostMdl.deleteAll(`thread_id = ${i.thread_id}`).then((res) => {
-        ls.push(res);
-      }).catch((e) => {
-        console.log(`Error: ${e}`);
-      });
-      await ThreadMdl.delete(i.thread_id);
+    if (this.threadsToDelete === undefined || this.threadsToDelete.length === 0) {
+      ls = 1;
+    } else {
+      for (var i of this.threadsToDelete){
+        await PostMdl.deleteAll(`thread_id = ${i.thread_id}`).then((res) => {
+          ls.push(res);
+        }).catch((e) => {
+          ls = 1;
+          console.log(`Error: ${e}`);
+        });
+        await ThreadMdl.delete(i.thread_id);
+      }
     }
     return ls;
   }

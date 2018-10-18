@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-07T13:20:58-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T23:11:17-05:00
+ * @Last modified time: 2018-10-11T01:11:56-05:00
  */
 
 // Models for using the Subject class
@@ -11,16 +11,36 @@ const db = require('../db');
 
 class Subject {
   constructor(args) {
-    this.nrc = args.nrc;
-    this.name = args.name;
-    this.first_day = args.first_day;
-    this.sec_day = args.sec_day;
-    this.classroom = args.classroom;
-    this.section = args.section;
-    this.credits = args.credits;
-    this.building = args.building;
-    this.exist = args.exist;
-    this.taught_by = args.taught_by;
+    if (args.nrc !== undefined) {
+      this.nrc = args.nrc;
+    }
+    if (args.name !== undefined) {
+      this.name = args.name;
+    }
+    if (args.first_day !== undefined) {
+      this.first_day = args.first_day;
+    }
+    if (args.sec_day !== undefined) {
+      this.sec_day = args.sec_day;
+    }
+    if (args.classroom !== undefined) {
+      this.classroom = args.classroom;
+    }
+    if (args.section !== undefined) {
+      this.section = args.section;
+    }
+    if (args.credits !== undefined) {
+      this.credits = args.credits;
+    }
+    if (args.building !== undefined) {
+      this.building = args.building;
+    }
+    if (args.exist !== undefined) {
+      this.exist = '1';
+    }
+    if (args.taught_by !== undefined) {
+      this.taught_by = args.taught_by;
+    }
   }
 
   static processResult(data) {
@@ -54,7 +74,7 @@ class Subject {
   }
 
   static async getAll() {
-    await db.get('subject', '*')
+    await db.get('subject', ['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'])
       .then((results) => {
         this.result = Subject.processResult(results);
       })
@@ -76,7 +96,7 @@ class Subject {
   }
 
   static async del(condition) {
-    await db.del('subject', condition)
+    await db.logicalDel('subject', condition)
       .then((results) => {
         this.result = results;
       })
@@ -111,16 +131,19 @@ class Subject {
     return this.result;
   }
 
-  static async createRelation(nrc, userId) {
-    if (Subject.validSubject(nrc)) {
+  static async createRelation(userId, nrc) {
+    if (await Subject.validSubject(nrc)) {
+      const newId = `${userId}${nrc}`;
       const SubjectItem = {
+        id: newId,
         exist: 1,
-        subject_id: userId,
-        stud_id: nrc,
+        subject_id: nrc,
+        stud_id: userId,
       };
       await db.insert('subject_lists', SubjectItem)
         .then((results) => {
           this.result = results;
+          console.log(results);
           return SubjectItem;
         })
         .catch((e) => {

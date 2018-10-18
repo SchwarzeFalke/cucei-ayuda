@@ -1,10 +1,3 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T22:23:28-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:55:26-05:00
- */
-
 /*
  * Definition of subject routing
  */
@@ -29,6 +22,7 @@ const router = Router();
 router.get('/', subjectCtrl.getAll);
 
 // GET /subject/:subjectId    returns specific subject
+// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
 router.get('/:nrc', subjectCtrl.getSubject);
 
 // GET /subject/:subjectId/subjects
@@ -37,12 +31,16 @@ router.get('/:nrc', subjectCtrl.getSubject);
 
 // POST /subject
 // [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher],
-router.post('/', subjectCtrl.insert);
+// FIXME Brincar por linea cada valor del arreglo
+router.post('/', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher] ,subjectCtrl.insert);
 
 // PUT /subject/:subjectId
-router.put('/:nrc', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher], subjectCtrl.update);
+// FIXME Falta validar el cuerpo del request
+// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
+router.put('/:nrc', subjectCtrl.update);
 
 // DELETE /subject/:subjectId
+// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
 router.delete('/:nrc', subjectCtrl.del);
 
 module.exports = router;

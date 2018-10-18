@@ -1,20 +1,29 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T01:15:15-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:15:00-05:00
+ */
+
+
+
 const db = require('../db');
 
 class PostMdl {
   constructor({
-    post_id, content, exist, stud_code, thread_id, date
+    post_id, content, user_code, thread_id, date
   }) {
     this.post_id = post_id;
     this.content = content;
-    this.exist = exist;
-    this.stud_code = stud_code;
+    this.exist = 1;
+    this.user_code = user_code;
     this.thread_id = thread_id;
     this.date = date;
   }
 
   required() {
     return (this.content !== undefined
-    && this.exist !== undefined && this.stud_code !== undefined
+    && this.exist !== undefined && this.user_code !== undefined
     && this.thread_id !== undefined && this.date !== undefined);
   }
 
@@ -22,8 +31,7 @@ class PostMdl {
     let condition = '';
     if (data.sort) {
       condition += ` ORDER BY date ${data.sort}`;
-    }
-    else {
+    } else {
       condition += ' ORDER BY date';
     }
     return condition;
@@ -38,11 +46,11 @@ class PostMdl {
   }
 
   static async getAll(threadId) {
-    let all = ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'];
+    let all = ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'];
     const order = ' ORDER BY date';
     let res;
     const condition = `thread_id = ${threadId}`;
-    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((results) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'], condition, order).then((results) => {
       res = this.processData(results);
     }).catch((e) => {
       console.log(`Error: ${e}`);
@@ -64,8 +72,7 @@ class PostMdl {
     } else {
       condition = ` post_id = ${data} && thread_id = ${threadId}`;
     }
-    console.log(condition);
-    await db.get('post', ['post_id', 'content', 'exist', 'stud_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
+    await db.get('post', ['post_id', 'content', 'exist', 'user_code', 'thread_id', 'exist', 'date'], condition, order).then((result) => {
       response = this.processData(result);
     }).catch((e) => {
       console.error(`.catch(${e})`);
@@ -75,16 +82,22 @@ class PostMdl {
 
   async save() {
     delete this.post_id;
-    let results;
-    console.log(this);
+    let data;
     if (this.required()) {
       await db.insert('post', this).then((result) => {
-        results = result;
+        if (result === undefined) {
+          data = undefined;
+        }
+        data = {
+          insertId: result.insertId,
+          content: this.content,
+          date: this.date,
+        };
       }).catch((e) => {
         console.error(`.catch(${e})`);
+        data = undefined;
       });
-      console.log(results);
-      return results;
+      return data;
     }
     return 1;
   }
@@ -96,7 +109,14 @@ class PostMdl {
     obj.content = this.content;
     obj.date = this.date;
     await db.update('post', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      }
+      data = {
+        postId: postId,
+        content: this.content,
+        date: this.date,
+      };
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
@@ -107,11 +127,12 @@ class PostMdl {
     let data;
     const condition = `post_id = ${id}`;
     await db.physicalDel('post', condition).then((result) => {
-      if (data !== undefined) {
-        data = result;
-      } else {
+      if (result === undefined) {
         data = undefined;
       }
+      data = {
+        threadId: id,
+      };
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });

@@ -99,9 +99,9 @@ class BuildingMdl {
   }
 
   // logic detele a specific building
-  async logDel(id) {
+  async logicalDel(id) {
     const condition = `building_id = ${id}`;
-    await db.logDel('building', condition)
+    await db.logicalDel('building', condition)
       .then((results) => {
         this.result = results;
         return this.result;

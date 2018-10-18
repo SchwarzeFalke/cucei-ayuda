@@ -1,13 +1,10 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T13:20:58-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:39:55-05:00
- */
-
 // controller for the Subject class
 
 const { Subject } = require('../models');
+
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
 
 class SubjectCtrl {
   constructor() {
@@ -62,7 +59,7 @@ class SubjectCtrl {
         .then((exists) => {
           if (exists) {
             const condition = `nrc = ${req.params.nrc}`;
-            Subject.get('*', condition)
+            Subject.get(['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'], condition)
               .then((data) => {
                 this.requestJSON.data = data;
                 res.status(this.requestJSON.status).send(this.requestJSON);

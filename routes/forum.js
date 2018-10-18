@@ -1,4 +1,13 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T02:00:56-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:01:51-05:00
+ */
+
 const { Router } = require('express');
+// FIXME los controladores se pueden cargar en una sola linea const { threadCtrl, topicCtrl } = require('../controllers');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
 const { forumMid } = require('../middlewares');
@@ -9,6 +18,7 @@ const router = Router();
  * ALL GET methods for the forum
  */
 
+// FIXME para los casos de muchos middlewares, deberia ir uno por linea
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
 router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);
@@ -40,11 +50,14 @@ router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
 
  */
 
-router.put('/:topicId', [forumMid.validateNumberParams], topicCtrl.modify);
+router.put('/:topicId', [forumMid.validateNumberParams,
+  forumMid.noEmptyUT], topicCtrl.modify);
 router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread], threadCtrl.modify);
-router.put('/:topicId/threads/:threadId/posts/:postId',
-   threadCtrl.updatePost);
+  forumMid.validateNumberParamsThread, forumMid.noEmptyUTh], threadCtrl.modify);
+router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread, forumMid.validateNumberParamsPost,
+  forumMid.noEmptyUP],
+  threadCtrl.updatePost);
 
 /**
  * delete routes
@@ -53,7 +66,7 @@ router.put('/:topicId/threads/:threadId/posts/:postId',
  * DELETE /:topicId/threads/:threadId/posts/:postId
  */
 
-router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.delete);
+router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.deleteAll);
 router.delete('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread], threadCtrl.delete);
 router.delete('/:topicId/threads/:threadId/posts/:postId',

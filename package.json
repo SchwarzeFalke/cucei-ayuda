@@ -12,16 +12,20 @@
   },
   "author": "Julio Mariscal <julio.mariscal.bautista@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "10.9.0"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "express": "^4.16.3",
     "eslinter": "^3.2.1",
+    "express": "^4.16.3",
     "faker": "^4.1.0",
     "mysql": "^2.16.0"
   },
   "devDependencies": {
+    "bcrypt": "^3.0.1",
     "eslint": "^5.6.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",

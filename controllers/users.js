@@ -1,13 +1,17 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-08T00:46:03-05:00
+ * @Last modified time: 2018-10-11T01:10:18-05:00
  */
+const db = require('../db'); // for database handling
 
+// FIXME se pueden cargar todos los modelos de golpe
 const { UserMdl } = require('../models'); // for model handling
 const { ScheduleMdl } = require('../models');
 const { Subject } = require('../models');
+const { RoadMdl } = require('../models');
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -28,6 +32,10 @@ const { Subject } = require('../models');
  * ---> update(req, res)        ->  Updates the requested user
  * -----------------------------------------------------------------------------
  */
+
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
 
 class UserCtrl {
   constructor() {
@@ -95,7 +103,7 @@ class UserCtrl {
           res.status(this.requestJSON.status).send(this.requestJSON);
         })
         .catch(e => console.error(`.catch(${e}})`));
-    } catch (e) {
+    } catch (e) { // FIXME como ya se esta haciendo un catch en el promise, este no es necesario
       console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
@@ -127,21 +135,21 @@ class UserCtrl {
 
   async getRoads(req, res) {
     try {
-      await UserMdl.validUser(req.params.userId)
-        .then((exists) => {
-          if (exists) {
-            UserMdl.get('*', req.params.userId, req.query)
+      if (await UserMdl.validUser(req.params.userId)) {
+        const condition = `stud_id = ${req.params.userId}`;
+        await RoadMdl.getBuildings('subject_id', condition)
+          .then(async (buildings) => {
+            await RoadMdl.getRoad(buildings)
               .then((data) => {
-                this.requestJSON.data = data;
+                this.requestJSON.data = [data, buildings];
                 res.status(this.requestJSON.status).send(this.requestJSON);
               })
               .catch(e => console.error(`.catch(${e})`));
-          } else {
-            this.forbiddenJSON.message = 'The requested user cannot be found';
-            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
-          }
-        })
-        .catch(e => console.error(`.catch(${e})`));
+          });
+      } else {
+        this.forbiddenJSON.message = 'The requested user cannot be found';
+        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      }
     } catch (e) {
       console.error(`try/catch(${e})`);
       this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
@@ -174,7 +182,7 @@ class UserCtrl {
   async getPosts(req, res) {
     try {
       const condition = `user_code = ${req.params.userId}`;
-      await UserMdl.get('*', condition)
+      await db.get('post', '*', condition)
         .then((data) => {
           this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
@@ -208,10 +216,11 @@ class UserCtrl {
   async insertSchedule(req, res) {
     try {
       await UserMdl.validUser(req.params.userId)
-        .then((exists) => {
+        .then(async (exists) => {
           if (exists) {
-            Subject.createRelation(req.params.userId, req.body.nrc)
+            await Subject.createRelation(req.params.userId, req.body.nrc)
               .then((results) => {
+                console.log(results);
                 this.modifyJSON.response = 'Created';
                 this.modifyJSON.message = `New subject on user ${req.params.userId} schedule successfully created`;
                 this.modifyJSON.data = results;
@@ -260,6 +269,7 @@ class UserCtrl {
         .catch(e => console.error(`.catch(${e})`));
     } catch (e) {
       console.error(`try/catch(${e})`);
+      // FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
