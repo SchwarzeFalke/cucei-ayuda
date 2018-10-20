@@ -35,6 +35,6 @@ router.post('/', [middleWares.subjectM.validateNrc, middleWares.subjectM.validat
 router.put('/:nrc', subjectCtrl.update);
 
 // DELETE /subject/:subjectId
-router.delete('/:nrc', subjectCtrl.del);
+router.delete('/:nrc',  [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher], subjectCtrl.del);
 
 module.exports = router;

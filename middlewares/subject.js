@@ -52,8 +52,7 @@ class subjectM {
     const test = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
     try {
       if (req.body.first_day === undefined) {
-        forbiddenJSON.message = 'Invalid first_day';
-        res.status(forbiddenJSON.status).send(forbiddenJSON);
+        next();
       }
       if (test.test(req.body.first_day)) {
         next();
@@ -155,6 +154,7 @@ class subjectM {
     const test = /^\d+$/;
     try {
       if (req.body.building === undefined) {
+        console.log('exiting building middleware');
         next();
       }
       if (test.test(req.body.building)) {
@@ -184,7 +184,6 @@ class subjectM {
           forbiddenJSON.message = 'Invalid Teacher';
           res.status(forbiddenJSON.status).send(forbiddenJSON);
         } else {
-          console.log('entering validate teacher');
           next();
         }
       } else {
