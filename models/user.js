@@ -69,6 +69,9 @@ class UserMdl {
     ];
   }
 
+  canDo(method, url) {
+    if()
+  }
   /**
    * [processResult description: Processes all the raw data and return the
    * requested data in a formatted way]
