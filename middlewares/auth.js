@@ -113,6 +113,13 @@ class Auth {
     }
     return true;
   }
+
+  getHeaderToken(bearer) {
+    //  obtenemos token
+    this.bearerToken = bearer.split('')[1];
+    return this.bearerToken;
+  }
+
 }
 
 module.exports = Auth;

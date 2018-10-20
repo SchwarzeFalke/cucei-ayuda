@@ -70,7 +70,19 @@ class UserMdl {
   }
 
   canDo(method, url) {
-    if()
+    // sigo sin saber hacer esto, de donde sacaremos los permisos
+    if (method === 'GET'){
+
+    }
+    if (method === 'DELETE'){
+
+    }
+    if (method === 'POST'){
+
+    }
+    if (method === 'PUT'){
+
+    }
   }
   /**
    * [processResult description: Processes all the raw data and return the
