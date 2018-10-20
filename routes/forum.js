@@ -15,7 +15,13 @@ const router = Router();
 /**
  * ALL GET methods for the forum
  */
+router.get('/login', (req, res, next) => {
+  let bearer = req.headers.authorization;
+  const ber = bearer.split(' ')[1];
+  console.log(ber);
 
+  res.send('2');
+});
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
 router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);
