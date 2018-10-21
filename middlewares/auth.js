@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-18T13:56:37-05:00
+ * @Last modified time: 2018-10-21T16:38:02-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -14,7 +14,7 @@ class Auth {
     this.key = `${user[0].name}${user[0].user_code}ky`;
     console.log(this.key);
     await bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(this.key, salt, (err, hash) => {
+      bcrypt.hash(this.key, salt, (hashErr, hash) => {
         TokenMdl.create({
           token: hash,
           created_at: new Date(),
@@ -24,9 +24,12 @@ class Auth {
           user_id: user[0].user_code,
         })
           .then(() => hash)
-          .catch(e => console.error(`.catch(${e})`));
+          .catch((e) => {
+            console.error(`.catch(${hashErr})`);
+            throw e;
+          });
       });
-    });
+    }).catch((err) => { throw err; });
   }
 
   async register(req, res, next) {
