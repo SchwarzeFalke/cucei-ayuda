@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-18T02:19:30-05:00
+ * @Last modified time: 2018-10-18T13:56:37-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -13,8 +13,6 @@ class Auth {
   static async generateToken(user) {
     this.key = `${user[0].name}${user[0].user_code}ky`;
     console.log(this.key);
-    /// const hash = await bcrypt.hash(this.key, process.env.SECRET);
-    let hashKey;
     await bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(this.key, salt, (err, hash) => {
         TokenMdl.create({
