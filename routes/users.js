@@ -3,7 +3,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-11T01:04:37-05:00
+ * @Last modified time: 2018-10-18T00:48:58-05:00
  */
 
 const { Router } = require('express');
@@ -25,6 +25,10 @@ const router = Router();
  GET /users/userId/schedule
  GET /users/userId/posts
 */
+
+
+router.post('/login', [middleWares.Auth.login]);
+
 
 // FIXME Falta un middleware para validar que el param :amount sea un numero valido
 router.get('/fakeData/:amount', (req, res) => {
