@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-10-09T01:15:15-05:00
@@ -7,10 +8,13 @@
 
 const badRequestJSON = {
   status: 400,
-  response: 'Bad request',
+  response: 'Bad request', // FIXME el status code para un input incorrecto no es 400
   message: null,
   data: null,
 };
+
+// FIXME Probably unify the validator for forum, and subject in validator will create a more generic validator for future resources
+// FIXME Todos los metodos deben estar documentados
 
 class ForumMid {
   static validateNumberParams(req, res, next) {

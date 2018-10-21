@@ -27,6 +27,12 @@ For example to install body-parser use the following command in your terminal wi
   
 And do the same with all the other dependencies.
 
+### BUILDING (LOCALLY)
+
+To run this application locally, the user must clone/download this repo into his machine and run the [database script](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Database). The database is a relational database developed with MySQL, but any SQL manager should work with it.
+
+![alt-text](https://i.imgur.com/uho5uU3.png)
+
 ### DEPLOYMENT
 
 To use this app in real time it's necesary to deploy the app to a server, for this app we choosed to use heroku's free app hosting.
@@ -43,23 +49,25 @@ To use heroku you first need to create an account on heroku's official website h
 
 Use heroku open to open the app
 
-### 1- USERS MODULE
+### APP MODULES
+
+#### USERS MODULE
 
 This module allows to create users into database as well as handle the schedules and roads (for the map resource). Also, allows the user to request for its posts on the forum resource.
 
 All the users can create schedules from the subject resource, but only that. Higher privilages are required to make another actions with the subject table.
 
-### 2- MAP MODULE
+#### MAP MODULE
 
 This module is only used to see buildings and retrieve a specific building
 
-### 3- SUBECT MODULE
+#### SUBECT MODULE
 
 This module is only for the administrator user; allows to create new subjects to create schedules for the users. This model is related to the building model, because it needs information about the bulding where the class is given.
 
 The normal user cannot manipulate the data from this model.
 
-### 4- FORUM MODULE
+#### FORUM MODULE
 
 The forum allow users to create topics, which is usually a word describing the main theme of the topic. ej "Comida"
 
@@ -79,17 +87,17 @@ For more information about the forum:
 
 ### Collection
 
-To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/be0fff6d8a618111c276)
+To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/26ad4e3449008ebf1c02)
 
 ### API Documentation
-To see more documentation about the project, please visit [this link](https://web.postman.co/collections/5136276-1bb78b75-96bb-49ed-a2d0-88b9fd52ee6f?workspace=7082d4e1-6a80-4677-8399-27e29b9fc02e#introduction)
+To see more documentation about the project, please visit [this link](https://documenter.getpostman.com/view/5136276/RWgryJ77)
 
 ## Authors
 
-+ Carlos
-+ Brandon
-+ Tyler
-+ Julio 
++ [Carlos Vara](https://github.com/SchwarzeFalke) 
++ [Brandon Diaz](https://github.com/BrandonDiazM) 
++ [Tyler Ruiz](https://github.com/tyler97)
++ [Julio Mariscal](https://github.com/JulioMariscal)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md] file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/SchwarzeFalke/cucei-ayuda/blob/master/LICENSE) file for details

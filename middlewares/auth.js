@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
@@ -8,6 +9,8 @@
 const bcrypt = require('bcrypt');
 const { UserMdl } = require('../models'); // for model handling
 const { TokenMdl } = require('../models'); // for model handling
+
+// FIXME Todos los metodos deben estar documentados
 
 class Auth {
   static async generateToken(user) {

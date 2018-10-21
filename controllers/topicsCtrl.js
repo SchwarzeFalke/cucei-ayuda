@@ -2,6 +2,10 @@ const { TopicMdl } = require('../models');
 const { ThreadMdl } = require('../models');
 const { PostMdl } = require('../models');
 
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
+
 class TopicCtrl {
   constructor() {
     this.getAll = this.getAll.bind(this);
@@ -192,12 +196,11 @@ class TopicCtrl {
     const topic = new TopicMdl(req.body);
     let changed = 0;
     let resultado;
-    console.log(req.params.topicId)
     try {
       resultado = await topic.deleteAll(req.params.topicId);
     } catch (e) {
       console.error(`error!! ${e}`);
-      if (changed === 0) {
+      if (resultado === 1) {
         this.badRequestJSON.message = 'One field is missings or data is wrong';
         changed = 1;
         res.status(400).send(this.badRequestJSON);
@@ -223,13 +226,6 @@ class TopicCtrl {
       }
     }
     if (this.deleted === undefined) {
-      if (changed === 0) {
-        this.badRequestJSON.message = 'One field is missings or data is wrong';
-        changed = 1;
-        res.status(400).send(this.badRequestJSON);
-      }
-    }
-    if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
       if (changed === 0) {
         this.badRequestJSON.message = 'One field is missings or data is wrong';
         changed = 1;

@@ -40,15 +40,35 @@ class UserMdl {
   constructor(args) {
     // If the value of a requested arg is an undefined value, does not create a
     // field for it (this is useful for the updating method).
-    if (args.user_code !== undefined) this.user_code = args.user_code;
-    if (args.name !== undefined) this.name = args.name;
-    if (args.middle_name !== undefined) this.middle_name = args.middle_name;
-    if (args.flastname !== undefined) this.flastname = args.flastname;
-    if (args.mlastname !== undefined) this.mlastname = args.mlastname;
-    if (args.email !== undefined) this.email = args.email;
-    if (args.password !== undefined) this.password = args.password;
-    if (args.privilages !== undefined) this.privilages = args.privilages;
-    if (args.exist !== undefined) this.exist = args.exist;
+
+    // FIXME este tipo de asignacion se puede hacer this.user_code = args.user_code || null;
+    if (args.user_code !== undefined) {
+      this.user_code = args.user_code;
+    }
+    if (args.name !== undefined) {
+      this.name = args.name;
+    }
+    if (args.middle_name !== undefined) {
+      this.middle_name = args.middle_name;
+    }
+    if (args.flastname !== undefined) {
+      this.flastname = args.flastname;
+    }
+    if (args.mlastname !== undefined) {
+      this.mlastname = args.mlastname;
+    }
+    if (args.email !== undefined) {
+      this.email = args.email;
+    }
+    if (args.password !== undefined) {
+      this.password = args.password;
+    }
+    if (args.privilages !== undefined) {
+      this.privilages = args.privilages;
+    }
+    if (args.exist !== undefined) {
+      this.exist = args.exist;
+    }
   }
 
   /**
@@ -115,7 +135,9 @@ class UserMdl {
         this.querySentence += `${column} = '${data[column]}' && `;
       }
     });
-    if (this.querySentence.length < 1) return '';
+    if (this.querySentence.length < 1) {
+      return '';
+    }
     // if there are not more columns to evaluate, delete the last '&&' operator
     // from the query condition
     return this.querySentence.slice(0, -4);

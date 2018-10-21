@@ -2,11 +2,12 @@
 
 const forbiddenJSON = {
   status: 403,
-  response: 'Forbidden',
+  response: 'Forbidden', // FIXME un campo con un formato no valido o vacio no es Forbidden
   message: null,
   data: null,
 };
 
+// FIXME Todos los metodos deben estar documentados
 
 class subjectM {
   static validateNrc(req, res, next) {

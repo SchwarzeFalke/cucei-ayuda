@@ -7,6 +7,9 @@
 
 const mysql = require('mysql');
 
+// FIXME Todos los metodos deben estar documentados
+// FIXME La conexion a la base de datos deberia hacerse solo una vez
+
 class DB {
   constructor() {
     this.connection = mysql.createConnection({
@@ -27,14 +30,24 @@ class DB {
     return new Promise((resolve, reject) => {
       // const data = [columns, table];
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
-      if (columns === '*') query = 'SELECT * FROM ??';
-      else query = `SELECT ${columns} FROM ??`;
+      if (columns === '*') {
+        query = 'SELECT * FROM ??';
+      }
+      else{
+        query = `SELECT ${columns} FROM ??`;
+      }
       query += ' WHERE exist = TRUE';
-      if (condition) query += ` && ${condition}`;
-      if (order) query += order;
+      if (condition) {
+        query += ` && ${condition}`;
+      }
+      if (order){
+        query += order;
+      }
       query += ';';
       this.connection.query(query, table, (err, results) => {
-        if (err) reject(err);
+        if (err) {
+          reject(err);
+        }
         this.connection.destroy();
         resolve(results);
       });
@@ -73,11 +86,19 @@ class DB {
     });
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET ?';
-      if (condition) query += ` WHERE ${condition} && exist = 1;`;
-      else query += ';';
+      if (condition) {
+        query += ` WHERE ${condition} && exist = 1;`;
+      }
+      else {
+        query += ';';
+      }
       this.connection.query(query, [table, data], (err, results) => {
-        if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
-        if (err) reject(err);
+        if (results.affectedRows === 0 || results.changedRows === 0) {
+          reject(new Error('Doesnt exist'));
+        }
+        if (err) {
+          reject(err);
+        }
         this.connection.destroy();
         return resolve(results);
       });
@@ -93,10 +114,16 @@ class DB {
     });
     return new Promise((resolve, reject) => {
       let query = 'DELETE FROM ??';
-      if (condition) query += ` WHERE ${condition};`;
-      else query += ';';
+      if (condition) {
+        query += ` WHERE ${condition};`;
+      }
+      else {
+        query += ';';
+      }
       this.connection.query(query, table, (err, results) => {
-        if (err) reject(err);
+        if (err) {
+          reject(err);
+        }
         this.connection.destroy();
         resolve(results);
       });
@@ -112,10 +139,16 @@ class DB {
     });
     return new Promise((resolve, reject) => {
       let query = 'UPDATE ?? SET exist = 0';
-      if (condition) query += ` WHERE ${condition}`;
+      if (condition) {
+        query += ` WHERE ${condition}`;
+      }
       this.connection.query(query, table, (err, results) => {
-        if (results.affectedRows === 0 || results.changedRows === 0) reject(new Error('Doesnt exist'));
-        if (err) reject(err);
+        if (results.affectedRows === 0 || results.changedRows === 0) {
+          reject(new Error('Doesnt exist'));
+        }
+        if (err) {
+          reject(err);
+        }
         this.connection.destroy();
         resolve(results);
       });

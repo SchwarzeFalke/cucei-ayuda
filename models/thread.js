@@ -28,6 +28,7 @@ class ThreadMdl {
     && this.topic_id !== undefined);
   }
 
+  // FIXME: los modelos no deben generar logica de base de datos
   static processRequest(data) {
     let condition = '';
     let count = 10;
@@ -93,15 +94,23 @@ class ThreadMdl {
 
   async save() {
     delete this.thread_id;
-    let results;
+    let data;
     if (this.required()) {
       await db.insert('thread', this).then((result) => {
-        results = result;
+        if (result === undefined) {
+          data = 2;
+        } else {
+          data = {
+            insertId: result.insertId,
+            subject: this.subject,
+            created: this.created,
+          };
+        }
       }).catch((e) => {
         console.error(`.catch(${e})`);
         return undefined;
       });
-      return results;
+      return data;
     }
     return 1;
   }
@@ -113,12 +122,19 @@ class ThreadMdl {
     obj.subject = this.subject;
     obj.created = this.created;
     await db.update('thread', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      } else {
+        data = {
+          threadId: threadId,
+          subject: this.subject,
+          created: this.created,
+        };
+      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
       return undefined;
     });
-    console.log(this.data);
     return data;
   }
 
@@ -128,7 +144,13 @@ class ThreadMdl {
     const obj = {};
     obj.exist = 0;
     await db.update('thread', obj, condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      } else {
+        data = {
+          threadId: id,
+        };
+      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
@@ -137,7 +159,6 @@ class ThreadMdl {
 
   static async deleteReal(id) {
     let data;
-    console.log(id);
     await PostMdl.deleteAll(`thread_id = ${id}`).then((result) => {
       data = result;
     }).catch((e) => {
@@ -145,7 +166,14 @@ class ThreadMdl {
     });
     const condition = `thread_id = ${id}`;
     await db.physicalDel('thread', condition).then((result) => {
-      data = result;
+      if (result === undefined) {
+        data = undefined;
+      } else {
+        data = {
+          threadId: id,
+          affectedRows: result.affectedRows,
+        };
+      }
     }).catch((e) => {
       console.error(`.catch(${e})`);
     });
