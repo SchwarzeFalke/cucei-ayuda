@@ -29,22 +29,23 @@ class Auth {
     });
   }
 
-  register(req, res, next) {
-    //  hashear contraseña
+  async register(req, res, next) {
     bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
     this.newUser = new UserMdl({ ...req.body });
-    this.newUser.save()
-      .then(() => {
-        this.token = Auth.generateToken(this.newUser);
-        res.send(this.token);
-        next();
-      })
-      .catch((e) => {
-        console.error(`.catch(${e})`);
-        next(e);
+    try {
+      await this.newUser.save();
+      this.token = Auth.generateToken(this.newUser);
+      res.send(this.token);
+      next({
+        token: this.token,
+        user: this.newUser,
       });
+    } catch (e) {
+      console.error(`.catch(${e})`);
+      next(e);
+    }
   }
 
   static async login(req, res, next) {
@@ -75,6 +76,48 @@ class Auth {
         });
     }
   }
+
+  haveSession(req, res, next) {
+    const token = this.getHeaderToken(req.headers.authorization);
+    this.token = TokenMdl.get(token);
+    if (this.isActive()) {
+      req.session = {
+        token: this.token,
+        user: UserMdl.get(this.token.userId),
+      };
+      next();
+    } else {
+      next({
+        status: 403,
+        message: 'You need to loggin',
+      });
+    }
+  }
+
+  havePermission(req, res, next) {
+    this.method = req.method;
+    if (req.session.UserMdl.canDo(this.method, req.originalUrl)) {
+      next();
+    } else {
+      res.send('NO tienes permiso man');
+    }
+  }
+
+  isActive() {
+    const time = new Date();
+    if (time > this.token.created + this.token.expires) {
+      this.token.destroy();
+      return false;
+    }
+    return true;
+  }
+
+  getHeaderToken(bearer) {
+    //  obtenemos token
+    this.bearerToken = bearer.split('')[1];
+    return this.bearerToken;
+  }
+
 }
 
 module.exports = Auth;
