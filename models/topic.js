@@ -15,6 +15,7 @@ class TopicMdl {
     && this.descript !== undefined);
   }
 
+  // FIXME: los modelos no deben generar logica de base de datos
   static processRequest(data) {
     let condition = '';
     let count = 10;

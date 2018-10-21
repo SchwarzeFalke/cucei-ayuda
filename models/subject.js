@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-07T13:20:58-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-11T01:11:56-05:00
+ * @Last modified time: 2018-10-18T01:32:18-05:00
  */
 
 // Models for using the Subject class
@@ -143,7 +143,6 @@ class Subject {
       await db.insert('subject_lists', SubjectItem)
         .then((results) => {
           this.result = results;
-          console.log(results);
           return SubjectItem;
         })
         .catch((e) => {

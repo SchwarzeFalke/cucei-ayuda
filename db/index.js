@@ -7,6 +7,9 @@
 
 const mysql = require('mysql');
 
+// FIXME Todos los metodos deben estar documentados
+// FIXME La conexion a la base de datos deberia hacerse solo una vez
+
 class DB {
   constructor() {
     this.connection = mysql.createConnection({
