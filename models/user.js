@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T00:34:32-05:00
+ * @Last modified time: 2018-10-22T03:22:29-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -98,7 +98,7 @@ class UserMdl {
       case 'GET':
         switch (url) {
           case expression:
-            
+
             break;
           default:
 
@@ -143,6 +143,7 @@ class UserMdl {
     this.querySentence = '';
     const columns = UserMdl.validColumns;
     columns.forEach((column) => {
+      console.log(data);
       if (data[column] !== undefined) {
         this.querySentence += `${column} = '${data[column]}' && `;
       }
@@ -152,6 +153,7 @@ class UserMdl {
     }
     // if there are not more columns to evaluate, delete the last '&&' operator
     // from the query condition
+    console.log(this.querySentence);
     return this.querySentence.slice(0, -4);
   }
 
@@ -204,7 +206,8 @@ class UserMdl {
     let queryCondition = `user_code = ${id}`;
     if (condition) {
       if (condition.length > 1) {
-        queryCondition += `&& ${UserMdl.processConditions(condition)}`;
+        queryCondition += ` && ${UserMdl.processConditions(condition)}`;
+        console.log(queryCondition);
       }
     }
     await db.get('user', columns, queryCondition)

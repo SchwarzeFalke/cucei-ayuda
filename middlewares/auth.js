@@ -3,12 +3,11 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T01:30:23-05:00
+ * @Last modified time: 2018-10-22T03:25:14-05:00
  */
 
 const bcrypt = require('bcrypt');
-const { UserMdl } = require('../models'); // for model handling
-const { TokenMdl } = require('../models'); // for model handling
+const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handling
 
 // FIXME Todos los metodos deben estar documentados
 
@@ -56,7 +55,13 @@ class Auth {
   }
 
   static async login(req, res, next) {
-    const user = await UserMdl.get('*', `${req.body.user_id}`);
+    const newResponse = new ResMdl();
+    if (req.session !== undefined && req.session.token.length > 1) {
+      newResponse.createResponse('Successfully logged in', 201, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    }
+    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
     if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
@@ -76,6 +81,10 @@ class Auth {
           next();
         })
         .catch(err => console.error(`.catch(${err})`));
+    } else {
+      newResponse.createResponse('Wrong password or user ID', 409, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
     }
   }
 
@@ -92,25 +101,31 @@ class Auth {
   }
 
   static async haveSession(req, res, next) {
-    const token = Auth.getHeaderToken(req.headers.authorization);
-    await TokenMdl.get(token)
-      .then(async (result) => {
-        await TokenMdl.active(result)
-          .then((active) => {
-            if (active) {
-              req.session = {
-                token: result[0].token,
-                user: UserMdl.get('*', result[0].user_id),
-              };
-              next();
-            } else {
-              next({
-                status: 403,
-                message: 'You need to login',
-              });
-            }
-          });
-      });
+    const newResponse = new ResMdl();
+    if (req.headers.authorization === undefined) {
+      newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    } else {
+      const token = Auth.getHeaderToken(req.headers.authorization);
+      await TokenMdl.get(token)
+        .then(async (result) => {
+          await TokenMdl.active(result)
+            .then(async (active) => {
+              if (active) {
+                req.session = {
+                  token: result[0].token,
+                  user: await UserMdl.get('*', result[0].user_id),
+                };
+                next();
+              } else {
+                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                newResponse.response.message = newResponse.createMessage();
+                next(res.status(newResponse.response.status).send(newResponse.response));
+              }
+            });
+        });
+    }
   }
 
   havePermission(req, res, next) {
