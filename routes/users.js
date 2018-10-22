@@ -3,7 +3,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T20:52:34-05:00
+ * @Last modified time: 2018-10-21T21:07:34-05:00
  */
 
 const { Router } = require('express');
@@ -98,6 +98,8 @@ router.post('/:userId/schedule', usersCtrl.insertSchedule);
 // FIXME Falta un middleware para validar que el cuerpo del request
 // FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.put('/:userId', usersCtrl.updatePUT);
+
+router.patch('/:userId', usersCtrl.updatePATCH);
 
 // FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.delete('/:userId', usersCtrl.del);

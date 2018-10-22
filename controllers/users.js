@@ -3,7 +3,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T20:40:41-05:00
+ * @Last modified time: 2018-10-21T21:09:50-05:00
  */
 const db = require('../db'); // for database handling
 
@@ -91,6 +91,7 @@ class UserCtrl {
               .then((data) => {
                 if (data.length >= 1) {
                   newResponse.createResponse(data, 200, '/users', 'GET');
+                  console.log(newResponse);
                 } else {
                   newResponse.createResponse(data, 204, '/users', 'GET');
                 }
@@ -130,17 +131,19 @@ class UserCtrl {
                 newResponse.response.message = newResponse.createMessage();
                 this.response = newResponse;
                 res.status(this.response.response.status).send(this.response.response);
-              })
-              .catch(e => console.error(`.catch(${e})`));
+              });
           });
       } else {
-        this.forbiddenJSON.message = 'The requested user cannot be found';
-        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+        newResponse.createResponse('Nothing to show', 404, '/users', 'GET');
+        newResponse.response.message = newResponse.createMessage();
+        this.response = newResponse;
+        res.status(this.response.response.status).send(this.response.response);
       }
     } catch (e) {
-      console.error(`try/catch(${e})`);
-      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 

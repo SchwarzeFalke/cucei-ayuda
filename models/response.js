@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-21T17:36:28-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T20:20:10-05:00
+ * @Last modified time: 2018-10-21T21:09:02-05:00
  */
 
 class ResMdl {
@@ -41,9 +41,9 @@ class ResMdl {
       405: 'The user does not have the necessary permissions for ',
       409: 'There are missing fields! ',
       500: 'Oops! Something unexpected just happened, there are overqualified'
-      + 'monkeys working in this issue. ',
+      + ' monkeys working in this issue. ',
       501: 'Well, this is not finished yet, but we are working day and night'
-      + 'at this:) ',
+      + ' at this:) ',
     };
   }
 
