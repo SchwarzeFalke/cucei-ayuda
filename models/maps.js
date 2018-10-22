@@ -1,13 +1,16 @@
+/**
+ * @author: JulioMariscal
+ */
 const db = require('../db');
 
-class mapsMdl{
-  constructor({building_id, name, num_class, longitude, latitude, exist}) {
-    this.building_id = building_id;
-    this.name = name;
-    this.num_class = num_class;
-    this.longitude = longitude;
-    this.latitude = latitude;
-    this.exist = exist;
+class mapsMdl {
+    constructor(args) {
+        this.building_id = building_id;
+        this.name = name;
+        this.num_class = num_class;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.exist = exist;
   }
 
   //Processes result sent by database

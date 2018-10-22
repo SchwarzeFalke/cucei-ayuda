@@ -1,8 +1,5 @@
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:20:58-05:00
+ * @author: JulioMariscal
  */
 
 const { BuildingMdl } = require('../models');
