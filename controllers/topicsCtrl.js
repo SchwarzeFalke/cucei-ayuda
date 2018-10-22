@@ -46,44 +46,60 @@ class TopicCtrl {
     };
   }
 
+/**
+ * [getAll is a function that returns all the topics from the db or specific data
+ * specified in a query. First it validates if we sent a query, if you send a
+ * query it sends it to a function of topicMdl (modles/topicMdl), else it call
+ * a function to get all the topics registered in the db].
+ * @param  {Object}  req [description]
+ * @param  {Object}  res [response sent to the browser with the data extracted,
+ * a message, a status and a response]
+ * @return {Void}
+ */
   async getAll(req, res) {
     const query = req.query;
     //  GET ALL
     if (Object.keys(query).length === 0 && query.constructor === Object) {
-      await TopicMdl.getAll().then((result) => {
-        this.data = result;
-      }).catch((e) => {
+      try {
+        this.data = await TopicMdl.getAll();
+        if (this.data === undefined || this.data.length === 0) {
+          this.notFoundJSON.message = 'you don´t have any data';
+          res.status(404).send(this.notFoundJSON);
+        } else {
+          this.requestJSON.message = 'Data succesfully retrieve';
+          this.requestJSON.data = this.data;
+          res.send(this.requestJSON);
+        }
+      } catch (e) {
         console.error(`error!! ${e}`);
         this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
         res.status(400).send(this.badRequestJSON);
-      });
-      if (this.data === undefined || this.data.length === 0) {
-        this.notFoundJSON.message = 'you don´t have any data';
-        res.status(404).send(this.notFoundJSON);
-      } else {
-        this.requestJSON.message = 'Data succesfully retrieve';
-        this.requestJSON.data = this.data;
-        res.send(this.requestJSON);
       }
       //  GET query data
     } else {
-      await TopicMdl.find(query).then((result) => {
-        this.data = result;
-      }).catch((e) => {
+      try {
+        this.data = await TopicMdl.find(query);
+        if (this.data === undefined || this.data.length === 0) {
+          this.notFoundJSON.message = 'you don´t have any data';
+          res.status(404).send(this.notFoundJSON);
+        } else {
+          this.requestJSON.message = 'Data succesfully retrieve';
+          this.requestJSON.data = this.data;
+          res.send(this.requestJSON);
+        }
+      } catch (e) {
         console.error(`error!! ${e}`);
         this.notFoundJSON.message = 'you don´t have any data';
         res.status(404).send(this.notFoundJSON);
-      });
-      if (this.data === undefined || this.data.length === 0) {
-        this.notFoundJSON.message = 'you don´t have any data';
-        res.status(404).send(this.notFoundJSON);
-      } else {
-        this.requestJSON.message = 'Data succesfully retrieve';
-        this.requestJSON.data = this.data;
-        res.send(this.requestJSON);
       }
     }
   }
+/**
+ * [get description]
+ * @param  {[type]}  req [description]
+ * @param  {[type]}  res [description]
+ * @return {Promise}     [description]
+ */
 
   async get(req, res) {
     const { topicId } = req.params;
