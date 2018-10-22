@@ -1,14 +1,12 @@
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T13:20:58-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-18T01:32:18-05:00
+ * @author: tyler97
  */
 
-// Models for using the Subject class
-
 const db = require('../db');
-
+/**
+   * [Subject model class used for interaction with subject,
+   * and all the querys involving the subject table]
+   */
 class Subject {
   constructor(args) {
     if (args.nrc !== undefined) {
@@ -43,6 +41,13 @@ class Subject {
     }
   }
 
+  /**
+   * [processResult description: Processes all the raw data and returns the
+   * requested data in a formatted way]
+   * @param  {[type]} data [description: the returned data row from database]
+   * @return {[type]}      [description: the formatted data]
+   */
+
   static processResult(data) {
     this.result = [];
     data.forEach((res) => {
@@ -51,15 +56,13 @@ class Subject {
     return this.result;
   }
 
-  static checkUndefined(data) {
-    this.result = {};
-    data.forEach((dat) => {
-      if (dat !== undefined) {
-        console.log(dat);
-      }
-    });
-    return this.result;
-  }
+  /**
+ * [validSubject, this method is used to check
+ * and see if a requested subject exists in Database]
+ * @method validSubject
+ * @param  {Number}     nrc [nrc, is the primary key of subject]
+ * @return {Promise}        [returns length of result]
+ */
 
   static async validSubject(nrc) {
     await db.get('subject', 'nrc', `nrc = ${nrc}`)
@@ -73,6 +76,13 @@ class Subject {
     return this.result;
   }
 
+  /**
+ * [getAll method used to obtain all subjects inspect
+ * the Database]
+ * @method getAll
+ * @return {Array} [Array of all the subjects in Database]
+ */
+
   static async getAll() {
     await db.get('subject', ['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'])
       .then((results) => {
@@ -83,6 +93,16 @@ class Subject {
       });
     return this.result;
   }
+
+  /**
+ * [get method used for obtaining subjects, but with specific
+ * columns and condition]
+ * @method get
+ * @param  {[String]}  columns   [columns used in the subject table,
+ * with this variable you can specify eaxctly what columns to be returned from query]
+ * @param  {[String]}  condition [Specifies the conditions on which to request subjects]
+ * @return {Array}           [Array of requested subjects]
+ */
 
   static async get(columns, condition) {
     await db.get('subject', columns, condition)
@@ -95,6 +115,15 @@ class Subject {
     return this.result;
   }
 
+  /**
+ * [del method used to perform a logical deletion of a specified subject,
+ * given a condition]
+ * @method del
+ * @param  {[String]}  condition [String representing the condition on which the subject
+ * is to be logically deleted]
+ * @return {Object}           [Returns the response from the database]
+ */
+
   static async del(condition) {
     await db.logicalDel('subject', condition)
       .then((results) => {
@@ -105,6 +134,13 @@ class Subject {
       });
     return this.result;
   }
+
+  /**
+  * [save method used for saving an instance of the subject model
+  * in the database]
+  * @method save
+  * @return {Promise} [returns results returned from the database]
+  */
 
   async save() {
     await db.insert('subject', this)
@@ -118,6 +154,14 @@ class Subject {
     return this.result;
   }
 
+  /**
+   * [update method used for updating a subject from the Database
+   * on a specified condition which in this case is nrc , and an instance of the subject model]
+   * @method update
+   * @param  {Number}  nrc [Number representing the primary key nrc of database]
+   * @return {Promise}     [returns the results returned from the query performed on the database]
+   */
+
   async update(nrc) {
     const condition = `nrc = ${nrc}`;
     await db.update('subject', this, condition)
@@ -130,6 +174,15 @@ class Subject {
       });
     return this.result;
   }
+
+  /**
+   * [createRelation method used to add a subject to a specified user,
+   * basically this method is used to create a schedule]
+   * @method createRelation
+   * @param  {Number}       userId [Number representing the userId, which is PK of user table]
+   * @param  {Number}       nrc    [Number representing nrc from the subject table]
+   * @return {Promise}   [returns the results returned from the database when processing the query]
+   */
 
   static async createRelation(userId, nrc) {
     if (await Subject.validSubject(nrc)) {
