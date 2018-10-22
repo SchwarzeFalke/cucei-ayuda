@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-18T02:07:33-05:00
+ * @Last modified time: 2018-10-22T01:12:10-05:00
  */
 
 
@@ -12,19 +12,19 @@ class Token {
   constructor(args) {
     this.token = args.token;
     this.created_at = args.created_at;
-    this.expires = new Date(args.created_at.getTime() + args.duration * 60000);
+    this.expires = args.expires;
     this.type = args.type;
     this.active = args.active;
-    this.user_id = args.suser.id;
+    this.user_id = args.user_id;
   }
 
-  async get(token) {
-    const query = `token = ${token}`;
-    await db.get('tokens', '*', query)
+  static async get(token) {
+    const query = `token = '${token}'`;
+    await db.get('token', '*', query)
       .then((results) => {
         this.result = results;
       })
-      .cacht(e => console.error(`.catch(${e})`));
+      .catch(e => console.error(`.catch(${e})`));
     return this.result;
   }
 
@@ -57,16 +57,17 @@ class Token {
           }
           resolve('NON-ACTIVE');
         })
-        .catch(e => console.error(`.catch(${e})`));
+        .catch(e => reject(e));
     });
   }
 
   static async create(data) {
     return new Promise(async (resolve, reject) => {
-      console.log(data);
       await db.insert('token', data)
-        .then(() => resolve(data.token))
-        .catch(e => console.error(`.catch(${e})`));
+        .then(() => {
+          resolve(data.token);
+        })
+        .catch(e => reject(e));
     });
   }
 

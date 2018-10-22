@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T20:32:38-05:00
+ * @Last modified time: 2018-10-22T00:34:32-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -89,20 +89,32 @@ class UserMdl {
     ];
   }
 
-  canDo(method, url) {
-    // sigo sin saber hacer esto, de donde sacaremos los permisos
-    if (method === 'GET'){
-
+  canDo(method, url, data) {
+    let can = false;
+    if (this.privilages === 'ADMIN') {
+      can = true;
     }
-    if (method === 'DELETE'){
+    switch (method) {
+      case 'GET':
+        switch (url) {
+          case expression:
+            
+            break;
+          default:
 
+        }
+        break;
+      case 'DELETE':
+        break;
+      case 'POST':
+        break;
+      case 'PUT':
+        break;
+      case 'PATCH':
+        break;
+      default:
     }
-    if (method === 'POST'){
-
-    }
-    if (method === 'PUT'){
-
-    }
+    return can;
   }
 
   /**
@@ -190,8 +202,10 @@ class UserMdl {
    */
   static async get(columns, id, condition) {
     let queryCondition = `user_code = ${id}`;
-    if (condition.length > 1) {
-      queryCondition += `&& ${UserMdl.processConditions(condition)}`;
+    if (condition) {
+      if (condition.length > 1) {
+        queryCondition += `&& ${UserMdl.processConditions(condition)}`;
+      }
     }
     await db.get('user', columns, queryCondition)
       .then((results) => {

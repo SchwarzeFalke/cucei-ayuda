@@ -3,7 +3,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T21:09:50-05:00
+ * @Last modified time: 2018-10-21T21:16:12-05:00
  */
 const db = require('../db'); // for database handling
 
@@ -154,19 +154,26 @@ class UserCtrl {
         const condition = `stud_id = ${req.params.userId}`;
         await ScheduleMdl.get('subject_id', condition)
           .then((data) => {
-            console.log(data);
-            this.requestJSON.data = data;
-            res.status(this.requestJSON.status).send(this.requestJSON);
-          })
-          .catch(e => console.error(`.catch(${e})`));
+            if (data.length >= 1) {
+              newResponse.createResponse(data, 200, '/users', 'GET');
+            } else {
+              newResponse.createResponse(data, 204, '/users', 'GET');
+            }
+            newResponse.response.message = newResponse.createMessage();
+            this.response = newResponse;
+            res.status(this.response.response.status).send(this.response.response);
+          });
       } else {
-        this.forbiddenJSON.message = 'The requested user cannot be found';
-        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+        newResponse.createResponse('Nothing to show', 404, '/users', 'GET');
+        newResponse.response.message = newResponse.createMessage();
+        this.response = newResponse;
+        res.status(this.response.response.status).send(this.response.response);
       }
     } catch (e) {
-      console.error(`try/catch(${e})`);
-      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 

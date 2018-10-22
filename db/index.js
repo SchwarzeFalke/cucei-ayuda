@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T20:34:42-05:00
+ * @Last modified time: 2018-10-22T01:11:19-05:00
  */
 
 const mysql = require('mysql');
@@ -65,7 +65,6 @@ class DB {
       if (condition) {
         query += `WHERE ${condition};`;
       } else { query += ';'; }
-      console.log(query);
       this.connection.query(query, [table, data], (err, results) => {
         if (err) {
           reject(err);

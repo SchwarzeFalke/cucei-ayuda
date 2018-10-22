@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T19:25:25-05:00
+ * @Last modified time: 2018-10-22T01:30:23-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -14,28 +14,29 @@ const { TokenMdl } = require('../models'); // for model handling
 
 class Auth {
   static async generateToken(user) {
-    this.key = `${user[0].name}${user[0].user_code}ky`;
-    console.log(this.key);
-    await bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(this.key, salt, (hashErr, hash) => {
-        TokenMdl.create({
-          token: hash,
-          created_at: new Date(),
-          expires: new Date(),
-          type: 's',
-          exist: 1,
-          user_id: user[0].user_code,
-        })
-          .then(() => hash)
-          .catch((e) => {
-            console.error(`.catch(${hashErr})`);
-            throw e;
-          });
+    return new Promise(async (resolve, reject) => {
+      this.key = `${user[0].name}${user[0].user_code}ky`;
+      await bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(this.key, salt, (hashErr, hash) => {
+          TokenMdl.create({
+            token: hash,
+            created_at: new Date(),
+            expires: new Date(),
+            type: 's',
+            exist: 1,
+            user_id: user[0].user_code,
+          })
+            .then(() => resolve(hash))
+            .catch((e) => {
+              console.error(`.catch(${hashErr})`);
+              reject(e);
+            });
+        });
       });
-    }).catch((err) => { throw err; });
+    });
   }
 
-  async register(req, res, next) {
+  static async register(req, res, next) {
     bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
@@ -55,19 +56,26 @@ class Auth {
   }
 
   static async login(req, res, next) {
-    const user = JSON.parse(await UserMdl.get('*', `${req.body.user_id}`));
+    const user = await UserMdl.get('*', `${req.body.user_id}`);
     if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
         token: null,
       };
-      const active = await TokenMdl.active(data);
-      if (active === 'NON-ACTIVE') {
-        res.send(await Auth.generateToken(user));
-        next();
-      } else {
-        next();
-      }
+      await TokenMdl.active(data)
+        .then(async (active) => {
+          if (active === 'NON-ACTIVE') {
+            const response = {
+              created_at: new Date(),
+              userId: user[0].user_code,
+              token: await Auth.generateToken(user),
+            };
+            res.send(response);
+            next();
+          }
+          next();
+        })
+        .catch(err => console.error(`.catch(${err})`));
     }
   }
 
@@ -83,21 +91,26 @@ class Auth {
     }
   }
 
-  haveSession(req, res, next) {
-    const token = this.getHeaderToken(req.headers.authorization);
-    this.token = TokenMdl.get(token);
-    if (this.isActive()) {
-      req.session = {
-        token: this.token,
-        user: UserMdl.get(this.token.userId),
-      };
-      next();
-    } else {
-      next({
-        status: 403,
-        message: 'You need to loggin',
+  static async haveSession(req, res, next) {
+    const token = Auth.getHeaderToken(req.headers.authorization);
+    await TokenMdl.get(token)
+      .then(async (result) => {
+        await TokenMdl.active(result)
+          .then((active) => {
+            if (active) {
+              req.session = {
+                token: result[0].token,
+                user: UserMdl.get('*', result[0].user_id),
+              };
+              next();
+            } else {
+              next({
+                status: 403,
+                message: 'You need to login',
+              });
+            }
+          });
       });
-    }
   }
 
   havePermission(req, res, next) {
@@ -109,7 +122,7 @@ class Auth {
     }
   }
 
-  isActive() {
+  isActive(req, res, next) {
     const time = new Date();
     if (time > this.token.created + this.token.expires) {
       this.token.destroy();
@@ -118,12 +131,10 @@ class Auth {
     return true;
   }
 
-  getHeaderToken(bearer) {
-    //  obtenemos token
-    this.bearerToken = bearer.split('')[1];
+  static getHeaderToken(bearer) {
+    this.bearerToken = bearer.replace('Bearer ', '');
     return this.bearerToken;
   }
-
 }
 
 module.exports = Auth;
