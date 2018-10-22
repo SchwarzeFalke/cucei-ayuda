@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-08T14:34:11-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T06:07:20-05:00
+ * @Last modified time: 2018-10-21T20:34:42-05:00
  */
 
 const mysql = require('mysql');
@@ -32,15 +32,14 @@ class DB {
       let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
       if (columns === '*') {
         query = 'SELECT * FROM ??';
-      }
-      else{
+      } else {
         query = `SELECT ${columns} FROM ??`;
       }
       query += ' WHERE exist = TRUE';
       if (condition) {
         query += ` && ${condition}`;
       }
-      if (order){
+      if (order) {
         query += order;
       }
       query += ';';
@@ -49,7 +48,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(results);
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -72,7 +71,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        return resolve(results);
+        return resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -88,8 +87,7 @@ class DB {
       let query = 'UPDATE ?? SET ?';
       if (condition) {
         query += ` WHERE ${condition} && exist = 1;`;
-      }
-      else {
+      } else {
         query += ';';
       }
       this.connection.query(query, [table, data], (err, results) => {
@@ -100,7 +98,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        return resolve(results);
+        return resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -116,8 +114,7 @@ class DB {
       let query = 'DELETE FROM ??';
       if (condition) {
         query += ` WHERE ${condition};`;
-      }
-      else {
+      } else {
         query += ';';
       }
       this.connection.query(query, table, (err, results) => {
@@ -125,7 +122,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(results);
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -150,7 +147,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(results);
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }

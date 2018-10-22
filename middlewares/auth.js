@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T16:38:02-05:00
+ * @Last modified time: 2018-10-21T19:25:25-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -55,7 +55,7 @@ class Auth {
   }
 
   static async login(req, res, next) {
-    const user = JSON.parse(JSON.stringify(await UserMdl.get('*', `${req.body.user_id}`)));
+    const user = JSON.parse(await UserMdl.get('*', `${req.body.user_id}`));
     if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
