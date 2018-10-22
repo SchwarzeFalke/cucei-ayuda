@@ -1,15 +1,12 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T13:20:58-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T13:36:24-05:00
- */
+// controller for the Subject class
 
-// controller for the schedule class
+const { Subject } = require('../models');
 
-const { Schedule } = require('../models');
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
 
-class ScheduleCtrl {
+class SubjectCtrl {
   constructor() {
     this.getAll = this.getAll.bind(this);
     this.insert = this.insert.bind(this);
@@ -41,7 +38,7 @@ class ScheduleCtrl {
 
   async getAll(req, res) {
     try {
-      await Schedule.getAll()
+      await Subject.getAll()
         .then((data) => {
           this.requestJSON.data = data;
           res.status(this.requestJSON.status).send(this.requestJSON);
@@ -58,11 +55,11 @@ class ScheduleCtrl {
 
   async getSubject(req, res) {
     try {
-      await Schedule.validSchedule(req.params.nrc)
+      await Subject.validSubject(req.params.nrc)
         .then((exists) => {
           if (exists) {
             const condition = `nrc = ${req.params.nrc}`;
-            Schedule.get('*', condition)
+            Subject.get(['nrc', 'name', 'first_day', 'sec_day', 'classroom', 'section', 'credits', 'building', 'taught_by'], condition)
               .then((data) => {
                 this.requestJSON.data = data;
                 res.status(this.requestJSON.status).send(this.requestJSON);
@@ -89,14 +86,14 @@ class ScheduleCtrl {
 
   async insert(req, res) {
     console.log(req.body);
-    const newSchedule = new Schedule({ ...req.body });
+    const newSubject = new Subject({ ...req.body });
     try {
-      await newSchedule.save()
+      await newSubject.save()
         .then((data) => {
           this.info = data;
           this.modifyJSON.response = 'Created';
           this.modifyJSON.message += ' created into database';
-          this.modifyJSON.data = newSchedule;
+          this.modifyJSON.data = newSubject;
           res.status(this.modifyJSON.status).send(this.modifyJSON);
         })
         .catch((e) => {
@@ -112,7 +109,7 @@ class ScheduleCtrl {
   async del(req, res) {
     try {
       const condition = `nrc = ${req.params.nrc}`;
-      await Schedule.del(condition)
+      await Subject.del(condition)
         .then((data) => {
           this.modifyJSON.data = data;
           this.modifyJSON.response = 'Deleted';
@@ -130,9 +127,9 @@ class ScheduleCtrl {
   }
 
   async update(req, res) {
-    const updateSchedule = new Schedule({ ...req.body });
+    const updateSubject = new Subject({ ...req.body });
     try {
-      await updateSchedule.update(req.params.nrc)
+      await updateSubject.update(req.params.nrc)
         .then((data) => {
           this.modifyJSON.response = 'Updated';
           this.modifyJSON.message += ' updated from database';
@@ -150,4 +147,4 @@ class ScheduleCtrl {
   }
 }
 
-module.exports = new ScheduleCtrl();
+module.exports = new SubjectCtrl();

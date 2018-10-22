@@ -1,29 +1,51 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-09T02:00:56-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-09T02:01:51-05:00
+ */
+
 const { Router } = require('express');
+// FIXME los controladores se pueden cargar en una sola linea const { threadCtrl, topicCtrl } = require('../controllers');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
-
-// const middlewares = require('../middlewares/forum')
+const { forumMid } = require('../middlewares');
 
 const router = Router();
 
 /**
  * ALL GET methods for the forum
  */
+router.get('/login', (req, res, next) => {
+  let bearer = req.headers.authorization;
+  const ber = bearer.split(' ')[1];
+  console.log(ber);
 
-router.get('/', topicCtrl.getAll);
-router.get('/:topicId', topicCtrl.get);
-router.get('/:topicId/threads', threadCtrl.getAll);
-router.get('/:topicId/threads/:threadId', threadCtrl.get);
-router.get('/:topicId/threads/:threadId/posts', threadCtrl.getAllPosts);
-router.get('/:topicId/threads/:threadId/posts/:postId', threadCtrl.getPost);
+  res.send('2');
+});
+// FIXME para los casos de muchos middlewares, deberia ir uno por linea
+router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
+router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
+router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);
+router.get('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.get);
+router.get('/:topicId/threads/:threadId/posts', [forumMid.noEmptySearch,
+  forumMid.validateNumberParams, forumMid.validateNumberParamsThread], threadCtrl.getAllPosts);
+router.get('/:topicId/threads/:threadId/posts/:postId', [
+  forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
+  forumMid.validateNumberParamsPost], threadCtrl.getPost);
 
 /**
  * ALL POST methods for the forum
  */
 
-router.post('/', topicCtrl.create);
-router.post('/:topicId/threads', threadCtrl.create);
-router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
+router.post('/', forumMid.noEmptyPostTopic, topicCtrl.create);
+router.post('/:topicId/threads', [forumMid.noEmptyPostThread,
+  forumMid.validateNumberParams], threadCtrl.create);
+router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
+  forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.createPost);
 
 /**
  * This are all the PUT methods for the forum page.
@@ -34,9 +56,14 @@ router.post('/:topicId/threads/:threadId/posts', threadCtrl.createPost);
 
  */
 
-router.put('/:topicId', topicCtrl.modify);
-router.put('/:topicId/threads/:threadId', threadCtrl.modify);
-router.put('/:topicId/threads/:threadId/posts/:postId', threadCtrl.updatePost);
+router.put('/:topicId', [forumMid.validateNumberParams,
+  forumMid.noEmptyUT], topicCtrl.modify);
+router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread, forumMid.noEmptyUTh], threadCtrl.modify);
+router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread, forumMid.validateNumberParamsPost,
+  forumMid.noEmptyUP],
+  threadCtrl.updatePost);
 
 /**
  * delete routes
@@ -45,9 +72,12 @@ router.put('/:topicId/threads/:threadId/posts/:postId', threadCtrl.updatePost);
  * DELETE /:topicId/threads/:threadId/posts/:postId
  */
 
-router.delete('/:topicId', topicCtrl.delete);
-router.delete('/:topicId/threads/:threadId', threadCtrl.delete);
-router.delete('/:topicId/threads/:threadId/posts/:postId', threadCtrl.deletePost);
+router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.deleteAll);
+router.delete('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread], threadCtrl.delete);
+router.delete('/:topicId/threads/:threadId/posts/:postId',
+  [forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
+    forumMid.validateNumberParamsPost], threadCtrl.deletePost);
 
 
 module.exports = router;

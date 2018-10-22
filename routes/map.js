@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-09-23T22:45:17-05:00
@@ -7,6 +8,7 @@
 
 const { Router } = require('express');
 
+// FIXME se pueden cargar los dos controllers en una sola linea
 const { mapCtrl } = require('../controllers');
 const { buildingCtrl } = require('../controllers');
 const middleWares = require('../middlewares');

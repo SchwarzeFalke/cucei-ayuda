@@ -1,4 +1,10 @@
 const { TopicMdl } = require('../models');
+const { ThreadMdl } = require('../models');
+const { PostMdl } = require('../models');
+
+// FIXME Todos los metodos deben estar documentados
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
 
 class TopicCtrl {
   constructor() {
@@ -7,6 +13,7 @@ class TopicCtrl {
     this.create = this.create.bind(this);
     this.modify = this.modify.bind(this);
     this.delete = this.delete.bind(this);
+    this.deleteAll = this.deleteAll.bind(this);
     this.modifyJSON = {
       status: 201,
       response: null,
@@ -125,7 +132,7 @@ class TopicCtrl {
       this.requestJSON.message = 'Data succesfully created';
       this.requestJSON.data = this.response;
       this.requestJSON.code = 201;
-      res.status(201).end(this.requestJSON);
+      res.status(201).send(this.requestJSON);
     } else {
       this.badRequestJSON.message = 'Something went wrong! Monkeys working on it';
       res.status(400).send(this.badRequestJSON);
@@ -149,10 +156,11 @@ class TopicCtrl {
     if (this.topicModify === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully modified';
+      this.requestJSON.data = this.topicModify;
+      res.status(200).send(this.requestJSON);
     }
-    this.requestJSON.message = 'Data succesfully modified';
-    this.requestJSON.data = this.topicModify;
-    res.status(200).send(this.requestJSON);
   }
 
   async delete(req, res) {
@@ -177,6 +185,52 @@ class TopicCtrl {
     if (this.deleted.affectedRows === 0 || this.deleted.affectedRows === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
+    } else {
+      this.requestJSON.message = 'Data succesfully deleted';
+      this.requestJSON.data = this.deleted;
+      res.status(200).send(this.requestJSON);
+    }
+  }
+
+  async deleteAll(req, res) {
+    const topic = new TopicMdl(req.body);
+    let changed = 0;
+    let resultado;
+    try {
+      resultado = await topic.deleteAll(req.params.topicId);
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      if (resultado === 1) {
+        this.badRequestJSON.message = 'One field is missings or data is wrong';
+        changed = 1;
+        res.status(400).send(this.badRequestJSON);
+      }
+    }
+    try {
+      await topic.delete(req.params.topicId).then((result) => {
+        this.deleted = result;
+      }).catch((e) => {
+        console.error(`error!! ${e}`);
+        if (changed === 0) {
+          this.badRequestJSON.message = 'One field is missings or data is wrong';
+          changed = 1;
+          res.status(400).send(this.badRequestJSON);
+        }
+      });
+    } catch (e) {
+      console.error(`error!! ${e}`);
+      if (changed === 0) {
+        this.badRequestJSON.message = 'One field is missings or data is wrong';
+        changed = 1;
+        res.status(400).send(this.badRequestJSON);
+      }
+    }
+    if (this.deleted === undefined) {
+      if (changed === 0) {
+        this.badRequestJSON.message = 'One field is missings or data is wrong';
+        changed = 1;
+        res.status(400).send(this.badRequestJSON);
+      }
     } else {
       this.requestJSON.message = 'Data succesfully deleted';
       this.requestJSON.data = this.deleted;

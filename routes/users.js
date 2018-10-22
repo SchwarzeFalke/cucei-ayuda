@@ -1,8 +1,9 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T13:44:40-05:00
+ * @Last modified time: 2018-10-18T00:48:58-05:00
  */
 
 const { Router } = require('express');
@@ -25,6 +26,11 @@ const router = Router();
  GET /users/userId/posts
 */
 
+
+router.post('/login', [middleWares.Auth.login]);
+
+
+// FIXME Falta un middleware para validar que el param :amount sea un numero valido
 router.get('/fakeData/:amount', (req, res) => {
   userFaker.fakeUsers(req.params.amount);
   res.send('Ok');
@@ -52,18 +58,21 @@ router.get('/:userId', (req, res, next) => {
  * @type {Array} Returns all routes from a specific user through its identifier
  * "start" and "end" attributes reffers to a starting point and an ending point
  */
+ // FIXME Falta un middleware para validar que el param :userId
 router.get('/:userId/roads', usersCtrl.getRoads);
 
 /**
  * GET users/userId/schedule
  * @type {Object} Returns the schedule's identifier from an specific user
  */
+ // FIXME Falta un middleware para validar que el param :userId
 router.get('/:userId/schedule', usersCtrl.getSchedule);
 
 /**
  * GET users/userId/posts
  * @type {Array} Returns all publications by the given user
  */
+ // FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.get('/:userId/posts', usersCtrl.getPosts);
 
 /**
@@ -79,12 +88,18 @@ router.get('/:userId/posts', usersCtrl.getPosts);
  * @type {Object} Create a new user by given name, middle name, last name, email
  * and a password. Returns an ok response.
  */
+ // FIXME Falta un middleware para validar que el cuerpo del request
 router.post('/', usersCtrl.insertUser);
 
+ // FIXME Falta un middleware para validar que el cuerpo del request
+ // FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.post('/:userId/schedule', usersCtrl.insertSchedule);
 
+// FIXME Falta un middleware para validar que el cuerpo del request
+// FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.put('/:userId', usersCtrl.update);
 
+// FIXME Falta un middleware para validar que el param :userId es un identificador valido, ejem: un numero en cierto rango
 router.delete('/:userId', usersCtrl.del);
 
 module.exports = router;

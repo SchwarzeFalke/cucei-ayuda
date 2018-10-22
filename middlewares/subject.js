@@ -1,14 +1,15 @@
-// middleware class for schedule error handling
+// middleware class for subject error handling
 
 const forbiddenJSON = {
   status: 403,
-  response: 'Forbidden',
+  response: 'Forbidden', // FIXME un campo con un formato no valido o vacio no es Forbidden
   message: null,
   data: null,
 };
 
+// FIXME Todos los metodos deben estar documentados
 
-class scheduleM {
+class subjectM {
   static validateNrc(req, res, next) {
     const test = /^\d+$/;
     try {
@@ -28,7 +29,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate NRC ${e}`);
     }
   }
 
@@ -46,7 +47,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate Name ${e}`);
     }
   }
 
@@ -64,7 +65,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate first_day ${e}`);
     }
   }
 
@@ -89,7 +90,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate second day ${e}`);
     }
   }
 
@@ -112,7 +113,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate class ${e}`);
     }
   }
 
@@ -130,7 +131,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate section ${e}`);
     }
   }
 
@@ -153,7 +154,7 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate CR ${e}`);
     }
   }
 
@@ -176,12 +177,12 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate building ${e}`);
     }
   }
 
   static validateTeacher(req, res, next) {
-    const test = /^\d+$/;
+    const test = /^[A-Za-z]+$/;
     try {
       if (req.body.taught_by === undefined) {
         forbiddenJSON.message = 'Invalid Teacher';
@@ -192,6 +193,7 @@ class scheduleM {
           forbiddenJSON.message = 'Invalid Teacher';
           res.status(forbiddenJSON.status).send(forbiddenJSON);
         } else {
+          console.log('entering validate teacher');
           next();
         }
       } else {
@@ -199,10 +201,10 @@ class scheduleM {
         res.status(forbiddenJSON.status).send(forbiddenJSON);
       }
     } catch (e) {
-      console.log(e);
+      console.log(`error in validate Teacher ${e}`);
     }
   }
 }
 
 
-module.exports = scheduleM;
+module.exports = subjectM;
