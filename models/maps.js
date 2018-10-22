@@ -3,35 +3,36 @@
  */
 const db = require('../db');
 
-class mapsMdl {
-    constructor(args) {
-        this.building_id = building_id;
+class MapsMdl {
+    constructor({
+        buildingId, name, numClass, longitude, latitude, exist,
+    }) {
+        this.building_id = buildingId;
         this.name = name;
-        this.num_class = num_class;
+        this.num_class = numClass;
         this.longitude = longitude;
         this.latitude = latitude;
         this.exist = exist;
-  }
+    }
 
-  //Processes result sent by database
-  static processResult(data) {
-   this.result = [];
-   data.forEach((res) => {
-     this.result.push(new mapsMdl(res));
-   });
-   return this.result;
-  }
+    // Processes result sent by database
+    static processResult(data) {
+        this.result = [];
+        data.forEach((res) => {
+            this.result.push(new MapsMdl(res));
+        });
+        return this.result;
+    }
 
-  //request all data in table buildings
-  static async get() {
-    let condition = '';
-    await db.get('building', '*',  condition)
-      .then((results) => {
-        this.result = mapsMdl.processResult(results);
-     })
-     .catch(e => console.error(`We have a error!(${e})`));
-     return this.result;
-  }
-
+    // request all data in table buildings
+    static async get() {
+        const condition = '';
+        await db.get('building', '*', condition)
+            .then((results) => {
+                this.result = MapsMdl.processResult(results);
+            })
+            .catch(e => console.error(`.catch(${e})`));
+        return this.result;
+    }
 }
-module.exports = mapsMdl;
+module.exports = MapsMdl;

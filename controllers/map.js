@@ -22,14 +22,17 @@ class MapCtrl {
     async get(req, res) {
         const newResponse = new ResMdl();
         try {
-            await MapsMdl.get()
+            await MapsMdl.get(req.query)
                 .then((data) => {
-                    if (data.length > 1) {
-                        newResponse.createResponse(data, 200, '/buildings', '/GET');
+                    if (data.length === 0) {
+                        newResponse.createResponse(data, 204, '/buildings', 'GET');
                     } else {
-                        newResponse.createResponse(data, 204, '/buildings', '/GET');
+                        newResponse.createResponse(data, 200, '/buildings', 'GET');
                     }
                 });
+            newResponse.response.message = newResponse.createMessage();
+            this.response = newResponse;
+            res.status(this.response.response.status).send(this.response.response);
         } catch (e) {
             newResponse.response('There is nothing to retrieve', 500, e, 'GET');
             newResponse.response.message = newResponse.createMessage();
