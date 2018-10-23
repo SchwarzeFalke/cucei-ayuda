@@ -21,12 +21,21 @@ class PostMdl {
     this.date = date;
   }
 
+  /**
+ * [required function cheks that the not null data is defined]
+ * @return {Boolean} [if all any data is undefined it returns a true, else false]
+ */
   required() {
     return (this.content !== undefined
     && this.exist !== undefined && this.user_code !== undefined
     && this.thread_id !== undefined && this.date !== undefined);
   }
 
+  /**
+ * [processRequest ]
+ * @param  {string} data [The way it will be ordered]
+ * @return {string}      [A sql order that describe if it is ordered asc or desc]
+ */
   static processRequest(data) {
     let condition = '';
     if (data.sort) {

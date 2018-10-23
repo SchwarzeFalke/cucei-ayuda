@@ -49,8 +49,14 @@ class ThreadCtrl {
     };
   }
 
+  /**
+ * [getAll description]
+ * @param  {[type]}  req [description]
+ * @param  {[type]}  res [description]
+ * @return {Promise}     [description]
+ */
   async getAll(req, res) {
-    const query = req.query;
+    const { query } = req;
     const { topicId } = req.params;
     let data;
     //  GET All
@@ -127,6 +133,7 @@ class ThreadCtrl {
       this.badRequestJSON.message = 'One field is missings or data is wrong';
       res.status(400).send(this.badRequestJSON);
     }
+    console.log(response);
     const id = response.insertId;
     if (id === undefined) {
       this.badRequestJSON.message = 'One field is missings or data is wrong';

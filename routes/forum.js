@@ -34,7 +34,7 @@ router.get('/:topicId/threads/:threadId/posts/:postId', [
  * ALL POST methods for the forum
  */
 
-router.post('/', forumMid.noEmptyPostTopic, topicCtrl.create);
+router.post('/', forumMid.noEmptyTopic, topicCtrl.create);
 router.post('/:topicId/threads', [forumMid.noEmptyPostThread,
   forumMid.validateNumberParams], threadCtrl.create);
 router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
@@ -51,7 +51,7 @@ router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
  */
 
 router.put('/:topicId', [forumMid.validateNumberParams,
-  forumMid.noEmptyUT], topicCtrl.modify);
+  forumMid.noEmptyTopic], topicCtrl.modify);
 router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread, forumMid.noEmptyUTh], threadCtrl.modify);
 router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,

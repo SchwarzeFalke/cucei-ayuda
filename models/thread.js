@@ -58,7 +58,6 @@ class ThreadMdl {
   }
 
   static async getAll(topicId) {
-    let all = ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'];
     let res;
     const order = ' ORDER BY created';
     const condition = `topic_id = ${topicId}`;
@@ -93,6 +92,7 @@ class ThreadMdl {
   }
 
   async save() {
+    const error = 1;
     delete this.thread_id;
     let data;
     if (this.required()) {
@@ -112,7 +112,7 @@ class ThreadMdl {
       });
       return data;
     }
-    return 1;
+    return error;
   }
 
   async modify(threadId, topicId) {

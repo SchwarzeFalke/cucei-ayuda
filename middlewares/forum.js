@@ -80,21 +80,18 @@ class ForumMid {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-  static noEmptyPostTopic(req, res, next) {
+  static noEmptyTopic(req, res, next) {
     let empty = 0;
     if (req.body.name === undefined || req.body.descript === undefined) {
       empty = 1;
     }
-    for (var i in req.body) {
-      if (i === 'name' && req.body[i] === '') {
-        empty = 1;
-      }
-      if (i === 'descript' && req.body[i] === '') {
-        empty = 1;
-      }
+    const { name } = req.body;
+    const { descript } = req.body;
+    if (name === '' || descript === '') {
+      empty = 1;
     }
     if (empty > 0) {
-      badRequestJSON.message = 'dejaste un campo vacio';
+      badRequestJSON.message = 'You leave an empty field';
       res.status(400).send(badRequestJSON);
     } else {
       next();
@@ -106,14 +103,10 @@ class ForumMid {
     if (req.body.subject === undefined || req.body.user_code === undefined) {
       empty = 1;
     }
-    for (var i in req.body){
-      if (i === 'subject' && req.body[i] === '') {
-        badRequestJSON.message = 'b';
-        empty = 1;
-      }
-      if (i === 'user_code' && req.body[i] === '') {
-        empty = 1;
-      }
+    const { subject } = req.body;
+    const { user_code } = req.body;
+    if (subject === '' || user_code === '') {
+      empty = 1;
     }
     if (empty > 0) {
       badRequestJSON.message += 'dejaste un campo vacio';
@@ -128,16 +121,13 @@ class ForumMid {
     if (req.body.content === undefined || req.body.user_code === undefined) {
       empty = 1;
     }
-    for (var i in req.body){
-      if (i === 'content' && req.body[i] === '') {
-        empty = 1;
-      }
-      if (i === 'user_code' && req.body[i] === '') {
-        empty = 1;
-      }
+    const { content } = req.body;
+    const { user_code } = req.body;
+    if (content === '' || user_code === '') {
+      empty = 1;
     }
     if (empty > 0) {
-      badRequestJSON.message = 'dejaste un campo vacio';
+      badRequestJSON.message = 'You leave an empty field';
       res.status(400).send(badRequestJSON);
     } else {
       next();
@@ -166,7 +156,7 @@ class ForumMid {
         }
       }
       if (req.query.sort) {
-        let lower = req.query.sort
+        let lower = req.query.sort;
         lower = lower.toLowerCase();
         if (lower === 'asc' || lower === 'desc') {
         } else {
@@ -180,18 +170,9 @@ class ForumMid {
     }
   }
 
-  static noEmptyUT(req, res, next) {
-    if (req.body.name === undefined || req.body.descript === undefined) {
-      badRequestJSON.message = 'you are missing a field';
-      res.status(400).send(badRequestJSON);
-    } else {
-      next();
-    }
-  }
-
   static noEmptyUTh(req, res, next) {
-    if (req.body.subject === undefined) {
-      badRequestJSON.message = 'you are missing a field';
+    if (req.body.subject === undefined || req.body.subject === '') {
+      badRequestJSON.message = 'You are missing a field or is empty';
       res.status(400).send(badRequestJSON);
     } else {
       next();
@@ -199,8 +180,8 @@ class ForumMid {
   }
 
   static noEmptyUP(req, res, next) {
-    if (req.body.content === undefined) {
-      badRequestJSON.message = 'you are missing a field';
+    if (req.body.content === undefined || req.body.content === '') {
+      badRequestJSON.message = 'You are missing a field or is empty';
       res.status(400).send(badRequestJSON);
     } else {
       next();
