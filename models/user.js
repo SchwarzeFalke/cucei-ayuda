@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T03:22:29-05:00
+ * @Last modified time: 2018-10-22T20:06:53-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -97,9 +97,14 @@ class UserMdl {
     switch (method) {
       case 'GET':
         switch (url) {
-          case expression:
-
+          case '/users':
+            console.log('NO TIENE PERMISO DE HACER UN GET ALL DE TODOS LOS USUARIOS');
             break;
+          case '/users/:userId':
+            if (data.user_id === url.user_id)
+              console.log('TIENE PERMISO PARA VER TODA SU INFO, PUES SON SUS DATOS');
+            else
+              console.log('NO TIENE PERMISO DE VER TODA LA INFO, PUES ES DE OTRO USUARIO QUE NO ES ÉL');
           default:
 
         }

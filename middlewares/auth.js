@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T03:25:14-05:00
+ * @Last modified time: 2018-10-22T21:03:00-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -20,8 +20,8 @@ class Auth {
           TokenMdl.create({
             token: hash,
             created_at: new Date(),
-            expires: new Date(),
-            type: 's',
+            expires: new Date() + ,
+            type: 'auth',
             exist: 1,
             user_id: user[0].user_code,
           })
@@ -88,7 +88,7 @@ class Auth {
     }
   }
 
-  logout(token, next) {
+  logout(req, res, next) {
     this.statusToken = TokenMdl.get(token);
     if (this.statusToken) {
       TokenMdl.destroy(token)
@@ -110,6 +110,7 @@ class Auth {
       const token = Auth.getHeaderToken(req.headers.authorization);
       await TokenMdl.get(token)
         .then(async (result) => {
+          Auth.isActive(result[0]);
           await TokenMdl.active(result)
             .then(async (active) => {
               if (active) {
@@ -128,7 +129,7 @@ class Auth {
     }
   }
 
-  havePermission(req, res, next) {
+  static havePermission(req, res, next) {
     this.method = req.method;
     if (req.session.UserMdl.canDo(this.method, req.originalUrl)) {
       next();
@@ -137,13 +138,11 @@ class Auth {
     }
   }
 
-  isActive(req, res, next) {
+  static isActive(token) {
     const time = new Date();
-    if (time > this.token.created + this.token.expires) {
-      this.token.destroy();
-      return false;
+    if (time > token.created + token.expires) {
+      TokenMdl.destroy(token.token);
     }
-    return true;
   }
 
   static getHeaderToken(bearer) {
