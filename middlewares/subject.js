@@ -33,6 +33,29 @@ class subjectM {
     }
   }
 
+  static validateNrcP(req, res, next) {
+    const test = /^\d+$/;
+    try {
+      if (req.params.nrc === undefined) {
+        forbiddenJSON.message = 'Invalid Nrc';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+      if (test.test(req.params.nrc)) {
+        if (Number(req.params.nrc) < 1) {
+          forbiddenJSON.message = 'Invalid Nrc';
+          res.status(forbiddenJSON.status).send(forbiddenJSON);
+        } else {
+          next();
+        }
+      } else {
+        forbiddenJSON.message = 'Invalid Nrc';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+    } catch (e) {
+      console.log(`error in validate NRC ${e}`);
+    }
+  }
+
   static validateName(req, res, next) {
     const test = /^[A-Za-z]+$/;
     try {

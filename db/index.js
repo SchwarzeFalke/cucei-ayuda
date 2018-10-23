@@ -1,14 +1,12 @@
-/**
- * @Author: schwarze_falke
- * @Date:   2018-10-08T14:34:11-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T03:26:48-05:00
- */
 
 const mysql = require('mysql');
 
-// FIXME Todos los metodos deben estar documentados
 // FIXME La conexion a la base de datos deberia hacerse solo una vez
+
+/**
+  * [DB class used for connection to the Database,
+  * the credentials used for accesing are environment variables]
+  */
 
 class DB {
   constructor() {
@@ -19,6 +17,18 @@ class DB {
       database: process.env.DB_NAME,
     });
   }
+
+  /**
+ * [get method used to obtain an array or an object from the database, using the
+ * following parameters]
+ * @method get
+ * @param  {[String]} table     [A string used to represent the table from the database]
+ * @param  {[String]} columns   [used to specify the columns to get from a specified table]
+ * @param  {[String]} condition [a condition on which the query is to be made]
+ * @param  {[String]} order     [the way in which the query is ordered, is passed as a string]
+ * @return {[Array]}           [Returns an array of the specified objects
+ *                              formed from a table]
+ */
 
   get(table, columns, condition, order) {
     this.connection = mysql.createConnection({
@@ -53,6 +63,17 @@ class DB {
     });
   }
 
+  /**
+   * [insert method used for inserting into the database an object,
+   * specefied by the following parameters]
+   * @method insert
+   * @param  {[String]} table     [a string that specefies the table to insert into the database]
+   * @param  {[Object]} data      [object that is the model to be inserted into the database]
+   * @param  {[String]} condition [string representing the condition on which the
+   *                                 object is to be inserted]
+   * @return {[Object]}     [returns an array of objects representing the results from the query]
+   */
+
   insert(table, data, condition) {
     this.connection = mysql.createConnection({
       host: process.env.DB_HOST,
@@ -74,6 +95,18 @@ class DB {
       });
     });
   }
+
+  /**
+   * [update method used for updating an object in the database,
+   * specified with the following parameters]
+   * @method update
+   * @param  {[String]} table     [string that represents the table from the database]
+   * @param  {[Object]} data      [object representing the model from the specefied table]
+   * @param  {[String]} condition [string that specifies the condition on which
+   *                               the update is to be made]
+   * @return {[Object]}           [returns an array of objects specified from the
+   *                               results obtained from the query]
+   */
 
   update(table, data, condition) {
     this.connection = mysql.createConnection({
@@ -102,6 +135,16 @@ class DB {
     });
   }
 
+  /**
+   * [physicalDel method used to physically delete an object from the database
+   * specified by the following parameters]
+   * @method physicalDel
+   * @param  {[String]}    table     [string representing a table from the database]
+   * @param  {[String]}    condition [string representing the condition on which the
+   *                                  elimination is to take place]
+   * @return {[Object]}              [returns the results processed from the query]
+   */
+
   physicalDel(table, condition) {
     this.connection = mysql.createConnection({
       host: process.env.DB_HOST,
@@ -125,6 +168,16 @@ class DB {
       });
     });
   }
+
+  /**
+   * [logicalDel method used to logically delete an object from the database
+   * specified by the following parameters]
+   * @method logicalDel
+   * @param  {[String]}    table     [string representing a table from the database]
+   * @param  {[String]}    condition [string representing the condition on which the
+   *                                  elimination is to take place]
+   * @return {[Object]}              [returns the results processed from the query]
+   */
 
   logicalDel(table, condition) {
     this.connection = mysql.createConnection({
