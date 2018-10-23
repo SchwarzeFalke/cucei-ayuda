@@ -15,9 +15,11 @@ class MapCtrl {
         this.get = this.get.bind(this);
     }
 
-    /* Valida que el promise regrese datos, en tal caso manda una respuesta
-     * 200(Ok), en caso de que la respuesta del promise no regrese nada
-     * se dara una respuesta 204(No content)
+    /**
+     * [GET Returns all the data from database via map model]
+     * @param  {[type]}  req
+     * @param  {[type]}  res
+     * @return {Promise}
      */
     async get(req, res) {
         const newResponse = new ResMdl();

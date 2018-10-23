@@ -11,16 +11,15 @@ const middleWares = require('../middlewares');
 
 const router = Router();
 
-/* These is Get methods needing for routes maps
- * Get/map
- * Get/map/building/:buildingId
+/**
+ * [GET /map]
+ * @type {Array} Return all users from database
  */
-
-// this method return all buildings
 router.get('/', mapCtrl.get);
 
-/* this get method need a middleware for validate
- *if id building is a int and return a buildings with id specific
+/**
+ * [GET /map/building/buildingId]
+ * @type {Array} Returns a specific building through its identifier
  */
 router.get('/building/:buildingId', (req, res, next) => {
     const request = middleWares.validator.code(req.params.buildingId);

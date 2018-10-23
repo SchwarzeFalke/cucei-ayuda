@@ -15,7 +15,11 @@ class MapsMdl {
         this.exist = exist;
     }
 
-    // Processes result sent by database
+    /**
+     * [processResult description]
+     * @param  {[type]} data [description: the returned data row from database]
+     * @return {[type]}      [description: the formatted data]
+     */
     static processResult(data) {
         this.result = [];
         data.forEach((res) => {
@@ -24,7 +28,10 @@ class MapsMdl {
         return this.result;
     }
 
-    // request all data in table buildings
+    /**
+     * [get description: Returns all buildings from database]
+     * @return {Promise} [description: Returns all the buildings]
+     */
     static async get() {
         const condition = '';
         await db.get('building', '*', condition)
