@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-21T11:26:08-05:00
+ * @Last modified time: 2018-10-22T03:22:29-05:00
  */
 
 const db = require('../db'); // for database handling
@@ -89,20 +89,32 @@ class UserMdl {
     ];
   }
 
-  canDo(method, url) {
-    // sigo sin saber hacer esto, de donde sacaremos los permisos
-    if (method === 'GET'){
-
+  canDo(method, url, data) {
+    let can = false;
+    if (this.privilages === 'ADMIN') {
+      can = true;
     }
-    if (method === 'DELETE'){
+    switch (method) {
+      case 'GET':
+        switch (url) {
+          case expression:
 
-    }
-    if (method === 'POST'){
+            break;
+          default:
 
+        }
+        break;
+      case 'DELETE':
+        break;
+      case 'POST':
+        break;
+      case 'PUT':
+        break;
+      case 'PATCH':
+        break;
+      default:
     }
-    if (method === 'PUT'){
-
-    }
+    return can;
   }
 
   /**
@@ -131,6 +143,7 @@ class UserMdl {
     this.querySentence = '';
     const columns = UserMdl.validColumns;
     columns.forEach((column) => {
+      console.log(data);
       if (data[column] !== undefined) {
         this.querySentence += `${column} = '${data[column]}' && `;
       }
@@ -140,6 +153,7 @@ class UserMdl {
     }
     // if there are not more columns to evaluate, delete the last '&&' operator
     // from the query condition
+    console.log(this.querySentence);
     return this.querySentence.slice(0, -4);
   }
 
@@ -174,7 +188,7 @@ class UserMdl {
     }
     await db.get('user', '*', queryCondition)
       .then((results) => {
-        this.result = UserMdl.processResult(results);
+        this.result = results;
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
@@ -191,11 +205,14 @@ class UserMdl {
   static async get(columns, id, condition) {
     let queryCondition = `user_code = ${id}`;
     if (condition) {
-      queryCondition += `&& ${UserMdl.processConditions(condition)}`;
+      if (condition.length > 1) {
+        queryCondition += ` && ${UserMdl.processConditions(condition)}`;
+        console.log(queryCondition);
+      }
     }
     await db.get('user', columns, queryCondition)
       .then((results) => {
-        this.result = UserMdl.processResult(results);
+        this.result = results;
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
