@@ -22,7 +22,7 @@ const router = Router();
 router.get('/', subjectCtrl.getAll);
 
 // GET /subject/:subjectId    returns specific subject
-router.get('/:nrc', [middleWares.subjectM.validateNrcP], subjectCtrl.getSubject);
+router.get('/:nrc', [middleWares.subjectM.validateNrcP, middleWares.Auth.haveSession], subjectCtrl.getSubject);
 
 // GET /subject/:subjectId/subjects
 // Returns all subjects of a method

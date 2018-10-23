@@ -26,7 +26,6 @@ class ScheduleMdl {
         .catch(e => reject(e));
       return resolve(this.result);
     });
-<<<<<<< HEAD
     return this.result;
   }
 
@@ -46,17 +45,6 @@ class ScheduleMdl {
     await db.get('subject', ['nrc','name','first_day','sec_day','classroom','section','credits','building','exist','taught_by'])
       .then((results) => {
         this.result = Schedule.processResult(results);
-      })
-      .catch((e) => {
-        throw e;
-      });
-    return this.result;
-  }
-
-  static async get(columns, condition) {
-    await db.get('subject', columns, condition)
-      .then((results) => {
-        this.result = results;
       })
       .catch((e) => {
         throw e;
@@ -98,8 +86,6 @@ class ScheduleMdl {
         throw e;
       });
     return this.result;
-=======
->>>>>>> e78ee392e3d3c3d35b8f21e73eca78ce33ca3cf9
   }
 
   static async get(column, condition) {
