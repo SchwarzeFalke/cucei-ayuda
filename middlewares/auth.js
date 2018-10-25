@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T04:07:02-05:00
+ * @Last modified time: 2018-10-25T04:58:22-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -116,10 +116,18 @@ class Auth {
         const token = Auth.getHeaderToken(req.headers.authorization);
         await TokenMdl.get(token)
           .then(async (result) => {
-//            Auth.isActive(result[0]);
+            await TokenMdl.active(result).then((active) => {
+              if (active === 'NON-ACTIVE') {
+                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                newResponse.response.message = newResponse.createMessage();
+                next(res.status(newResponse.response.status).send(newResponse.response));
+              } else {
+                Auth.isActive(result[0]);
+              }
+            });
             await TokenMdl.active(result)
               .then(async (active) => {
-                if (active) {
+                if (active === 'ACTIVE') {
                   req.session = {
                     token: result[0].token,
                     user: await UserMdl.get('*', result[0].user_id),
@@ -147,7 +155,8 @@ class Auth {
 
   static isActive(token) {
     const time = new Date();
-    if (time > token.expires) {
+    const tokenTime = new Date(token.expires);
+    if (time.getTime() > tokenTime.getTime()) {
       TokenMdl.destroy(token.token);
     }
   }
