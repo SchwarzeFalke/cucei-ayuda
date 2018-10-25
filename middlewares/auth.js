@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T06:57:29-05:00
+ * @Last modified time: 2018-10-25T07:12:57-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -41,7 +41,7 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
     this.newUser = new UserMdl({ ...req.body });
@@ -68,8 +68,12 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
-    if (user[0].user_code !== undefined) {
+    let user;
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, async (err, hash) => {
+      user = await UserMdl.get('*', `${req.body.user_id}`, { password: hash });
+    });
+    console.log(user);
+    if (typeof user[0].user_code !== 'undefined') {
       const data = {
         user: user[0].user_code,
         token: null,

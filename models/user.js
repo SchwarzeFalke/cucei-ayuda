@@ -2,11 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T20:06:53-05:00
+ * @Last modified time: 2018-10-25T07:16:23-05:00
  */
 
+const bcrypt = require('bcrypt');
 const db = require('../db'); // for database handling
-
 /**
  * Name: user.js | Type: Class | Description: User Model | @Author: Carlos Vara
  *                                 METHODS
@@ -61,7 +61,9 @@ class UserMdl {
       this.email = args.email;
     }
     if (args.password !== undefined) {
-      this.password = args.password;
+      bcrypt.hash(`${args.password}`, process.env.SECRET, (err, hash) => {
+        this.password = hash;
+      });
     }
     if (args.privilages !== undefined) {
       this.privilages = args.privilages;
