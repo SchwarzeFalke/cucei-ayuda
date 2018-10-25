@@ -2,8 +2,6 @@ const { TopicMdl } = require('../models');
 const { ThreadMdl } = require('../models');
 const { PostMdl } = require('../models');
 
-// FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
-
 class TopicCtrl {
   constructor() {
     this.getAll = this.getAll.bind(this);
@@ -44,7 +42,7 @@ class TopicCtrl {
     };
   }
 
-/**
+  /**
  * [getAll is a function that returns all the topics from the db or specific data
  * specified in a query. First it validates if we sent a query, if you send a
  * query it sends it to a function of topicMdl (modles/topicMdl), else it call
@@ -52,7 +50,7 @@ class TopicCtrl {
  * @param  {Object}  req [description]
  * @param  {Object}  res [response sent to the browser with the data extracted,
  * a message, a status and a response]
- * @return {Void}
+ * @return Void funtion
  */
   async getAll(req, res) {
     const { query } = req;
@@ -97,7 +95,7 @@ class TopicCtrl {
  * @param  {Object}  req [description]
  * @param  {Object}  res [response sent to the browser with the data extracted,
  * a message, a status and a response]
- * @return {Void}
+ * @return Void funtion
  */
 
   async get(req, res) {
@@ -126,7 +124,7 @@ class TopicCtrl {
  * @param  {Object}  req [description]
  * @param  {Object}  res [response sent to the browser with the data extracted,
  * a message, a status and a response]
- * @return {Void}
+ * @return Void funtion
  */
   async create(req, res) {
     const topic = new TopicMdl(req.body);
@@ -162,7 +160,7 @@ class TopicCtrl {
   * * @param  {Object}  req [description]
   * @param  {Object}  res [response sent to the browser with the data extracted,
   * a message, a status and a response]
-  * @return {Void}
+  * @return Void funtion
   */
   async modify(req, res) {
     const topic = new TopicMdl(req.body);
@@ -188,7 +186,7 @@ class TopicCtrl {
    * @param  {Object}  req [description]
    * @param  {Object}  res [response sent to the browser with the data extracted,
    * a message, a status and a response]
-   * @return {Void}
+   * @return Void funtion
    */
   async delete(req, res) {
     const topic = new TopicMdl(req.body);
@@ -218,7 +216,7 @@ class TopicCtrl {
  * @param  {Object}  req [object than contains the id that we are sending]
  * @param  {Object}  res [response sent to the browser with the data extracted,
  * a message, a status and a response]
- * @return {Void}
+ * @return Void funtion
  */
   async deleteAll(req, res) {
     const topic = new TopicMdl(req.body);

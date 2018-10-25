@@ -22,10 +22,11 @@ class ThreadCtrl {
   }
 
   /**
- * [getAll description]
- * @param  {[type]}  req [description]
- * @param  {[type]}  res [description]
- * @return {Promise}     [description]
+ * getAll: gets all the data from the DB by calling a model, it offers you
+ * two ways of retrieving the data, one by sending a query or the other
+ * is getting everything.
+ * @param  {Object}  req
+ * @param  {Object}  res
  */
   async getAll(req, res) {
     const { query } = req;
@@ -68,6 +69,11 @@ class ThreadCtrl {
     }
   }
 
+  /**
+ * get: gets data using an specific id.
+ * @param  {Object}  req
+ * @param  {Object}  res
+ */
   async get(req, res) {
     const { threadId } = req.params;
     let data;
