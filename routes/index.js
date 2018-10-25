@@ -15,7 +15,7 @@ const subjectRouter = require('./subject');
 const forumRouter = require('./forum');
 const mapRouter = require('./map');
 const buildingRouter = require('./building');
-
+const mailer = require('../mail');
 
 const router = Router();
 
@@ -24,7 +24,17 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => res.send('Welcome to QCInf!'));
-
+router.get('/email', (req, res) => {
+  let mailOptions = {
+    to: 'ruiztyler97@gmail.com',
+    subject: 'Hello testing',
+    text: 'Aqui viene url al que se le concatena el token (dsfdsafsafdsa/${token})',
+    html: '<b>Hello world?</b>'
+    //en los parametros recives
+  };
+  mailer.sendMail(mailOptions);
+  res.send('lo logramos');
+});
 router.use('/users', usersRouter);
 router.use('/subject', subjectRouter);
 router.use('/topics', forumRouter);
