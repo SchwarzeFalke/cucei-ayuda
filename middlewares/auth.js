@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T21:03:00-05:00
+ * @Last modified time: 2018-10-25T04:07:02-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -17,10 +17,11 @@ class Auth {
       this.key = `${user[0].name}${user[0].user_code}ky`;
       await bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(this.key, salt, (hashErr, hash) => {
+          const creation = new Date();
           TokenMdl.create({
             token: hash,
-            created_at: new Date(),
-            expires: new Date() + ,
+            created_at: creation,
+            expires: new Date(creation.getTime() + (15 * 60000)),
             type: 'auth',
             exist: 1,
             user_id: user[0].user_code,
@@ -76,9 +77,11 @@ class Auth {
               token: await Auth.generateToken(user),
             };
             res.send(response);
-            next();
+          } else if (active === 'ACTIVE') {
+            newResponse.createResponse('You are already logged', 200, '/users', 'POST');
+            newResponse.response.message = newResponse.createMessage();
+            next(res.status(newResponse.response.status).send(newResponse.response));
           }
-          next();
         })
         .catch(err => console.error(`.catch(${err})`));
     } else {
@@ -101,31 +104,35 @@ class Auth {
   }
 
   static async haveSession(req, res, next) {
-    const newResponse = new ResMdl();
-    if (req.headers.authorization === undefined) {
-      newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-      newResponse.response.message = newResponse.createMessage();
-      next(res.status(newResponse.response.status).send(newResponse.response));
+    if (req.path === '/users/login') {
+      next();
     } else {
-      const token = Auth.getHeaderToken(req.headers.authorization);
-      await TokenMdl.get(token)
-        .then(async (result) => {
-          Auth.isActive(result[0]);
-          await TokenMdl.active(result)
-            .then(async (active) => {
-              if (active) {
-                req.session = {
-                  token: result[0].token,
-                  user: await UserMdl.get('*', result[0].user_id),
-                };
-                next();
-              } else {
-                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                newResponse.response.message = newResponse.createMessage();
-                next(res.status(newResponse.response.status).send(newResponse.response));
-              }
-            });
-        });
+      const newResponse = new ResMdl();
+      if (req.headers.authorization === undefined) {
+        newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+        newResponse.response.message = newResponse.createMessage();
+        next(res.status(newResponse.response.status).send(newResponse.response));
+      } else {
+        const token = Auth.getHeaderToken(req.headers.authorization);
+        await TokenMdl.get(token)
+          .then(async (result) => {
+//            Auth.isActive(result[0]);
+            await TokenMdl.active(result)
+              .then(async (active) => {
+                if (active) {
+                  req.session = {
+                    token: result[0].token,
+                    user: await UserMdl.get('*', result[0].user_id),
+                  };
+                  next();
+                } else {
+                  newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                  newResponse.response.message = newResponse.createMessage();
+                  next(res.status(newResponse.response.status).send(newResponse.response));
+                }
+              });
+          });
+      }
     }
   }
 
@@ -140,7 +147,7 @@ class Auth {
 
   static isActive(token) {
     const time = new Date();
-    if (time > token.created + token.expires) {
+    if (time > token.expires) {
       TokenMdl.destroy(token.token);
     }
   }
