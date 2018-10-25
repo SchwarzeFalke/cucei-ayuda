@@ -3,7 +3,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T01:19:16-05:00
+ * @Last modified time: 2018-10-25T05:20:04-05:00
  */
 
 const { Router } = require('express');
@@ -28,6 +28,8 @@ const router = Router();
 
 
 router.post('/login', middleWares.Auth.login);
+
+router.get('/logout', middleWares.Auth.logout);
 
 
 // FIXME Falta un middleware para validar que el param :amount sea un numero valido

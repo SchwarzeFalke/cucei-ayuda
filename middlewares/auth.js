@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T04:58:22-05:00
+ * @Last modified time: 2018-10-25T06:57:29-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -15,28 +15,32 @@ class Auth {
   static async generateToken(user) {
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
-      await bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(this.key, salt, (hashErr, hash) => {
-          const creation = new Date();
-          TokenMdl.create({
-            token: hash,
-            created_at: creation,
-            expires: new Date(creation.getTime() + (15 * 60000)),
-            type: 'auth',
-            exist: 1,
-            user_id: user[0].user_code,
-          })
-            .then(() => resolve(hash))
-            .catch((e) => {
-              console.error(`.catch(${hashErr})`);
-              reject(e);
-            });
-        });
+      bcrypt.hash(this.key, process.env.SECRET, (hashErr, hash) => {
+        const creation = new Date();
+        TokenMdl.create({
+          token: hash,
+          created_at: creation,
+          expires: new Date(creation.getTime() + (15 * 60000)),
+          type: 'auth',
+          exist: 1,
+          user_id: user[0].user_code,
+        })
+          .then(() => resolve(hash))
+          .catch((e) => {
+            console.error(`.catch(${hashErr})`);
+            reject(e);
+          });
       });
     });
   }
 
   static async register(req, res, next) {
+    const newResponse = new ResMdl();
+    if (req.session !== undefined && req.session.token.length > 1) {
+      newResponse.createResponse('You already have an account', 400, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    }
     bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
@@ -50,8 +54,10 @@ class Auth {
         user: this.newUser,
       });
     } catch (e) {
-      console.error(`.catch(${e})`);
-      next(e);
+      newResponse.createResponse(`There is an user with that information ${e}`,
+        400, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
     }
   }
 
@@ -91,20 +97,27 @@ class Auth {
     }
   }
 
-  logout(req, res, next) {
-    this.statusToken = TokenMdl.get(token);
-    if (this.statusToken) {
-      TokenMdl.destroy(token)
-        .then(() => next())
-        .catch((e) => {
-          console.error(`.catch(${e})`);
-          next(e);
+  static async logout(req, res, next) {
+    const newResponse = new ResMdl();
+    if (req.headers.authorization === undefined) {
+      newResponse.createResponse('You are not logged in or signed up', 409, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    } else {
+      const token = Auth.getHeaderToken(req.headers.authorization);
+      await TokenMdl.get(token)
+        .then(async (result) => {
+          TokenMdl.destroy(result[0].token);
+          newResponse.createResponse('Successfully log-out', 200, '/users', 'POST');
+          newResponse.response.message = newResponse.createMessage();
+          next(res.status(newResponse.response.status).send(newResponse.response));
         });
     }
   }
 
   static async haveSession(req, res, next) {
-    if (req.path === '/users/login') {
+    if (req.path === '/users/login' || req.path === '/users/logout'
+      || req.path === '/users/register') {
       next();
     } else {
       const newResponse = new ResMdl();
