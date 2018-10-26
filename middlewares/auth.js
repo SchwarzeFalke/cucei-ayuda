@@ -12,6 +12,8 @@ const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handlin
 // FIXME Todos los metodos deben estar documentados
 
 class Auth {
+  generateTokenPassword(email) {}
+
   static async generateToken(user) {
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
