@@ -1,7 +1,7 @@
 /**
- * @Author: schwarze_falke
+ * @Author: brandonmdiaz
  * @Date:   2018-10-09T01:15:15-05:00
- * @Last modified by:   schwarze_falke
+ * @Last modified by:   brandonmdiaz
  * @Last modified time: 2018-10-09T01:40:18-05:00
  */
 
@@ -58,22 +58,20 @@ class ThreadMdl {
   }
 
   static async getAll(topicId) {
-    let all = ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'];
-    let res;
     const order = ' ORDER BY created';
     const condition = `topic_id = ${topicId}`;
-    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'], condition, order).then((results) => {
-      res = this.processData(results);
-    }).catch((e) => {
+    try {
+      this.res = await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'], condition, order);
+      this.res = this.processData(this.res);
+    } catch (e) {
       console.log(`Error: ${e}`);
-    });
-    return res;
+    }
+    return this.res;
   }
 
   static async find(data, topicId) {
     let condition;
     let order;
-    let response;
     if (data.q || data.page || data.count || data.sort) {
       this.condition = `topic_id = ${topicId}`;
       if (data.q) {
@@ -84,79 +82,101 @@ class ThreadMdl {
     } else {
       condition = `thread_id = ${data} && topic_id = ${topicId}`;
     }
-    await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'], condition, order).then((result) => {
-      response = this.processData(result);
-    }).catch((e) => {
+    try {
+      this.response = await db.get('thread', ['thread_id', 'exist', 'subject', 'created', 'user_code', 'topic_id'], condition, order);
+      this.response = this.processData(this.respose);
+    } catch (e) {
       console.error(`.catch(${e})`);
-    });
-    return response;
+    }
+    return this.response;
   }
 
   async save() {
+    const error = 1;
     delete this.thread_id;
     let data;
     if (this.required()) {
-      await db.insert('thread', this).then((result) => {
-        if (result === undefined) {
+      try {
+        this.data = await db.insert('thread', this);
+        if (this.data === undefined) {
           data = 2;
         } else {
           data = {
-            insertId: result.insertId,
+            insertId: this.data.insertId,
             subject: this.subject,
             created: this.created,
           };
         }
-      }).catch((e) => {
+      } catch (e) {
         console.error(`.catch(${e})`);
         return undefined;
-      });
+      }
       return data;
     }
-    return 1;
+    return error;
   }
 
+  /**
+   * this functions creates a condition and then sends it to the db manager. so it can
+   * modify the data given
+   * @param  {integer}  threadId
+   * @param  {integer}  topicId
+   * @return {Object}  data     it returns the data modify
+   */
   async modify(threadId, topicId) {
-    let data;
     const condition = `thread_id = ${threadId} && topic_id = ${topicId}`;
     const obj = {};
     obj.subject = this.subject;
     obj.created = this.created;
-    await db.update('thread', obj, condition).then((result) => {
-      if (result === undefined) {
-        data = undefined;
+    try {
+      this.result = await db.update('thread', obj, condition);
+      if (this.result === undefined) {
+        this.data = undefined;
       } else {
-        data = {
+        this.data = {
           threadId: threadId,
           subject: this.subject,
           created: this.created,
         };
       }
-    }).catch((e) => {
+    } catch (e) {
       console.error(`.catch(${e})`);
       return undefined;
-    });
-    return data;
+    }
+
+    return this.data;
   }
 
+  /**
+ * delete a thread with the user id
+ * @param  {[type]}  id [description]
+ * @return {Promise}    [description]
+ */
   static async delete(id) {
     let data;
     const condition = `thread_id = ${id}`;
     const obj = {};
     obj.exist = 0;
-    await db.update('thread', obj, condition).then((result) => {
-      if (result === undefined) {
+    try {
+      this.result = await db.update('thread', obj, condition);
+      if (this.result === undefined) {
         data = undefined;
       } else {
         data = {
           threadId: id,
         };
       }
-    }).catch((e) => {
+    } catch (e) {
       console.error(`.catch(${e})`);
-    });
+    }
     return data;
   }
 
+  /**
+ * [deleteReal deletes all posts from the thread, and then deletes the thread]
+ * @param  {integer}  id [description]
+ * @return {}    [description]
+ */
   static async deleteReal(id) {
     let data;
     await PostMdl.deleteAll(`thread_id = ${id}`).then((result) => {
