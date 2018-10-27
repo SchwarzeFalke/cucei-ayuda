@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T03:58:02-05:00
+ * @Last modified time: 2018-10-27T04:44:24-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -111,7 +111,7 @@ class Auth {
               token: await Auth.generateToken(user),
             };
             res.send(response);
-          } else if (active === 'ACTIVE') {
+          } else {
             newResponse.createResponse('You are already logged', 200, '/users', 'POST');
             newResponse.response.message = newResponse.createMessage();
             next(res.status(newResponse.response.status).send(newResponse.response));
@@ -143,9 +143,19 @@ class Auth {
     }
   }
 
+  static async confirm(req, res, next) {
+    const newResponse = new ResMdl();
+    await TokenMdl.confirm(req.body.user, req.body.confirmation)
+      .then(async (result) => {
+        newResponse.createResponse('Email Confirmation', result.status, '/users', 'POST');
+        newResponse.response.message = `${result.message}`;
+        next(res.status(newResponse.response.status).send(newResponse.response));
+      });
+  }
+
   static async haveSession(req, res, next) {
     if (req.path === '/users/login' || req.path === '/users/logout'
-      || req.path === '/users/register') {
+      || req.path === '/users/register' || req.path === '/users/confirmEmail') {
       next();
     } else {
       const newResponse = new ResMdl();

@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T03:39:43-05:00
+ * @Last modified time: 2018-10-27T04:53:57-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -164,7 +164,6 @@ class UserMdl {
     this.querySentence = '';
     const columns = UserMdl.validColumns;
     columns.forEach((column) => {
-      console.log(data);
       if (data[column] !== undefined) {
         this.querySentence += `${column} = '${data[column]}' && `;
       }
@@ -174,7 +173,6 @@ class UserMdl {
     }
     // if there are not more columns to evaluate, delete the last '&&' operator
     // from the query condition
-    console.log(this.querySentence);
     return this.querySentence.slice(0, -4);
   }
 
@@ -228,7 +226,6 @@ class UserMdl {
     if (condition) {
       if (condition.length > 1) {
         queryCondition += ` && ${UserMdl.processConditions(condition)}`;
-        console.log(queryCondition);
       }
     }
     await db.get('user', columns, queryCondition)

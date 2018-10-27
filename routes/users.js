@@ -3,7 +3,7 @@
  * @Author: root
  * @Date:   2018-09-18T09:45:53-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T02:39:54-05:00
+ * @Last modified time: 2018-10-27T04:06:52-05:00
  */
 
 const { Router } = require('express');
@@ -27,6 +27,8 @@ const router = Router();
 */
 
 router.post('/register', middleWares.Auth.register);
+
+router.post('/confirmEmail', middleWares.Auth.confirm);
 
 router.post('/login', middleWares.Auth.login);
 

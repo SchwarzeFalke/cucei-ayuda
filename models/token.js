@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T04:01:29-05:00
+ * @Last modified time: 2018-10-27T04:48:41-05:00
  */
 
 
@@ -61,7 +61,9 @@ class Token {
           }
           await db.get('token', 'confirmation', query)
             .then((result) => {
-              if (result[0].confirmation !== 0) {
+              if (typeof result[0] === 'undefined') {
+                resolve('NON-ACTIVE');
+              } else if (result[0].confirmation !== null) {
                 answer += ' | PLEASE CONFIRM EMAIL!';
                 resolve(answer);
               } else {
@@ -116,13 +118,23 @@ class Token {
   }
 
   static async confirm(user, code) {
-    await db.update('token', 'code = NULL', `user_code = ${user} & confirmation = ${code}`)
-      .then((result) => {
-        if (result[0].affectedRows === 1) {
-          this.response = 'Account successfully confirmed';
-        } else { this.response = 'Cannot confirm session; confirmation code is wrong!'; }
-        return this.response;
-      });
+    return new Promise(async (resolve, reject) => {
+      await db.update('token', { confirmation: null }, `user_id = ${user} && confirmation = ${code}`)
+        .then((result) => {
+          if (result.affectedRows === 1) {
+            this.response = {
+              message: 'Account successfully confirmed',
+              status: 200,
+            };
+          } else {
+            this.response = {
+              message: 'Cannot confirm session; confirmation code is wrong!',
+              status: 401,
+            };
+          }
+          resolve(this.response);
+        }).catch(err => reject(err));
+    });
   }
 }
 
