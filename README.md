@@ -31,7 +31,7 @@ And do the same with all the other dependencies.
 
 To run this application locally, the user must clone/download this repo into his machine and run the [database script](https://github.com/SchwarzeFalke/cucei-ayuda/wiki/Database). The database is a relational database developed with MySQL, but any SQL manager should work with it.
 
-![alt-text](https://i.imgur.com/uho5uU3.png)
+![alt-text](https://i.imgur.com/zx2Ieza.png)
 
 ### DEPLOYMENT
 
