@@ -15,7 +15,7 @@ const subjectRouter = require('./subject');
 const forumRouter = require('./forum');
 const mapRouter = require('./map');
 const buildingRouter = require('./building');
-
+const auth = require('./auth');
 
 const router = Router();
 
@@ -30,5 +30,6 @@ router.use('/subject', subjectRouter);
 router.use('/topics', forumRouter);
 router.use('/map', mapRouter);
 router.use('/building', buildingRouter);
+router.use('/auth', auth);
 
 module.exports = router;

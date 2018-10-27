@@ -3,13 +3,12 @@ const nodemailer = require('nodemailer');
 class Mailer {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      servise: 'gmail',
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
       secure: false,
       auth: {
-        user: 'brandonmdflores@gmail.com',
-        pass: 'cappuchini123',
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
       },
     });
 

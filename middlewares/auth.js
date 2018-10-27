@@ -12,33 +12,47 @@ const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handlin
 // FIXME Todos los metodos deben estar documentados
 
 class Auth {
-  generateTokenPassword(email) {}
-
-  static async generateToken(user) {
+  static async generateToken(user, tipo = 'auth') {
+    const saltRounds = 10;
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
-      await bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(this.key, salt, (hashErr, hash) => {
-          TokenMdl.create({
-            token: hash,
-            created_at: new Date(),
-            expires: new Date(),
-            type: 's',
-            exist: 1,
-            user_id: user[0].user_code,
-          })
-            .then(() => resolve(hash))
-            .catch((e) => {
-              console.error(`.catch(${hashErr})`);
-              reject(e);
-            });
+      bcrypt.hash(this.key, saltRounds, (hashErr, hash) => {
+        const creation = new Date();
+        let expire;
+        if (tipo === 'recover') {
+          //hacer que dure poquito tiempo c:
+          expire = new Date(creation.getTime() + (15 * 60000));
+          const s = new Date(creation.getTime() + (15 * 1));
+          console.log(expire);
+          console.log(s);
+        } else {
+          expire = new Date(creation.getTime() + (15 * 60000));
+        }
+        TokenMdl.create({
+          token: hash,
+          created_at: creation,
+          expires: expire,
+          type: `${tipo}`,
+          exist: 1,
+          user_id: user[0].user_code,
+        }).then(() => {
+          resolve(hash);
+        }).catch((e) => {
+          console.error(`fdsafasdfasdfasdfas.catch(${hashErr})`);
+          reject(e);
         });
       });
     });
   }
 
   static async register(req, res, next) {
-    bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+    const newResponse = new ResMdl();
+    if (req.session !== undefined && req.session.token.length > 1) {
+      newResponse.createResponse('You already have an account', 400, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    }
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
       req.body.password = hash;
     });
     this.newUser = new UserMdl({ ...req.body });
@@ -51,8 +65,10 @@ class Auth {
         user: this.newUser,
       });
     } catch (e) {
-      console.error(`.catch(${e})`);
-      next(e);
+      newResponse.createResponse(`There is an user with that information ${e}`,
+        400, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      next(res.status(newResponse.response.status).send(newResponse.response));
     }
   }
 
@@ -63,8 +79,12 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
-    if (user[0].user_code !== undefined) {
+    let user;
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, async (err, hash) => {
+      user = await UserMdl.get('*', `${req.body.user_id}`, { password: hash });
+    });
+    console.log(user);
+    if (typeof user[0].user_code !== 'undefined') {
       const data = {
         user: user[0].user_code,
         token: null,
@@ -78,9 +98,11 @@ class Auth {
               token: await Auth.generateToken(user),
             };
             res.send(response);
-            next();
+          } else if (active === 'ACTIVE') {
+            newResponse.createResponse('You are already logged', 200, '/users', 'POST');
+            newResponse.response.message = newResponse.createMessage();
+            next(res.status(newResponse.response.status).send(newResponse.response));
           }
-          next();
         })
         .catch(err => console.error(`.catch(${err})`));
     } else {
@@ -90,43 +112,63 @@ class Auth {
     }
   }
 
-  logout(token, next) {
-    this.statusToken = TokenMdl.get(token);
-    if (this.statusToken) {
-      TokenMdl.destroy(token)
-        .then(() => next())
-        .catch((e) => {
-          console.error(`.catch(${e})`);
-          next(e);
-        });
-    }
-  }
-
-  static async haveSession(req, res, next) {
+  static async logout(req, res, next) {
     const newResponse = new ResMdl();
     if (req.headers.authorization === undefined) {
-      newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+      newResponse.createResponse('You are not logged in or signed up', 409, '/users', 'POST');
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     } else {
       const token = Auth.getHeaderToken(req.headers.authorization);
       await TokenMdl.get(token)
         .then(async (result) => {
-          await TokenMdl.active(result)
-            .then(async (active) => {
-              if (active) {
-                req.session = {
-                  token: result[0].token,
-                  user: await UserMdl.get('*', result[0].user_id),
-                };
-                next();
-              } else {
+          TokenMdl.destroy(result[0].token);
+          newResponse.createResponse('Successfully log-out', 200, '/users', 'POST');
+          newResponse.response.message = newResponse.createMessage();
+          next(res.status(newResponse.response.status).send(newResponse.response));
+        });
+    }
+  }
+
+  static async haveSession(req, res, next) {
+    if (req.path === '/users/login' || req.path === '/users/logout'
+      || req.path === '/users/register') {
+      next();
+    } else {
+      const newResponse = new ResMdl();
+      if (req.headers.authorization === undefined) {
+        newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+        newResponse.response.message = newResponse.createMessage();
+        next(res.status(newResponse.response.status).send(newResponse.response));
+      } else {
+        const token = Auth.getHeaderToken(req.headers.authorization);
+        await TokenMdl.get(token)
+          .then(async (result) => {
+            await TokenMdl.active(result).then((active) => {
+              if (active === 'NON-ACTIVE') {
                 newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
                 newResponse.response.message = newResponse.createMessage();
                 next(res.status(newResponse.response.status).send(newResponse.response));
+              } else {
+                Auth.isActive(result[0]);
               }
             });
-        });
+            await TokenMdl.active(result)
+              .then(async (active) => {
+                if (active === 'ACTIVE') {
+                  req.session = {
+                    token: result[0].token,
+                    user: await UserMdl.get('*', result[0].user_id),
+                  };
+                  next();
+                } else {
+                  newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                  newResponse.response.message = newResponse.createMessage();
+                  next(res.status(newResponse.response.status).send(newResponse.response));
+                }
+              });
+          });
+      }
     }
   }
 
@@ -139,13 +181,12 @@ class Auth {
     }
   }
 
-  isActive(req, res, next) {
+  static isActive(token) {
     const time = new Date();
-    if (time > this.token.created + this.token.expires) {
-      this.token.destroy();
-      return false;
+    const tokenTime = new Date(token.expires);
+    if (time.getTime() > tokenTime.getTime()) {
+      TokenMdl.destroy(token.token);
     }
-    return true;
   }
 
   static getHeaderToken(bearer) {

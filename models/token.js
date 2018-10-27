@@ -63,11 +63,14 @@ class Token {
 
   static async create(data) {
     return new Promise(async (resolve, reject) => {
+      console.log(data);
       await db.insert('token', data)
         .then(() => {
           resolve(data.token);
         })
-        .catch(e => reject(e));
+        .catch((e) => {
+          reject(e);
+        });
     });
   }
 

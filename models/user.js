@@ -72,6 +72,22 @@ class UserMdl {
   }
 
   /**
+ * findUser find user using an email]
+ * @param  {string}  email [email to find a user]
+ */
+  static async findUser(email) {
+    const condition = `email = '${email}'`;
+    try {
+      this.data = await db.get('user', '*', condition);
+      this.data = this.processResult(this.data);
+    } catch (e) {
+      console.log(`Error en findUser: ${e}`);
+      return undefined;
+    }
+    return this.data;
+  }
+
+  /**
    * [result description: Returns all the valids columns for the user model]
    * @type {Array}
    */
