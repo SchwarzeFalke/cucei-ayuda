@@ -2,9 +2,8 @@
  * @Author: schwarze_falke
  * @Date:   2018-10-22T21:03:42-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T04:52:21-05:00
+ * @Last modified time: 2018-10-27T03:20:41-05:00
  */
-
 
 
 const mysql = require('mysql');
@@ -99,6 +98,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
+        console.log(err);
         return resolve(JSON.parse(JSON.stringify(results)));
       });
     });

@@ -2,7 +2,7 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T07:16:23-05:00
+ * @Last modified time: 2018-10-27T03:39:43-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -61,9 +61,7 @@ class UserMdl {
       this.email = args.email;
     }
     if (args.password !== undefined) {
-      bcrypt.hash(`${args.password}`, process.env.SECRET, (err, hash) => {
-        this.password = hash;
-      });
+      this.password = args.password;
     }
     if (args.privilages !== undefined) {
       this.privilages = args.privilages;
@@ -256,13 +254,18 @@ class UserMdl {
   }
 
   async save() {
-    await db.insert('user', this)
-      .then((results) => {
-        this.result = results;
-        return this.result;
-      })
-      .catch(e => console.error(`.catch(${e}})`));
-    return this.result;
+    return new Promise(async (resolve, reject) => {
+      await bcrypt.hash(`${this.password}`, process.env.SECRET, async (err, hash) => {
+        this.password = hash;
+        await db.insert('user', this)
+          .then((results) => {
+            this.result = results;
+            resolve(this.result);
+          })
+          .catch(e => reject(e));
+        resolve(this.result);
+      });
+    });
   }
 
   async update(id) {

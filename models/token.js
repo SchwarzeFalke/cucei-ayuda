@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T04:53:03-05:00
+ * @Last modified time: 2018-10-27T04:01:29-05:00
  */
 
 
@@ -15,6 +15,7 @@ class Token {
     this.expires = args.expires;
     this.type = args.type;
     this.active = args.active;
+    this.confirmation = args.confirmation;
     this.user_id = args.user_id;
   }
 
@@ -45,18 +46,31 @@ class Token {
   static async active(args) {
     return new Promise(async (resolve, reject) => {
       let query;
+      let answer;
       if (args.user) {
         query = `user_id = ${args.user}`;
       } else if (args.token) {
         query = `token = ${args.token}`;
       }
       await db.get('token', '*', query)
-        .then((results) => {
+        .then(async (results) => {
           if ((typeof results[0] === 'undefined')) {
-            resolve('NON-ACTIVE');
+            answer = 'NON-ACTIVE';
           } else {
-            resolve('ACTIVE');
+            answer = 'ACTIVE';
           }
+          await db.get('token', 'confirmation', query)
+            .then((result) => {
+              if (result[0].confirmation !== 0) {
+                answer += ' | PLEASE CONFIRM EMAIL!';
+                resolve(answer);
+              } else {
+                resolve(answer);
+              }
+            })
+            .catch((e) => {
+              reject(e);
+            });
         })
         .catch(e => reject(e));
     });
@@ -64,10 +78,26 @@ class Token {
 
   static async create(data) {
     return new Promise(async (resolve, reject) => {
-      console.log(data);
       await db.insert('token', data)
         .then(() => {
           resolve(data.token);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  }
+
+  static async isConfirmed(args) {
+    return new Promise(async (resolve, reject) => {
+      const query = `token = '${args.token}'`;
+      await db.get('token', 'confirmation', query)
+        .then((result) => {
+          if (result[0].confirmation !== 0) {
+            resolve('TRUE');
+          } else {
+            resolve('FALSE');
+          }
         })
         .catch((e) => {
           reject(e);
@@ -81,6 +111,16 @@ class Token {
         if (result[0].affectedRows === 1) {
           this.response = 'Successfully ended session';
         } else { this.response = 'Cannot end session; token does not exist!'; }
+        return this.response;
+      });
+  }
+
+  static async confirm(user, code) {
+    await db.update('token', 'code = NULL', `user_code = ${user} & confirmation = ${code}`)
+      .then((result) => {
+        if (result[0].affectedRows === 1) {
+          this.response = 'Account successfully confirmed';
+        } else { this.response = 'Cannot confirm session; confirmation code is wrong!'; }
         return this.response;
       });
   }

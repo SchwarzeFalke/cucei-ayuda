@@ -3,24 +3,35 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-26T21:43:33-05:00
+ * @Last modified time: 2018-10-27T03:58:02-05:00
  */
 
 const bcrypt = require('bcrypt');
+const mailer = require('../mail');
 const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handling
 
 // FIXME Todos los metodos deben estar documentados
 
 class Auth {
-  static async generateToken(user, tipo = 'auth') {
+  static async generateToken(user, type = 'auth') {
     return new Promise(async (resolve, reject) => {
-      this.key = `${user[0].name}${user[0].user_code}ky`;
+      let usercode;
+      if (typeof user[0] === 'undefined') {
+        this.key = `${user.name}${user.user_code}ky`;
+        usercode = user.user_code;
+      } else {
+        this.key = `${user[0].name}${user[0].user_code}ky`;
+        usercode = user[0].user_code;
+      }
       bcrypt.hash(this.key, process.env.SECRET, (hashErr, hash) => {
         let expire;
+        let code = null;
         const creation = new Date();
-        if (tipo === 'recover') {
-          //hacer que dure poquito tiempo
+        if (type === 'recover') {
           expire = new Date(creation.getTime() + (5 * 60000));
+        } else if (type === 'confirm') {
+          expire = new Date(creation.getTime() + (30 * 60000));
+          code = Math.floor((Math.random() * 99999) + 1);
         } else {
           expire = new Date(creation.getTime() + (15 * 60000));
         }
@@ -28,11 +39,12 @@ class Auth {
           token: hash,
           created_at: creation,
           expires: expire,
-          type: `${tipo}`,
+          type: `${type}`,
           exist: 1,
-          user_id: user[0].user_code,
+          confirmation: code,
+          user_id: usercode,
         })
-          .then(() => resolve(hash))
+          .then(() => resolve({ hash, code }))
           .catch((e) => {
             console.error(`.catch(${hashErr})`);
             reject(e);
@@ -48,15 +60,24 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    this.newUser = new UserMdl({ ...req.body });
+    const newUser = await new UserMdl({ ...req.body });
+    await newUser.save();
     try {
-      await this.newUser.save();
-      this.token = Auth.generateToken(this.newUser);
-      res.send(this.token);
-      next({
-        token: this.token,
-        user: this.newUser,
-      });
+      await Auth.generateToken(newUser, 'confirm')
+        .then((genToken) => {
+          const mailOptions = {
+            from: 'cuceiayuda@gmail.com',
+            to: `${newUser.email}`,
+            subject: 'Confirmation code',
+            html: `<p>Hello here! Here is your confirmation code: <b></b>${genToken.code}</p>`,
+          };
+          mailer.sendMail(mailOptions);
+          newResponse.createResponse('Successfully sign up', 200, '/users', 'POST');
+          newResponse.response.message = 'Please check-out your email to confirm your registration...';
+          newResponse.response.token = genToken.hash;
+          newResponse.response.user = newUser.user_code;
+          next(res.status(newResponse.response.status).send(newResponse.response));
+        });
     } catch (e) {
       newResponse.createResponse(`There is an user with that information ${e}`,
         400, '/users', 'POST');
@@ -155,7 +176,7 @@ class Auth {
                   next();
                 } else {
                   newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                  newResponse.response.message = newResponse.createMessage();
+                  newResponse.response.message = active;
                   next(res.status(newResponse.response.status).send(newResponse.response));
                 }
               });
