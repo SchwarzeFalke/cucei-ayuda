@@ -18,8 +18,8 @@ class Mailer {
       port: process.env.MAIL_PORT,
       secure: false,
       auth: {
-        user: 'brandonmdflores@gmail.com',
-        pass: 'cappuchini123',
+        user: 'fdasfasf@gmail.com',
+        pass: 'fdsafsa',
       },
     });
 
