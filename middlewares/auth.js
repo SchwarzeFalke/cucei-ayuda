@@ -234,7 +234,8 @@ class Auth {
   static async haveSession(req, res, next) {
     // this method does not apply to the login, logout, registration and confirmation of email
     if (req.path === '/users/login' || req.path === '/users/logout'
-      || req.path === '/users/register' || req.path === '/users/confirmEmail') {
+      || req.path === '/users/register' || req.path === '/users/confirmEmail'
+      || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token') {
       next();
     } else {
       const newResponse = new ResMdl();
