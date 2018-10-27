@@ -14,7 +14,7 @@ const { UserMdl, TokenMdl } = require('../models'); // for model handling
 const router = Router();
 
 
-router.get('/password_reset', async (req, res) => {
+router.get('/password_reset', (req, res) => {
   const userEmail = req.query.email;
   // validar email.
   if (ResetPassword.validEmail(userEmail)) {
@@ -68,32 +68,3 @@ router.post('/recover/:token', async (req, res) => {
   }
 });
 module.exports = router;
-
-// const { token } = req.params;
-// console.log(TokenMdl.active(token));
-// if (TokenMdl.active(token) === 'ACTIVE') {
-//   // obtenemos el id del usuario
-//   TokenMdl.get(token).then((result) => {
-//     this.userId = result.user_id;
-//     // Obtenemos todos los datos del usuario
-//     UserMdl.get('*', this.userId).then((usuario) => {
-//       let user = usuario;
-//       // cambiamos el password del usuario
-//       user.password = req.body.password;
-//       // creamos un modelo con todos los datos del usuario
-//       user = new UserMdl(user);
-//       // modificamos el usuario
-//       user.update(this.userId).then((data) => {
-//         res.send(data);
-//       }).catch((e) => {
-//         console.log(e);
-//       });
-//     }).catch((e) => {
-//       console.log(e);
-//     });
-//   }).catch((e) => {
-//     console.log(e);
-//   });
-// } else {
-//   res.send('token no existe');
-// }
