@@ -279,7 +279,7 @@ class Auth {
         }
       }
     } catch (e) {
-      console.log('Theres been an error in haveSession');
+      res.send(e);
     }
   }
 
