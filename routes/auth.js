@@ -15,9 +15,7 @@ const router = Router();
 
 
 router.get('/password_reset', (req, res) => {
-  console.log(req.query);
   const userEmail = req.query.email;
-  console.log(userEmail);
   // validar email.
   if (ResetPassword.validEmail(userEmail)) {
     // revisamos que el usuario exista usando su email
@@ -28,7 +26,6 @@ router.get('/password_reset', (req, res) => {
       } else {
         // creamos token
         Auth.generateToken(this.user, 'recover').then((results) => {
-          console.log(results);
           const token = results;
           const mailOptions = {
             to: `${userEmail}`,
@@ -36,7 +33,6 @@ router.get('/password_reset', (req, res) => {
             text: `/auth/recover/${token}`,
             html: '<b>Recuperando contraseña, espera un segundo. </b>',
           }; // fin mailOptions
-          console.log(mailOptions);
           mailer.sendMail(mailOptions);
           res.send('lo logramos');
         }).catch((e) => {

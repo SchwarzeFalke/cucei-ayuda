@@ -13,10 +13,9 @@ const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handlin
 
 class Auth {
   static async generateToken(user, tipo = 'auth') {
-    const saltRounds = 10;
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
-      bcrypt.hash(this.key, saltRounds, (hashErr, hash) => {
+      bcrypt.hash(this.key, process.env.SECRET, (hashErr, hash) => {
         const creation = new Date();
         let expire;
         if (tipo === 'recover') {
