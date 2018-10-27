@@ -66,9 +66,7 @@ class UserMdl {
     if (args.privilages !== undefined) {
       this.privilages = args.privilages;
     }
-    if (args.exist !== undefined) {
-      this.exist = '1';
-    }
+    this.exist = '1';
   }
 
   /**
