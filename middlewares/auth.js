@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T06:06:04-05:00
+ * @Last modified time: 2018-10-27T16:04:01-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -161,7 +161,6 @@ class Auth {
               token: tokenString.hash, // takes only the hash token
             };
             res.send(response);
-            console.log(response);
           } else {
             // if the session is active, does not do nothing
             newResponse.createResponse('You are already logged', 200, '/users', 'POST');
@@ -234,27 +233,18 @@ class Auth {
    */
   static async haveSession(req, res, next) {
     // this method does not apply to the login, logout, registration and confirmation of email
-    try {
-      if (req.path === '/users/login' || req.path === '/users/logout'
-        || req.path === '/users/register' || req.path === '/users/confirmEmail') {
-        next();
+    if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
+      || req.path === '/users/register' || req.path === '/users/confirmEmail'
+      || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token') {
+      next();
+    } else {
+      const newResponse = new ResMdl();
+      // If there's no token, then it means the user hasn't log in or sign up
+      if (req.headers.authorization === undefined) {
+        newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+        newResponse.response.message = newResponse.createMessage();
+        next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
-<<<<<<< HEAD
-        const newResponse = new ResMdl();
-        // If there's no token, then it means the user hasn't log in or sign up
-        if (req.headers.authorization === undefined) {
-          newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-          newResponse.response.message = newResponse.createMessage();
-          next(res.status(newResponse.response.status).send(newResponse.response));
-        } else {
-          // Checks the headers looking for a token
-          const token = await Auth.getHeaderToken(req.headers.authorization);
-          await TokenMdl.get(token)
-            .then(async (result) => {
-              await TokenMdl.active(result).then((active) => { // takes the token and checks
-                // if it's active
-                if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
-=======
         // Checks the headers looking for a token
         const token = await Auth.getHeaderToken(req.headers.authorization);
         await TokenMdl.get(token)
@@ -279,35 +269,13 @@ class Auth {
                   };
                   next();
                 } else {
->>>>>>> parent of 83e2297... Update middlewares/auth.js
                   newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                  newResponse.response.message = newResponse.createMessage();
+                  newResponse.response.message = active;
                   next(res.status(newResponse.response.status).send(newResponse.response));
-                } else {
-                  // If it's active, checks if its expiration time hasn't come
-                  Auth.isActive(result);
-                  console.log('entering is active');
                 }
               });
-              await TokenMdl.active(result) // checks again after the expiration checkout
-                .then(async (active) => {
-                  if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
-                    req.session = {
-                      token: result[0].token,
-                      user: await UserMdl.get('*', result[0].user_code),
-                    };
-                    next();
-                  } else {
-                    newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                    newResponse.response.message = active;
-                    next(res.status(newResponse.response.status).send(newResponse.response));
-                  }
-                });
-            });
-        }
+          });
       }
-    } catch (e) {
-      res.send(e);
     }
   }
 
