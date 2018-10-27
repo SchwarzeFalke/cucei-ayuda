@@ -262,6 +262,7 @@ class Auth {
               }
             });
             await TokenMdl.active(result) // checks again after the expiration checkout
+            console.log(result);
               .then(async (active) => {
                 if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
                   req.session = {
