@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T16:04:01-05:00
+ * @Last modified time: 2018-10-27T18:00:59-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -233,6 +233,7 @@ class Auth {
    */
   static async haveSession(req, res, next) {
     // this method does not apply to the login, logout, registration and confirmation of email
+    console.log(req.path);
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
       || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token') {
