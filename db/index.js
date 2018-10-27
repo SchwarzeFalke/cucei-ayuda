@@ -1,3 +1,11 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-22T21:03:42-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-25T04:52:21-05:00
+ */
+
+
 
 const mysql = require('mysql');
 
@@ -191,6 +199,7 @@ class DB {
       if (condition) {
         query += ` WHERE ${condition}`;
       }
+      console.log(query);
       this.connection.query(query, table, (err, results) => {
         if (results.affectedRows === 0 || results.changedRows === 0) {
           reject(new Error('Doesnt exist'));

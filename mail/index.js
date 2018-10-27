@@ -1,10 +1,15 @@
+/**
+ * @Author: schwarze_falke
+ * @Date:   2018-10-26T21:22:38-05:00
+ * @Last modified by:   schwarze_falke
+ * @Last modified time: 2018-10-26T21:38:37-05:00
+ */
 const nodemailer = require('nodemailer');
 
-class Mailer {
+class MailSender {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
+      service: 'gmail',
       secure: false,
       auth: {
         user: process.env.MAIL_USER,
@@ -13,12 +18,11 @@ class Mailer {
     });
 
     this.mailOptions = {
-      from: '"Cucei Ayuda" <brandonmanuel@gmail.com>',
+      from: '"Cucei Ayuda" <cuceiayuda@gmail.com>',
     };
   }
 
   sendMail(options) {
-    console.log('Enviando email');
     const mailOptions = {
       ...this.mailOptions,
       ...options,
@@ -27,10 +31,10 @@ class Mailer {
       if (error) {
         return console.log(error);
       }
-      console.log('Message sent: %s', info.messageId);
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      return true;
     });
   }
 }
 
-module.exports = new Mailer();
+module.exports = new MailSender();

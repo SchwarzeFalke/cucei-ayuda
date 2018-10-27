@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T01:12:10-05:00
+ * @Last modified time: 2018-10-25T04:53:03-05:00
  */
 
 
@@ -52,10 +52,11 @@ class Token {
       }
       await db.get('token', '*', query)
         .then((results) => {
-          if (results.length > 1) {
+          if ((typeof results[0] === 'undefined')) {
+            resolve('NON-ACTIVE');
+          } else {
             resolve('ACTIVE');
           }
-          resolve('NON-ACTIVE');
         })
         .catch(e => reject(e));
     });
@@ -74,10 +75,10 @@ class Token {
     });
   }
 
-  async destroy(token) {
-    await db.update('token', 'exist(0)', `WHERE token = ${token}`)
+  static async destroy(token) {
+    await db.logicalDel('token', `token = '${token}'`)
       .then((result) => {
-        if (result.affectedRows === 1) {
+        if (result[0].affectedRows === 1) {
           this.response = 'Successfully ended session';
         } else { this.response = 'Cannot end session; token does not exist!'; }
         return this.response;

@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T03:25:14-05:00
+ * @Last modified time: 2018-10-26T21:43:33-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -16,14 +16,11 @@ class Auth {
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
       bcrypt.hash(this.key, process.env.SECRET, (hashErr, hash) => {
-        const creation = new Date();
         let expire;
+        const creation = new Date();
         if (tipo === 'recover') {
           //hacer que dure poquito tiempo
-          expire = new Date(creation.getTime() + (15 * 60000));
-          const s = new Date(creation.getTime() + (15 * 1));
-          console.log(expire);
-          console.log(s);
+          expire = new Date(creation.getTime() + (5 * 60000));
         } else {
           expire = new Date(creation.getTime() + (15 * 60000));
         }
@@ -34,12 +31,12 @@ class Auth {
           type: `${tipo}`,
           exist: 1,
           user_id: user[0].user_code,
-        }).then(() => {
-          resolve(hash);
-        }).catch((e) => {
-          console.error(`fdsafasdfasdfasdfas.catch(${hashErr})`);
-          reject(e);
-        });
+        })
+          .then(() => resolve(hash))
+          .catch((e) => {
+            console.error(`.catch(${hashErr})`);
+            reject(e);
+          });
       });
     });
   }
@@ -51,9 +48,6 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
-      req.body.password = hash;
-    });
     this.newUser = new UserMdl({ ...req.body });
     try {
       await this.newUser.save();
@@ -78,12 +72,11 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    let user;
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, async (err, hash) => {
-      user = await UserMdl.get('*', `${req.body.user_id}`, { password: hash });
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+      req.body.password = hash;
     });
-    console.log(user);
-    if (typeof user[0].user_code !== 'undefined') {
+    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
+    if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
         token: null,
@@ -171,7 +164,7 @@ class Auth {
     }
   }
 
-  havePermission(req, res, next) {
+  static havePermission(req, res, next) {
     this.method = req.method;
     if (req.session.UserMdl.canDo(this.method, req.originalUrl)) {
       next();
