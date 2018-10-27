@@ -15,6 +15,7 @@ const MapsMdl = require('./maps');
 const RoadMdl = require('./road');
 const ResMdl = require('./response');
 const TokenMdl = require('./token');
+const ResetPassword = require('./resetPass');
 
 module.exports = {
   UserMdl,
@@ -28,4 +29,5 @@ module.exports = {
   RoadMdl,
   ResMdl,
   TokenMdl,
+  ResetPassword,
 };

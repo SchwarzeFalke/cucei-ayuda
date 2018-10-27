@@ -1,9 +1,5 @@
-// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-09T02:00:56-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T02:01:51-05:00
+ * @Author: brandonmdDiaz
  */
 
 const { Router } = require('express');
@@ -17,13 +13,7 @@ const router = Router();
 /**
  * ALL GET methods for the forum
  */
-router.get('/login', (req, res, next) => {
-  let bearer = req.headers.authorization;
-  const ber = bearer.split(' ')[1];
-  console.log(ber);
 
-  res.send('2');
-});
 // FIXME para los casos de muchos middlewares, deberia ir uno por linea
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);

@@ -27,12 +27,11 @@ class MailSender {
       ...this.mailOptions,
       ...options,
     };
-
     this.transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         return console.log(error);
       }
-      console.log('Message sent: %s', info.messageId);
+      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
       return true;
     });
   }

@@ -12,16 +12,23 @@ const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handlin
 // FIXME Todos los metodos deben estar documentados
 
 class Auth {
-  static async generateToken(user) {
+  static async generateToken(user, tipo = 'auth') {
     return new Promise(async (resolve, reject) => {
       this.key = `${user[0].name}${user[0].user_code}ky`;
       bcrypt.hash(this.key, process.env.SECRET, (hashErr, hash) => {
+        let expire;
         const creation = new Date();
+        if (tipo === 'recover') {
+          //hacer que dure poquito tiempo
+          expire = new Date(creation.getTime() + (5 * 60000));
+        } else {
+          expire = new Date(creation.getTime() + (15 * 60000));
+        }
         TokenMdl.create({
           token: hash,
           created_at: creation,
-          expires: new Date(creation.getTime() + (15 * 60000)),
-          type: 'auth',
+          expires: expire,
+          type: `${tipo}`,
           exist: 1,
           user_id: user[0].user_code,
         })
