@@ -259,6 +259,7 @@ class Auth {
                 } else {
                   // If it's active, checks if its expiration time hasn't come
                   Auth.isActive(result);
+                  console.log('entering is active');
                 }
               });
               await TokenMdl.active(result) // checks again after the expiration checkout
