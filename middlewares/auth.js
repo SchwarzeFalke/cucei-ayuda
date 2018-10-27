@@ -234,48 +234,52 @@ class Auth {
    */
   static async haveSession(req, res, next) {
     // this method does not apply to the login, logout, registration and confirmation of email
-    if (req.path === '/users/login' || req.path === '/users/logout'
-      || req.path === '/users/register' || req.path === '/users/confirmEmail') {
-      next();
-    } else {
-      const newResponse = new ResMdl();
-      // If there's no token, then it means the user hasn't log in or sign up
-      if (req.headers.authorization === undefined) {
-        newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-        newResponse.response.message = newResponse.createMessage();
-        next(res.status(newResponse.response.status).send(newResponse.response));
+    try {
+      if (req.path === '/users/login' || req.path === '/users/logout'
+        || req.path === '/users/register' || req.path === '/users/confirmEmail') {
+        next();
       } else {
-        // Checks the headers looking for a token
-        const token = await Auth.getHeaderToken(req.headers.authorization);
-        await TokenMdl.get(token)
-          .then(async (result) => {
-            await TokenMdl.active(result).then((active) => { // takes the token and checks
-              // if it's active
-              if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
-                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                newResponse.response.message = newResponse.createMessage();
-                next(res.status(newResponse.response.status).send(newResponse.response));
-              } else {
-                // If it's active, checks if its expiration time hasn't come
-                Auth.isActive(result);
-              }
-            });
-            await TokenMdl.active(result) // checks again after the expiration checkout
-              .then(async (active) => {
-                if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
-                  req.session = {
-                    token: result[0].token,
-                    user: await UserMdl.get('*', result[0].user_code),
-                  };
-                  next();
-                } else {
+        const newResponse = new ResMdl();
+        // If there's no token, then it means the user hasn't log in or sign up
+        if (req.headers.authorization === undefined) {
+          newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+          newResponse.response.message = newResponse.createMessage();
+          next(res.status(newResponse.response.status).send(newResponse.response));
+        } else {
+          // Checks the headers looking for a token
+          const token = await Auth.getHeaderToken(req.headers.authorization);
+          await TokenMdl.get(token)
+            .then(async (result) => {
+              await TokenMdl.active(result).then((active) => { // takes the token and checks
+                // if it's active
+                if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
                   newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                  newResponse.response.message = active;
+                  newResponse.response.message = newResponse.createMessage();
                   next(res.status(newResponse.response.status).send(newResponse.response));
+                } else {
+                  // If it's active, checks if its expiration time hasn't come
+                  Auth.isActive(result);
                 }
               });
-          });
+              await TokenMdl.active(result) // checks again after the expiration checkout
+                .then(async (active) => {
+                  if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
+                    req.session = {
+                      token: result[0].token,
+                      user: await UserMdl.get('*', result[0].user_code),
+                    };
+                    next();
+                  } else {
+                    newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                    newResponse.response.message = active;
+                    next(res.status(newResponse.response.status).send(newResponse.response));
+                  }
+                });
+            });
+        }
       }
+    } catch(e) {
+      console.log('Theres been an error in haveSession');
     }
   }
 
