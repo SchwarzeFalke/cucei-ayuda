@@ -173,6 +173,7 @@ class Auth {
       // Something goes wrong, surely because of the user
       newResponse.createResponse('Wrong password or user ID', 409, '/users', 'POST');
       newResponse.response.message = newResponse.createMessage();
+      console.log('error');
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
   }
