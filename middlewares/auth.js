@@ -278,7 +278,7 @@ class Auth {
             });
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.log('Theres been an error in haveSession');
     }
   }
