@@ -3,7 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-25T07:12:57-05:00
+ * @Last modified time: 2018-10-26T21:43:33-05:00
  */
 
 const bcrypt = require('bcrypt');
@@ -41,9 +41,6 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
-      req.body.password = hash;
-    });
     this.newUser = new UserMdl({ ...req.body });
     try {
       await this.newUser.save();
@@ -68,12 +65,11 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    let user;
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, async (err, hash) => {
-      user = await UserMdl.get('*', `${req.body.user_id}`, { password: hash });
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+      req.body.password = hash;
     });
-    console.log(user);
-    if (typeof user[0].user_code !== 'undefined') {
+    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
+    if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
         token: null,
