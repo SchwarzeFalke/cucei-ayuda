@@ -143,7 +143,7 @@ class Auth {
       req.body.password = hash;
     });
     // Validates if the user and the password are correct
-    const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
+    const user = await UserMdl.get('*', `${req.body.user_code}`, { password: req.body.password });
     // if the info is not wrong, then generates the data for the token
     if (user[0].user_code !== undefined) {
       const data = {
@@ -162,7 +162,6 @@ class Auth {
               token: tokenString.hash, // takes only the hash token
             };
             res.send(response);
-            console.log(response);
           } else {
             // if the session is active, does not do nothing
             newResponse.createResponse('You are already logged', 200, '/users', 'POST');
@@ -266,7 +265,7 @@ class Auth {
                 if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
                   req.session = {
                     token: result[0].token,
-                    user: await UserMdl.get('*', result[0].user_id),
+                    user: await UserMdl.get('*', result[0].user_code),
                   };
                   next();
                 } else {
