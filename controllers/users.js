@@ -3,15 +3,18 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-20T09:59:17-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-11T01:10:18-05:00
+ * @Last modified time: 2018-10-27T04:54:30-05:00
  */
 const db = require('../db'); // for database handling
 
 // FIXME se pueden cargar todos los modelos de golpe
-const { UserMdl } = require('../models'); // for model handling
-const { ScheduleMdl } = require('../models');
-const { Subject } = require('../models');
-const { RoadMdl } = require('../models');
+const {
+  UserMdl,
+  ScheduleMdl,
+  Subject,
+  RoadMdl,
+  ResMdl,
+} = require('../models'); // for model handling
 
 /**
  * Name: user.js | Type: Class | Description: User Controller | @Author: Carlos Vara
@@ -48,44 +51,6 @@ class UserCtrl {
     this.insertUser = this.insertUser.bind(this);
     this.insertSchedule = this.insertSchedule.bind(this);
     this.del = this.del.bind(this);
-
-    /**
-     * [createdJSON description]
-     * @type {Object} Defines a format to give a success response at requesting
-     * a new user. Its 'data' field does not return nothing.
-     */
-    this.modifyJSON = {
-      status: 201,
-      response: null,
-      message: null,
-      data: null,
-    };
-
-    /**
-     * [requestJSON description]
-     * @type {Object} Defines a format to give a success response at requesting
-     * all data from database (user table). Its 'data' field returns all the
-     * information from the 'user' table.
-     */
-    this.requestJSON = {
-      status: 200,
-      response: 'Ok',
-      message: null,
-      data: null,
-    };
-
-    /**
-     * [forbiddenJSON description]
-     * @type {Object} Defines a format to give a bad response at requesting a
-     * new user. This response it's only given when user cannot be created
-     * because of a repeated row (duplicated primary key).
-     */
-    this.forbiddenJSON = {
-      status: 403,
-      response: 'Forbidden',
-      message: null,
-      data: null,
-    };
   }
 
   /**
@@ -95,45 +60,61 @@ class UserCtrl {
    * @return {[type]}     not-formatted rows (pending)
    */
   async getAll(req, res) {
+    const newResponse = new ResMdl();
     try {
       await UserMdl.getAll(req.query)
         .then((data) => {
-          this.requestJSON.message = 'All database users';
-          this.requestJSON.data = data; // data field is set
-          res.status(this.requestJSON.status).send(this.requestJSON);
-        })
-        .catch(e => console.error(`.catch(${e}})`));
+          if (data.length > 1) {
+            newResponse.createResponse(data, 200, '/users', 'GET');
+          } else {
+            newResponse.createResponse(data, 204, '/users', 'GET');
+          }
+          newResponse.response.message = newResponse.createMessage();
+          this.response = newResponse;
+          res.status(this.response.response.status).send(this.response.response);
+        });
     } catch (e) { // FIXME como ya se esta haciendo un catch en el promise, este no es necesario
-      console.error(`try/catch(${e})`);
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 
   async getUser(req, res) {
+    const newResponse = new ResMdl();
     try {
       await UserMdl.validUser(req.params.userId)
         .then((exists) => {
           if (exists) {
             UserMdl.get('*', req.params.userId, req.query)
               .then((data) => {
-                this.requestJSON.data = data;
-                res.status(this.requestJSON.status).send(this.requestJSON);
-              })
-              .catch(e => console.error(`.catch(${e})`));
+                if (data.length >= 1) {
+                  newResponse.createResponse(data, 200, '/users', 'GET');
+                } else {
+                  newResponse.createResponse(data, 204, '/users', 'GET');
+                }
+                newResponse.response.message = newResponse.createMessage();
+                this.response = newResponse;
+                res.status(this.response.response.status).send(this.response.response);
+              });
           } else {
-            this.forbiddenJSON.message = 'The requested user cannot be found';
-            res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+            newResponse.createResponse('Nothing to show', 404, '/users', 'GET');
+            newResponse.response.message = newResponse.createMessage();
+            this.response = newResponse;
+            res.status(this.response.response.status).send(this.response.response);
           }
-        })
-        .catch(e => console.error(`.catch(${e})`));
+        });
     } catch (e) {
-      console.error(`try/catch(${e})`);
-      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 
   async getRoads(req, res) {
+    const newResponse = new ResMdl();
     try {
       if (await UserMdl.validUser(req.params.userId)) {
         const condition = `stud_id = ${req.params.userId}`;
@@ -141,45 +122,62 @@ class UserCtrl {
           .then(async (buildings) => {
             await RoadMdl.getRoad(buildings)
               .then((data) => {
-                this.requestJSON.data = [data, buildings];
-                res.status(this.requestJSON.status).send(this.requestJSON);
-              })
-              .catch(e => console.error(`.catch(${e})`));
+                if (data.length >= 1) {
+                  newResponse.createResponse(data, 200, '/users', 'GET');
+                } else {
+                  newResponse.createResponse(data, 204, '/users', 'GET');
+                }
+                newResponse.response.message = newResponse.createMessage();
+                this.response = newResponse;
+                res.status(this.response.response.status).send(this.response.response);
+              });
           });
       } else {
-        this.forbiddenJSON.message = 'The requested user cannot be found';
-        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+        newResponse.createResponse('Nothing to show', 404, '/users', 'GET');
+        newResponse.response.message = newResponse.createMessage();
+        this.response = newResponse;
+        res.status(this.response.response.status).send(this.response.response);
       }
     } catch (e) {
-      console.error(`try/catch(${e})`);
-      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 
   async getSchedule(req, res) {
+    const newResponse = new ResMdl();
     try {
       if (await UserMdl.validUser(req.params.userId)) {
         const condition = `stud_id = ${req.params.userId}`;
         await ScheduleMdl.get('subject_id', condition)
           .then((data) => {
-            console.log(data);
-            this.requestJSON.data = data;
-            res.status(this.requestJSON.status).send(this.requestJSON);
-          })
-          .catch(e => console.error(`.catch(${e})`));
+            if (data.length >= 1) {
+              newResponse.createResponse(data, 200, '/users', 'GET');
+            } else {
+              newResponse.createResponse(data, 204, '/users', 'GET');
+            }
+            newResponse.response.message = newResponse.createMessage();
+            this.response = newResponse;
+            res.status(this.response.response.status).send(this.response.response);
+          });
       } else {
-        this.forbiddenJSON.message = 'The requested user cannot be found';
-        res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+        newResponse.createResponse('Nothing to show', 404, '/users', 'GET');
+        newResponse.response.message = newResponse.createMessage();
+        this.response = newResponse;
+        res.status(this.response.response.status).send(this.response.response);
       }
     } catch (e) {
-      console.error(`try/catch(${e})`);
-      this.forbiddenJSON.message = 'Oops! Something unexpected happened.';
-      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+      newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+      newResponse.response.message = newResponse.createMessage();
+      this.response = newResponse;
+      res.status(this.response.response.status).send(this.response.response);
     }
   }
 
   async getPosts(req, res) {
+    const newResponse = new ResMdl();
     try {
       const condition = `user_code = ${req.params.userId}`;
       await db.get('post', '*', condition)
@@ -195,6 +193,7 @@ class UserCtrl {
   }
 
   async insertUser(req, res) {
+    const newResponse = new ResMdl();
     const newUser = new UserMdl({ ...req.body });
     try {
       await newUser.save()
@@ -214,13 +213,13 @@ class UserCtrl {
   }
 
   async insertSchedule(req, res) {
+    const newResponse = new ResMdl();
     try {
       await UserMdl.validUser(req.params.userId)
         .then(async (exists) => {
           if (exists) {
             await Subject.createRelation(req.params.userId, req.body.nrc)
               .then((results) => {
-                console.log(results);
                 this.modifyJSON.response = 'Created';
                 this.modifyJSON.message = `New subject on user ${req.params.userId} schedule successfully created`;
                 this.modifyJSON.data = results;
@@ -237,6 +236,7 @@ class UserCtrl {
   }
 
   async del(req, res) {
+    const newResponse = new ResMdl();
     try {
       await UserMdl.del(req.params.userId, req.query)
         .then((data) => {
@@ -252,7 +252,8 @@ class UserCtrl {
     }
   }
 
-  async update(req, res) {
+  async updatePUT(req, res) {
+    const newResponse = new ResMdl();
     const updateUser = new UserMdl({ ...req.body });
     try {
       await updateUser.update(req.params.userId)
@@ -270,6 +271,28 @@ class UserCtrl {
     } catch (e) {
       console.error(`try/catch(${e})`);
       // FIXME En lugar de hacer los send de cada error, podria ser un next con error y tener un metodo manejador de errores
+      res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
+    }
+  }
+
+  async updatePATCH(req, res) {
+    const newResponse = new ResMdl();
+    const updateUser = new UserMdl({ ...req.body });
+    try {
+      await updateUser.update(req.params.userId)
+        .then((data) => {
+          const dataJSON = {
+            status: 201,
+            response: 'Updated',
+            message: 'User successfully updated from database',
+            data: updateUser,
+            modified: data,
+          };
+          res.status(dataJSON.status).send(dataJSON);
+        })
+        .catch(e => console.error(`.catch(${e})`));
+    } catch (e) {
+      console.error(`try/catch(${e})`);
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
