@@ -143,6 +143,8 @@ class Auth {
       req.body.password = hash;
     });
     // Validates if the user and the password are correct
+    console.log('logging password --> ');
+    console.log(req.body.password);
     const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
     // if the info is not wrong, then generates the data for the token
     if (user[0].user_code !== undefined) {
