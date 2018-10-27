@@ -19,7 +19,7 @@ class Auth {
         const creation = new Date();
         let expire;
         if (tipo === 'recover') {
-          //hacer que dure poquito tiempo c:
+          //hacer que dure poquito tiempo
           expire = new Date(creation.getTime() + (15 * 60000));
           const s = new Date(creation.getTime() + (15 * 1));
           console.log(expire);

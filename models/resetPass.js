@@ -1,8 +1,6 @@
 /**
  * @ author: brandonmdiaz
  */
-
-const db = require('../db'); // for database handling
 const UserMdl = require('./user');
 
 class ResetPassword {

@@ -14,7 +14,7 @@ const { UserMdl, TokenMdl } = require('../models'); // for model handling
 const router = Router();
 
 
-router.get('/password_reset', (req, res) => {
+router.get('/password_reset', async (req, res) => {
   const userEmail = req.query.email;
   // validar email.
   if (ResetPassword.validEmail(userEmail)) {
@@ -47,22 +47,53 @@ router.get('/password_reset', (req, res) => {
   }
 });
 
-router.post('/auth/recover/:token', (req, res) => {
+router.post('/recover/:token', async (req, res) => {
   const { token } = req.params;
-  if (Auth.active(token) === 'ACTIVE') {
+  const tokenStatus = await TokenMdl.active(token);
+  if (tokenStatus === 'ACTIVE') {
     // obtenemos el id del usuario
-    this.userId = TokenMdl.get(token).user_id;
+    this.userId = await TokenMdl.get(token);
+    this.userId = this.userId[0].user_id;
     // Obtenemos todos los datos del usuario
-    let user = UserMdl.get('*', this.userId);
+    let user = await UserMdl.get('*', this.userId);
     // cambiamos el password del usuario
     user.password = req.body.password;
     // creamos un modelo con todos los datos del usuario
     user = new UserMdl(user);
     // modificamos el usuario
     user.update(this.userId);
-    res.send('contraseña modificada');
+    res.send('Modificado con exito');
   } else {
     res.send('token no existe');
   }
 });
 module.exports = router;
+
+// const { token } = req.params;
+// console.log(TokenMdl.active(token));
+// if (TokenMdl.active(token) === 'ACTIVE') {
+//   // obtenemos el id del usuario
+//   TokenMdl.get(token).then((result) => {
+//     this.userId = result.user_id;
+//     // Obtenemos todos los datos del usuario
+//     UserMdl.get('*', this.userId).then((usuario) => {
+//       let user = usuario;
+//       // cambiamos el password del usuario
+//       user.password = req.body.password;
+//       // creamos un modelo con todos los datos del usuario
+//       user = new UserMdl(user);
+//       // modificamos el usuario
+//       user.update(this.userId).then((data) => {
+//         res.send(data);
+//       }).catch((e) => {
+//         console.log(e);
+//       });
+//     }).catch((e) => {
+//       console.log(e);
+//     });
+//   }).catch((e) => {
+//     console.log(e);
+//   });
+// } else {
+//   res.send('token no existe');
+// }
