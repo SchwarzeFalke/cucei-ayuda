@@ -2,7 +2,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:26:08-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T04:48:41-05:00
+ * @Last modified time: 2018-10-27T06:07:01-05:00
  */
 
 
@@ -20,13 +20,14 @@ class Token {
   }
 
   static async get(token) {
-    const query = `token = '${token}'`;
-    await db.get('token', '*', query)
-      .then((results) => {
-        this.result = results;
-      })
-      .catch(e => console.error(`.catch(${e})`));
-    return this.result;
+    return new Promise(async (resolve, reject) => {
+      const query = `token = '${token}'`;
+      await db.get('token', '*', query)
+        .then((results) => {
+          resolve(results);
+        })
+        .catch(e => reject(e));
+    });
   }
 
   static async sessionTimeOut(token) {
@@ -61,7 +62,8 @@ class Token {
           }
           await db.get('token', 'confirmation', query)
             .then((result) => {
-              if (typeof result[0] === 'undefined') {
+              if (typeof result[0] === 'undefined') { // this helps to know if the
+                // user has already confirm the email or not
                 resolve('NON-ACTIVE');
               } else if (result[0].confirmation !== null) {
                 answer += ' | PLEASE CONFIRM EMAIL!';
