@@ -26,6 +26,66 @@ class ScheduleMdl {
         .catch(e => reject(e));
       return resolve(this.result);
     });
+    return this.result;
+  }
+
+  static async validSchedule(nrc) {
+    await db.get('subject', 'nrc', `nrc = ${nrc}`)
+      .then((results) => {
+        this.result = results.length;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    console.log(this.result);
+    return this.result;
+  }
+
+  static async getAll() {
+    await db.get('subject', ['nrc','name','first_day','sec_day','classroom','section','credits','building','exist','taught_by'])
+      .then((results) => {
+        this.result = Schedule.processResult(results);
+      })
+      .catch((e) => {
+        throw e;
+      });
+    return this.result;
+  }
+
+  static async del(condition) {
+    await db.del('subject', condition)
+      .then((results) => {
+        this.result = results;
+      })
+      .catch((e) => {
+        throw e;
+      });
+    return this.result;
+  }
+
+  async save() {
+    await db.insert('subject', this)
+      .then((results) => {
+        this.result = results;
+        return this.result;
+      })
+      .catch((e) => {
+        throw e;
+      });
+    return this.result;
+  }
+
+  async update(nrc) {
+    const condition = `nrc = ${nrc}`;
+    await db.update('subject', this, condition)
+      .then((results) => {
+        this.result = results;
+        return this.result;
+      })
+      .catch((e) => {
+        throw e;
+      });
+    return this.result;
   }
 
   static async get(column, condition) {

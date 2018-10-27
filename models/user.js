@@ -2,11 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T21:37:02-05:00
+ * @Last modified time: 2018-10-27T04:53:57-05:00
  */
 
+const bcrypt = require('bcrypt');
 const db = require('../db'); // for database handling
-
 /**
  * Name: user.js | Type: Class | Description: User Model | @Author: Carlos Vara
  *                                 METHODS
@@ -40,6 +40,8 @@ class UserMdl {
   constructor(args) {
     // If the value of a requested arg is an undefined value, does not create a
     // field for it (this is useful for the updating method).
+
+    // FIXME este tipo de asignacion se puede hacer this.user_code = args.user_code || null;
     if (args.user_code !== undefined) {
       this.user_code = args.user_code;
     }
@@ -70,6 +72,22 @@ class UserMdl {
   }
 
   /**
+ * findUser find user using an email]
+ * @param  {string}  email [email to find a user]
+ */
+  static async findUser(email) {
+    const condition = `email = '${email}'`;
+    try {
+      this.data = await db.get('user', '*', condition);
+      this.data = this.processResult(this.data);
+    } catch (e) {
+      console.log(`Error en findUser: ${e}`);
+      return undefined;
+    }
+    return this.data;
+  }
+
+  /**
    * [result description: Returns all the valids columns for the user model]
    * @type {Array}
    */
@@ -85,6 +103,39 @@ class UserMdl {
       'privilages',
       'exist',
     ];
+  }
+
+  canDo(method, url, data) {
+    let can = false;
+    if (this.privilages === 'ADMIN') {
+      can = true;
+    }
+    switch (method) {
+      case 'GET':
+        switch (url) {
+          case '/users':
+            console.log('NO TIENE PERMISO DE HACER UN GET ALL DE TODOS LOS USUARIOS');
+            break;
+          case '/users/:userId':
+            if (data.user_id === url.user_id)
+              console.log('TIENE PERMISO PARA VER TODA SU INFO, PUES SON SUS DATOS');
+            else
+              console.log('NO TIENE PERMISO DE VER TODA LA INFO, PUES ES DE OTRO USUARIO QUE NO ES ÉL');
+          default:
+
+        }
+        break;
+      case 'DELETE':
+        break;
+      case 'POST':
+        break;
+      case 'PUT':
+        break;
+      case 'PATCH':
+        break;
+      default:
+    }
+    return can;
   }
 
   /**
@@ -156,7 +207,7 @@ class UserMdl {
     }
     await db.get('user', '*', queryCondition)
       .then((results) => {
-        this.result = UserMdl.processResult(results);
+        this.result = results;
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
@@ -172,12 +223,14 @@ class UserMdl {
    */
   static async get(columns, id, condition) {
     let queryCondition = `user_code = ${id}`;
-    if (condition.length > 1) {
-      queryCondition = UserMdl.processConditions(condition);
+    if (condition) {
+      if (condition.length > 1) {
+        queryCondition += ` && ${UserMdl.processConditions(condition)}`;
+      }
     }
     await db.get('user', columns, queryCondition)
       .then((results) => {
-        this.result = UserMdl.processResult(results);
+        this.result = results;
       })
       .catch(e => console.error(`.catch(${e})`));
     return this.result;
@@ -198,13 +251,18 @@ class UserMdl {
   }
 
   async save() {
-    await db.insert('user', this)
-      .then((results) => {
-        this.result = results;
-        return this.result;
-      })
-      .catch(e => console.error(`.catch(${e}})`));
-    return this.result;
+    return new Promise(async (resolve, reject) => {
+      await bcrypt.hash(`${this.password}`, process.env.SECRET, async (err, hash) => {
+        this.password = hash;
+        await db.insert('user', this)
+          .then((results) => {
+            this.result = results;
+            resolve(this.result);
+          })
+          .catch(e => reject(e));
+        resolve(this.result);
+      });
+    });
   }
 
   async update(id) {

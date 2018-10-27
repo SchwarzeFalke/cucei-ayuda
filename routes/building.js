@@ -1,3 +1,4 @@
+// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @Author: schwarze_falke
  * @Date:   2018-10-07T20:34:36-05:00
@@ -39,18 +40,21 @@ router.get('/:buildingId', (req, res, next) => {
  * This POST method for routes building
  * this method insert data in db
  */
+// FIXME Falta middleware para validar el cuerpo del request
 router.post('/', buildingCtrl.insert);
 
 /**
  * This POST method for routes building
  * this method modify data in db
  */
+// FIXME Falta validar el param buildingId
 router.put('/:buildingId', buildingCtrl.modify);
 
 /**
  * This POST method for routes building
  * this method logic delete data in db
  */
+// FIXME Falta validar el param buildingId
 router.delete('/:buildingId', buildingCtrl.logDel);
 
 module.exports = router;

@@ -2,11 +2,12 @@
 
 const forbiddenJSON = {
   status: 403,
-  response: 'Forbidden',
+  response: 'Forbidden', // FIXME un campo con un formato no valido o vacio no es Forbidden
   message: null,
   data: null,
 };
 
+// FIXME Todos los metodos deben estar documentados
 
 class subjectM {
   static validateNrc(req, res, next) {
@@ -17,6 +18,29 @@ class subjectM {
       }
       if (test.test(req.body.nrc)) {
         if (Number(req.body.nrc) < 1) {
+          forbiddenJSON.message = 'Invalid Nrc';
+          res.status(forbiddenJSON.status).send(forbiddenJSON);
+        } else {
+          next();
+        }
+      } else {
+        forbiddenJSON.message = 'Invalid Nrc';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+    } catch (e) {
+      console.log(`error in validate NRC ${e}`);
+    }
+  }
+
+  static validateNrcP(req, res, next) {
+    const test = /^\d+$/;
+    try {
+      if (req.params.nrc === undefined) {
+        forbiddenJSON.message = 'Invalid Nrc';
+        res.status(forbiddenJSON.status).send(forbiddenJSON);
+      }
+      if (test.test(req.params.nrc)) {
+        if (Number(req.params.nrc) < 1) {
           forbiddenJSON.message = 'Invalid Nrc';
           res.status(forbiddenJSON.status).send(forbiddenJSON);
         } else {

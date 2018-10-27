@@ -1,11 +1,9 @@
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-09T02:00:56-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-09T02:01:51-05:00
+ * @Author: brandonmdDiaz
  */
 
 const { Router } = require('express');
+// FIXME los controladores se pueden cargar en una sola linea const { threadCtrl, topicCtrl } = require('../controllers');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
 const { forumMid } = require('../middlewares');
@@ -16,6 +14,7 @@ const router = Router();
  * ALL GET methods for the forum
  */
 
+// FIXME para los casos de muchos middlewares, deberia ir uno por linea
 router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
 router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
 router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);

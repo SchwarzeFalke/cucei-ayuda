@@ -1,7 +1,16 @@
-// controller for the Subject class
+/**
+ * @author tyler97
+ */
 
 const { Subject } = require('../models');
 
+// FIXME En lugar de hacer los send de cada error, podria ser un next con error
+//  y tener un metodo manejador de errores
+// FIXME Recomiendo manejar los promises con await y try-catch en lugar de then y catch
+/**
+ * [SubjectCtrl controller used for the subject model
+ * this class is used to access the methods of the subject model]
+ */
 class SubjectCtrl {
   constructor() {
     this.getAll = this.getAll.bind(this);
@@ -32,6 +41,14 @@ class SubjectCtrl {
     };
   }
 
+  /**
+ * [getAll method used to call the getAll method of the subject model class]
+ * @method getAll
+ * @param  {[Object]}  req [Object representing the request from client]
+ * @param  {[Object]}  res [Object representing the response]
+ * @return {Promise}
+ */
+
   async getAll(req, res) {
     try {
       await Subject.getAll()
@@ -48,6 +65,16 @@ class SubjectCtrl {
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
+
+  /**
+ * [getSubject method used to get a specified subject
+ * using the subject model's class get method and the
+ * params.nrc value]
+ * @method getSubject
+ * @param  {[Object]}   req [Object representing the request from client]
+ * @param  {[Object]}   res [Object representing the response]
+ * @return {Promise}
+ */
 
   async getSubject(req, res) {
     try {
@@ -80,6 +107,16 @@ class SubjectCtrl {
     }
   }
 
+  /**
+ * [insert method used to insert a new subject into then
+ * subject table, using the subject models save method,
+ * and instantiating the class with the requests body]
+ * @method insert
+ * @param  {[Object]}  req [Object representing the request from client]
+ * @param  {[Object]}  res [Object representing the response]
+ * @return {Promise}
+ */
+
   async insert(req, res) {
     console.log(req.body);
     const newSubject = new Subject({ ...req.body });
@@ -102,6 +139,15 @@ class SubjectCtrl {
     }
   }
 
+  /**
+  * [del method used to logically delete a specified subject
+  * using req.params and the subject model class]
+  * @method del
+  * @param  {[Object]}  req [Object representing the request from client]
+  * @param  {[Object]}  res [Object representing the response]
+  * @return {Promise}
+  */
+
   async del(req, res) {
     try {
       const condition = `nrc = ${req.params.nrc}`;
@@ -121,6 +167,15 @@ class SubjectCtrl {
       res.status(this.forbiddenJSON.status).send(this.forbiddenJSON);
     }
   }
+
+  /**
+  * [del method used to update a specfied subject using the parametros nrc,
+  * and using req.body to create a subject instance]
+  * @method del
+  * @param  {[Object]}  req [Object representing the request from client]
+  * @param  {[Object]}  res [Object representing the response]
+  * @return {Promise}
+  */
 
   async update(req, res) {
     const updateSubject = new Subject({ ...req.body });
