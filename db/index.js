@@ -65,8 +65,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        console.log(results);
-        return resolve(JSON.parse(JSON.stringify(results)));
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -99,7 +98,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        return resolve(JSON.parse(JSON.stringify(results)));
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
@@ -138,7 +137,7 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        return resolve(JSON.parse(JSON.stringify(results)));
+        resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
