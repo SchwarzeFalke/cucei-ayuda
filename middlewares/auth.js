@@ -152,6 +152,7 @@ class Auth {
       };
       await TokenMdl.active(data) // Validates if the token is active
         .then(async (active) => {
+          console.log('entering await --> tokenstring');
           const tokenString = await Auth.generateToken(user); // Save the returned
           // object with the token and confirmation code
           if (active === 'NON-ACTIVE') { // If it's not active, generates a new token
@@ -161,6 +162,7 @@ class Auth {
               token: tokenString.hash, // takes only the hash token
             };
             res.send(response);
+            console.log(response);
           } else {
             // if the session is active, does not do nothing
             newResponse.createResponse('You are already logged', 200, '/users', 'POST');

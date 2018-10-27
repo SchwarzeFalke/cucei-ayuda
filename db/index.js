@@ -65,7 +65,8 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        console.log(results);
+        return resolve(JSON.parse(JSON.stringify(results)));
       });
     });
   }
