@@ -3,11 +3,7 @@
  * @Author: Carlos Vara
  * @Date:   2018-10-11T09:27:15-05:00
  * @Last modified by:   schwarze_falke
-<<<<<<< HEAD
  * @Last modified time: 2018-10-27T16:04:01-05:00
-=======
- * @Last modified time: 2018-10-27T18:07:26-05:00
->>>>>>> 5d709ce640b00946c9cc7b667c5d6543918e6cbb
  */
 
 const bcrypt = require('bcrypt');

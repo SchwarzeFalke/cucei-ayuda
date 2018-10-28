@@ -106,6 +106,7 @@ class UserMdl {
   canDo(method, url, data) {
     console.log('entering canDo');
     let can = false;
+    let ret = false;
     if (this.privilages === 'ADMIN') {
       can = true;
     }
@@ -113,15 +114,18 @@ class UserMdl {
       case 'GET':
         switch (url) {
           case '/users':
-            console.log('NO TIENE PERMISO DE HACER UN GET ALL DE TODOS LOS USUARIOS');
+            if (can) {
+              ret = true;
+            }
             break;
           case '/users/:userId':
-            if (data.user_id === url.user_id)
-              console.log('TIENE PERMISO PARA VER TODA SU INFO, PUES SON SUS DATOS');
-            else
-              console.log('NO TIENE PERMISO DE VER TODA LA INFO, PUES ES DE OTRO USUARIO QUE NO ES ÉL');
+            if (data.user_id === url.user_id) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
           default:
-
         }
         break;
       case 'DELETE':
@@ -134,7 +138,7 @@ class UserMdl {
         break;
       default:
     }
-    return can;
+    return ret;
   }
 
   /**
