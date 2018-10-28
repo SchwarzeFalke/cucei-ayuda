@@ -1,4 +1,3 @@
-// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
  * @author: JulioMariscal
  */
@@ -18,7 +17,7 @@ const router = Router();
 
 // this method return all buildings
 router.get('/', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission],
+    middleWares.Auth.havePermission],
 buildingCtrl.getAll);
 
 /**
@@ -26,21 +25,28 @@ buildingCtrl.getAll);
  * @type {Array} Returns a specific building through its identifier
  */
 router.get('/:buildingId', [(req, res, next) => {
-  const request = middleWares.validator.code(req.params.buildingId);
-  if (!request) {
-    next();
-  } else {
-    res.send(request);
-    console.log(request);
-  }
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
 }, middleWares.Auth.haveSession,
 middleWares.Auth.havePermission], buildingCtrl.getBuild);
 
 
 // FIXME Falta middleware para validar el cuerpo del request
-router.post('/', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission],
-buildingCtrl.insert);
+router.post('/', [(req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
+}, middleWares.Auth.haveSession,
+middleWares.Auth.havePermission], buildingCtrl.insert);
 
 /**
  * [PUT /building/buildingId]
@@ -48,17 +54,31 @@ buildingCtrl.insert);
  * and num_class. Returns an ok response.
  */
 // FIXME Falta validar el param buildingId
-router.put('/:buildingId', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission],
-buildingCtrl.modify);
+router.put('/:buildingId', [(req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
+}, middleWares.Auth.haveSession,
+middleWares.Auth.havePermission], buildingCtrl.modify);
 
 /**
  * [DELETE /building/buildingId]
  * @type {Object} Delete a specific building by logic delete
  */
 // FIXME Falta validar el param buildingId
-router.delete('/:buildingId', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission],
-buildingCtrl.logDel);
+router.delete('/:buildingId', [(req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
+}, middleWares.Auth.haveSession,
+middleWares.Auth.havePermission], buildingCtrl.logDel);
 
 module.exports = router;
