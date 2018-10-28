@@ -104,8 +104,6 @@ class UserMdl {
   }
 
   canDo(method, url, data) {
-    console.log('entering canDo');
-    console.log(url.params);
     let can = false;
     let ret = false;
     if (this.privilages === 'ADMIN') {
@@ -115,13 +113,11 @@ class UserMdl {
       case 'GET':
         switch (url) {
           case '/users':
-            if (can) {
-              ret = true;
-            }
-            break;
-          case '/users/:userId':
-            console.log('entering Users:params');
-            if (this.user_code === url.userId) {
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else if (can) {
               ret = true;
             } else {
               ret = false;
@@ -136,6 +132,21 @@ class UserMdl {
       case 'DELETE':
         break;
       case 'POST':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            ret = true;
+            break;
+          default:
+        }
         break;
       case 'PUT':
         break;

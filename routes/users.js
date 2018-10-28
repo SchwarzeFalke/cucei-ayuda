@@ -44,7 +44,9 @@ router.get('/fakeData/:amount', (req, res) => {
  * GET users/
  * @type {Array} Return all users from database
  */
-router.get('/', usersCtrl.getAll);
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.getAll);
 
 /**
  * GET users/userId
@@ -66,14 +68,18 @@ usersCtrl.getUser);
  * "start" and "end" attributes reffers to a starting point and an ending point
  */
 // FIXME Falta un middleware para validar que el param :userId
-router.get('/:userId/roads', usersCtrl.getRoads);
+router.get('/:userId/roads', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.getRoads);
 
 /**
  * GET users/userId/schedule
  * @type {Object} Returns the schedule's identifier from an specific user
  */
 // FIXME Falta un middleware para validar que el param :userId
-router.get('/:userId/schedule', usersCtrl.getSchedule);
+router.get('/:userId/schedule', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.getSchedule);
 
 /**
  * GET users/userId/posts
@@ -81,7 +87,9 @@ router.get('/:userId/schedule', usersCtrl.getSchedule);
  */
 // FIXME Falta un middleware para validar que el param :userId es un
 // identificador valido, ejem: un numero en cierto rango
-router.get('/:userId/posts', usersCtrl.getPosts);
+router.get('/:userId/posts', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.getPosts);
 
 /**
  * The next block code reffers to all modification methods of USERS resource,
@@ -102,7 +110,9 @@ router.post('/', middleWares.Auth.register);
 // FIXME Falta un middleware para validar que el cuerpo del request
 // FIXME Falta un middleware para validar que el param :userId es un
 // identificador valido, ejem: un numero en cierto rango
-router.post('/:userId/schedule', usersCtrl.insertSchedule);
+router.post('/:userId/schedule', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.insertSchedule);
 
 // FIXME Falta un middleware para validar que el cuerpo del request
 // FIXME Falta un middleware para validar que el param :userId es un
