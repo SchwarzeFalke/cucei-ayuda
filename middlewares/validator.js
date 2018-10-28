@@ -31,7 +31,11 @@ class Validator {
         return false;
     }
 
-    static validateReq(req, res, next) {
+    /* static validateReq(req, res, next) {
+        const test = /^\d+$/;
+    } */
+
+    static validateRe(req, res, next) {
         const test = /^\d+$/;
         try {
             if (req.body.nrc === undefined) {

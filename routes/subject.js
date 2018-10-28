@@ -1,5 +1,5 @@
-/*
- * Definition of subject routing
+/**
+ * @author tyler97
  */
 
 const { Router } = require('express');
@@ -19,28 +19,53 @@ const router = Router();
   */
 
 // GET /subject  Returns all subjects
-router.get('/', subjectCtrl.getAll);
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.getAll);
 
 // GET /subject/:subjectId    returns specific subject
-// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
-router.get('/:nrc', subjectCtrl.getSubject);
+router.get('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.getSubject);
 
 // GET /subject/:subjectId/subjects
 // Returns all subjects of a method
 // router.get('/:subjectId/subjects', ());
 
 // POST /subject
-// [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher],
-// FIXME Brincar por linea cada valor del arreglo
-router.post('/', [middleWares.subjectM.validateNrc, middleWares.subjectM.validateName, middleWares.subjectM.validateFirstDay, middleWares.subjectM.validateSecDay, middleWares.subjectM.validateSection, middleWares.subjectM.validateClass, middleWares.subjectM.validateCR, middleWares.subjectM.validateBuilding, middleWares.subjectM.validateTeacher] ,subjectCtrl.insert);
+
+router.post('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  middleWares.subjectM.validateName,
+  middleWares.subjectM.validateFirstDay,
+  middleWares.subjectM.validateSecDay,
+  middleWares.subjectM.validateSection,
+  middleWares.subjectM.validateClass,
+  middleWares.subjectM.validateCR,
+  middleWares.subjectM.validateBuilding,
+  middleWares.subjectM.validateTeacher], subjectCtrl.insert);
 
 // PUT /subject/:subjectId
 // FIXME Falta validar el cuerpo del request
-// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
-router.put('/:nrc', subjectCtrl.update);
+router.put('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  middleWares.subjectM.validateNrcP,
+  middleWares.subjectM.validateNrc,
+  middleWares.subjectM.validateName,
+  middleWares.subjectM.validateFirstDay,
+  middleWares.subjectM.validateSecDay,
+  middleWares.subjectM.validateSection,
+  middleWares.subjectM.validateClass,
+  middleWares.subjectM.validateCR,
+  middleWares.subjectM.validateBuilding,
+  middleWares.subjectM.validateTeacher], subjectCtrl.update);
 
 // DELETE /subject/:subjectId
-// FIXME Falta un middleware para validar que el param :nrc es un identificador valido
-router.delete('/:nrc', subjectCtrl.del);
+router.delete('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.del);
 
 module.exports = router;

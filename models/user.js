@@ -2,11 +2,11 @@
  * @Author: schwarze_falke
  * @Date:   2018-09-21T19:39:23-05:00
  * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-22T03:22:29-05:00
+ * @Last modified time: 2018-10-27T04:53:57-05:00
  */
 
+const bcrypt = require('bcrypt');
 const db = require('../db'); // for database handling
-
 /**
  * Name: user.js | Type: Class | Description: User Model | @Author: Carlos Vara
  *                                 METHODS
@@ -66,9 +66,23 @@ class UserMdl {
     if (args.privilages !== undefined) {
       this.privilages = args.privilages;
     }
-    if (args.exist !== undefined) {
-      this.exist = args.exist;
+    this.exist = '1';
+  }
+
+  /**
+ * findUser find user using an email]
+ * @param  {string}  email [email to find a user]
+ */
+  static async findUser(email) {
+    const condition = `email = '${email}'`;
+    try {
+      this.data = await db.get('user', '*', condition);
+      this.data = this.processResult(this.data);
+    } catch (e) {
+      console.log(`Error en findUser: ${e}`);
+      return undefined;
     }
+    return this.data;
   }
 
   /**
@@ -91,30 +105,147 @@ class UserMdl {
 
   canDo(method, url, data) {
     let can = false;
+    let ret = false;
     if (this.privilages === 'ADMIN') {
       can = true;
     }
     switch (method) {
       case 'GET':
         switch (url) {
-          case expression:
-
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            ret = true;
+            break;
+          case '/subject':
+            ret = true;
+            break;
+          case '/forum':
+            ret = true;
             break;
           default:
-
         }
         break;
       case 'DELETE':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'POST':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/forum':
+            ret = true;
+            break;
+          default:
+        }
         break;
       case 'PUT':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'PATCH':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       default:
     }
-    return can;
+    return ret;
   }
 
   /**
@@ -143,7 +274,6 @@ class UserMdl {
     this.querySentence = '';
     const columns = UserMdl.validColumns;
     columns.forEach((column) => {
-      console.log(data);
       if (data[column] !== undefined) {
         this.querySentence += `${column} = '${data[column]}' && `;
       }
@@ -153,7 +283,6 @@ class UserMdl {
     }
     // if there are not more columns to evaluate, delete the last '&&' operator
     // from the query condition
-    console.log(this.querySentence);
     return this.querySentence.slice(0, -4);
   }
 
@@ -207,7 +336,6 @@ class UserMdl {
     if (condition) {
       if (condition.length > 1) {
         queryCondition += ` && ${UserMdl.processConditions(condition)}`;
-        console.log(queryCondition);
       }
     }
     await db.get('user', columns, queryCondition)
@@ -233,12 +361,12 @@ class UserMdl {
   }
 
   async save() {
-    await db.insert('user', this)
-      .then((results) => {
-        this.result = results;
-        return this.result;
-      })
-      .catch(e => console.error(`.catch(${e}})`));
+    try {
+      this.password = await bcrypt.hash(this.password, process.env.SECRET);
+      this.result = await db.insert('user', this);
+    } catch (e) {
+      console.log(`${e}`);
+    }
     return this.result;
   }
 

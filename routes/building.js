@@ -16,29 +16,31 @@ const router = Router();
  * Get/building/:buildingId
  */
 
-/**
- * [GET /building]
- * @type {Array} Return all buildings from database
- */
-router.get('/', buildingCtrl.getAll);
+// this method return all buildings
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.getAll);
 
 /**
  * [GET /building/buildingId]
  * @type {Array} Returns a specific building through its identifier
  */
-router.get('/:buildingId', (req, res, next) => {
-    const request = middleWares.validator.code(req.params.buildingId);
-    if (!request) {
-        next();
-    } else {
-        res.send(request);
-        console.log(request);
-    }
-}, buildingCtrl.getBuild);
+router.get('/:buildingId', [(req, res, next) => {
+  const request = middleWares.validator.code(req.params.buildingId);
+  if (!request) {
+    next();
+  } else {
+    res.send(request);
+    console.log(request);
+  }
+}, middleWares.Auth.haveSession,
+middleWares.Auth.havePermission], buildingCtrl.getBuild);
 
 
 // FIXME Falta middleware para validar el cuerpo del request
-router.post('/', buildingCtrl.insert);
+router.post('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.insert);
 
 /**
  * [PUT /building/buildingId]
@@ -46,29 +48,17 @@ router.post('/', buildingCtrl.insert);
  * and num_class. Returns an ok response.
  */
 // FIXME Falta validar el param buildingId
-router.put('/:buildingId', (req, res, next) => {
-    const request = middleWares.validator.code(req.params.buildingId);
-    if (!request) {
-        next();
-    } else {
-        res.send(request);
-        console.log(request);
-    }
-}, buildingCtrl.modify);
+router.put('/:buildingId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.modify);
 
 /**
  * [DELETE /building/buildingId]
  * @type {Object} Delete a specific building by logic delete
  */
 // FIXME Falta validar el param buildingId
-router.delete('/:buildingId', (req, res, next) => {
-    const request = middleWares.validator.code(req.params.buildingId);
-    if (!request) {
-        next();
-    } else {
-        res.send(request);
-        console.log(request);
-    }
-}, buildingCtrl.logDel);
+router.delete('/:buildingId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.logDel);
 
 module.exports = router;
