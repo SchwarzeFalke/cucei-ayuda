@@ -13,7 +13,7 @@ const router = Router();
 
 /**
  * [GET /map]
- * @type {Array} Return all users from database
+ * @type {Array} Return all buildings from database
  */
 router.get('/', mapCtrl.get);
 

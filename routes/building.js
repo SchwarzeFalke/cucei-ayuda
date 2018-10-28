@@ -1,9 +1,6 @@
 // FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T21:56:50-05:00
+ * @author: JulioMariscal
  */
 
 const { Router } = require('express');
@@ -19,42 +16,59 @@ const router = Router();
  * Get/building/:buildingId
  */
 
-// this method return all buildings
+/**
+ * [GET /building]
+ * @type {Array} Return all buildings from database
+ */
 router.get('/', buildingCtrl.getAll);
 
 /**
- * This get method need a middleware for validate
- * if id building is a int and return a building with id specific
+ * [GET /building/buildingId]
+ * @type {Array} Returns a specific building through its identifier
  */
 router.get('/:buildingId', (req, res, next) => {
-  const request = middleWares.validator.code(req.params.buildingId);
-  if (!request) {
-    next();
-  } else {
-    res.send(request);
-    console.log(request);
-  }
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
 }, buildingCtrl.getBuild);
 
-/**
- * This POST method for routes building
- * this method insert data in db
- */
+
 // FIXME Falta middleware para validar el cuerpo del request
 router.post('/', buildingCtrl.insert);
 
 /**
- * This POST method for routes building
- * this method modify data in db
+ * [PUT /building/buildingId]
+ * @type {Object} Create a new building by give name, latitude, longitude
+ * and num_class. Returns an ok response.
  */
 // FIXME Falta validar el param buildingId
-router.put('/:buildingId', buildingCtrl.modify);
+router.put('/:buildingId', (req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
+}, buildingCtrl.modify);
 
 /**
- * This POST method for routes building
- * this method logic delete data in db
+ * [DELETE /building/buildingId]
+ * @type {Object} Delete a specific building by logic delete
  */
 // FIXME Falta validar el param buildingId
-router.delete('/:buildingId', buildingCtrl.logDel);
+router.delete('/:buildingId', (req, res, next) => {
+    const request = middleWares.validator.code(req.params.buildingId);
+    if (!request) {
+        next();
+    } else {
+        res.send(request);
+        console.log(request);
+    }
+}, buildingCtrl.logDel);
 
 module.exports = router;
