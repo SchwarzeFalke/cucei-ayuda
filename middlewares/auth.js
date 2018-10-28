@@ -164,9 +164,12 @@ class Auth {
             res.send(response);
           } else {
             // if the session is active, does not do nothing
-            newResponse.createResponse('You are already logged', 200, '/users', 'POST');
-            newResponse.response.message = newResponse.createMessage();
-            next(res.status(newResponse.response.status).send(newResponse.response));
+            const response = {
+              created_at: new Date(),
+              userId: user[0].user_code,
+              token: tokenString.hash, // takes only the hash token
+            };
+            res.send(response);
           }
         })
         .catch(err => console.error(`.catch(${err})`));
@@ -264,8 +267,6 @@ class Auth {
             });
             await TokenMdl.active(result) // checks again after the expiration checkout
               .then(async (active) => {
-                console.log('logging result');
-                console.log(result);
                 if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
                   req.session = {
                     token: result[0].token,
