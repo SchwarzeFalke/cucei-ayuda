@@ -250,18 +250,13 @@ class UserMdl {
   }
 
   async save() {
-    return new Promise(async (resolve, reject) => {
-      await bcrypt.hash(`${this.password}`, process.env.SECRET, async (err, hash) => {
-        this.password = hash;
-        await db.insert('user', this)
-          .then((results) => {
-            this.result = results;
-            resolve(this.result);
-          })
-          .catch(e => reject(e));
-        resolve(this.result);
-      });
-    });
+    try {
+      this.password = await bcrypt.hash(this.password, process.env.SECRET);
+      this.result = await db.insert('user', this);
+    } catch (e) {
+      console.log(`${e}`);
+    }
+    return this.result;
   }
 
   async update(id) {
