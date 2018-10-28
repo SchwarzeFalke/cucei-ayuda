@@ -50,12 +50,15 @@ router.get('/', usersCtrl.getAll);
  * GET users/userId
  * @type {Object} Returns a specific user through its identifier
  */
-router.get('/:userId', (req, res, next) => {
-  const request = middleWares.validator.code(req.params.userId);
-  if (!request) {
-    next();
-  } else { res.send(request); console.log(request); }
-}, usersCtrl.getUser);
+router.get('/:userId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  (req, res, next) => {
+    const request = middleWares.validator.code(req.params.userId);
+    if (!request) {
+      next();
+    } else { res.send(request); console.log(request); }
+  }],
+usersCtrl.getUser);
 
 /**
  * GET users/userId/routes
