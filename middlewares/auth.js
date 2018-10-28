@@ -285,9 +285,8 @@ class Auth {
   }
 
   static havePermission(req, res, next) {
-    console.log(req.session.user);
-    console.log(req.session);
-    if (req.session.user.canDo(req.method, req.originalUrl)) {
+    const user = new UserMdl(...req.session.user);
+    if (user.canDo(req.method, req.originalUrl)) {
       next();
     } else {
       res.send('NO tienes permiso man');
