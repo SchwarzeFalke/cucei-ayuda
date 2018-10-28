@@ -119,7 +119,7 @@ class UserMdl {
             }
             break;
           case '/users/:userId':
-            if (data.user_id === url.user_id) {
+            if (this.user_id === url.user_id) {
               ret = true;
             } else {
               ret = false;
