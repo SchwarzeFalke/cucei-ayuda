@@ -105,6 +105,8 @@ class UserMdl {
 
   canDo(method, url, data) {
     console.log('entering canDo');
+    console.log(method);
+    console.log(url);
     let can = false;
     let ret = false;
     if (this.privilages === 'ADMIN') {
