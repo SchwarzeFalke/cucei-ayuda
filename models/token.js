@@ -119,9 +119,9 @@ class Token {
       });
   }
 
-  static async confirm(user, code) {
+  static async confirm(userCode, code) {
     return new Promise(async (resolve, reject) => {
-      await db.update('token', { confirmation: null }, `user_id = ${user} && confirmation = ${code}`)
+      await db.update('token', { confirmation: null }, `user_id = ${userCode} && confirmation = ${code}`)
         .then((result) => {
           if (result.affectedRows === 1) {
             this.response = {
