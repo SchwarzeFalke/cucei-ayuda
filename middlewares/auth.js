@@ -234,7 +234,7 @@ class Auth {
     // this method does not apply to the login, logout, registration and confirmation of email
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
-      || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token'
+      || req.path === '/auth/password_reset' || req.path === '/auth/recover/'
     || req.path === '/users/confirmEmail') {
       next();
     } else {

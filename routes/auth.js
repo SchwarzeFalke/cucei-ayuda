@@ -1,8 +1,5 @@
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-11T09:44:49-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-11T09:44:49-05:00
+ * @Author: brandonmdiaz
  */
 
 const { Router } = require('express');
@@ -26,12 +23,13 @@ router.get('/password_reset', (req, res) => {
       } else {
         // creamos token
         Auth.generateToken(this.user, 'recover').then((results) => {
-          const token = results;
+          const token = results.hash;
           const mailOptions = {
             to: `${userEmail}`,
             subject: 'Reset Password',
-            text: `/auth/recover/${token}`,
-            html: '<b>Recuperando contraseña, espera un segundo. </b>',
+            text: `/auth/recover/?q=${token}`,
+            html: `<b>Recuperando contraseña, espera un segundo
+            /auth/recover/?q=${token} </b>`,
           }; // fin mailOptions
           mailer.sendMail(mailOptions);
           res.send('lo logramos');
@@ -47,12 +45,16 @@ router.get('/password_reset', (req, res) => {
   }
 });
 
-router.post('/recover/:token', async (req, res) => {
-  const { token } = req.params;
+router.post('/recover', async (req, res) => {
+  const token = req.query.q;
   const tokenStatus = await TokenMdl.active(token);
   if (tokenStatus === 'ACTIVE') {
     // obtenemos el id del usuario
-    this.userId = await TokenMdl.get(token);
+    try {
+      this.userId = await TokenMdl.get(token);
+    } catch(e) {
+      console.log(e);
+    }
     this.userId = this.userId[0].user_id;
     // Obtenemos todos los datos del usuario
     let user = await UserMdl.get('*', this.userId);
@@ -61,7 +63,7 @@ router.post('/recover/:token', async (req, res) => {
     // creamos un modelo con todos los datos del usuario
     user = new UserMdl(user);
     // modificamos el usuario
-    user.update(this.userId);
+    await user.update(this.userId);
     res.send('Modificado con exito');
   } else {
     res.send('token no existe');
