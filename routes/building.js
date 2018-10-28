@@ -20,7 +20,7 @@ const router = Router();
  */
 
 // this method return all buildings
-router.get('/', middleWares.Auth.havePermission, buildingCtrl.getAll);
+router.get('/', middleWares.Auth.haveSession, middleWares.Auth.havePermission, buildingCtrl.getAll);
 
 /**
  * This get method need a middleware for validate
