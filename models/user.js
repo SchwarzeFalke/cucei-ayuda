@@ -125,6 +125,9 @@ class UserMdl {
               ret = false;
             }
             break;
+          case '/building':
+            ret = true;
+            break;
           default:
         }
         break;
