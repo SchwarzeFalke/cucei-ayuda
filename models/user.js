@@ -105,8 +105,6 @@ class UserMdl {
 
   canDo(method, url, data) {
     console.log('entering canDo');
-    console.log(method);
-    console.log(url);
     let can = false;
     let ret = false;
     if (this.privilages === 'ADMIN') {
@@ -121,6 +119,7 @@ class UserMdl {
             }
             break;
           case '/users/:userId':
+            console.log('entering Users:params');
             if (this.user_code === url.userId) {
               ret = true;
             } else {
