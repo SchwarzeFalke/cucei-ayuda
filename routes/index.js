@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 
 const auth = require('../middlewares/auth');
 
+const authRouter = require('./auth');
 const usersRouter = require('./users');
 const subjectRouter = require('./subject');
 const forumRouter = require('./forum');
@@ -33,6 +34,6 @@ router.use('/subject', subjectRouter);
 router.use('/topics', forumRouter);
 router.use('/map', mapRouter);
 router.use('/building', buildingRouter);
-router.use('/auth', auth);
+router.use('/auth', authRouter);
 
 module.exports = router;

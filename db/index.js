@@ -60,13 +60,11 @@ class DB {
         query += order;
       }
       query += ';';
-      console.log("dsafasdfasfd");
       this.connection.query(query, table, (err, results) => {
         if (err) {
           reject(err);
         }
         this.connection.destroy();
-        console.log(results);
         resolve(JSON.parse(JSON.stringify(results)));
       });
     });
