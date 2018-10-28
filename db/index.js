@@ -60,11 +60,13 @@ class DB {
         query += order;
       }
       query += ';';
+      console.log("dsafasdfasfd");
       this.connection.query(query, table, (err, results) => {
         if (err) {
           reject(err);
         }
         this.connection.destroy();
+        console.log(results);
         resolve(JSON.parse(JSON.stringify(results)));
       });
     });
@@ -95,6 +97,7 @@ class DB {
       } else { query += ';'; }
       this.connection.query(query, [table, data], (err, results) => {
         if (err) {
+          console.log(err);
           reject(err);
         }
         this.connection.destroy();
@@ -130,10 +133,8 @@ class DB {
         query += ';';
       }
       this.connection.query(query, [table, data], (err, results) => {
-        if (results.affectedRows === 0 || results.changedRows === 0) {
-          reject(new Error('Doesnt exist'));
-        }
         if (err) {
+          console.log(err);
           reject(err);
         }
         this.connection.destroy();

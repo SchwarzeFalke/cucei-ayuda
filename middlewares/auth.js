@@ -1,10 +1,6 @@
-// FIXME Los atributos usados para documentacion son en minusculas y de estos solo author es valido
 /**
- * @Author: Carlos Vara
- * @Date:   2018-10-11T09:27:15-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-27T16:04:01-05:00
- */
+ * @author: Todos
+*/
 
 const bcrypt = require('bcrypt');
 const mailer = require('../mail');
@@ -89,11 +85,9 @@ class Auth {
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
-    // Build and save a new user into database
-    const newUser = await new UserMdl({ ...req.body });
-    await newUser.save();
-    console.log('finishing saving new user --> register');
     try {
+      const newUser = new UserMdl({ ...req.body });
+      await newUser.save();
       // Then, a confirmation token is generated
       await Auth.generateToken(newUser, 'confirm')
         .then((genToken) => {
@@ -218,7 +212,7 @@ class Auth {
    */
   static async confirm(req, res, next) {
     const newResponse = new ResMdl();
-    await TokenMdl.confirm(req.body.user, req.body.confirmation)
+    await TokenMdl.confirm(req.body.user_code, req.body.confirmation)
       .then(async (result) => {
         newResponse.createResponse('Email Confirmation', result.status, '/users', 'POST');
         newResponse.response.message = `${result.message}`;
@@ -240,7 +234,8 @@ class Auth {
     // this method does not apply to the login, logout, registration and confirmation of email
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
-      || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token') {
+      || req.path === '/auth/password_reset' || req.path === '/auth/recover/:token'
+    || req.path === '/users/confirmEmail') {
       next();
     } else {
       const newResponse = new ResMdl();
