@@ -129,6 +129,9 @@ class UserMdl {
           case '/subject':
             ret = true;
             break;
+          case '/forum':
+            ret = true;
+            break;
           default:
         }
         break;
@@ -184,6 +187,9 @@ class UserMdl {
             } else {
               ret = false;
             }
+            break;
+          case '/forum':
+            ret = true;
             break;
           default:
         }
