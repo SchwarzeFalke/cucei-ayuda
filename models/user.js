@@ -126,6 +126,9 @@ class UserMdl {
           case '/building':
             ret = true;
             break;
+          case '/subject':
+            ret = true;
+            break;
           default:
         }
         break;
@@ -141,6 +144,13 @@ class UserMdl {
             }
             break;
           case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
             if (can) {
               ret = true;
             } else {
@@ -168,6 +178,13 @@ class UserMdl {
               ret = false;
             }
             break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
           default:
         }
         break;
@@ -183,6 +200,13 @@ class UserMdl {
             }
             break;
           case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
             if (can) {
               ret = true;
             } else {
