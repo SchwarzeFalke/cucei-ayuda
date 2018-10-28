@@ -130,6 +130,25 @@ class UserMdl {
         }
         break;
       case 'DELETE':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'POST':
         switch (url) {
@@ -143,14 +162,56 @@ class UserMdl {
             }
             break;
           case '/building':
-            ret = true;
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
             break;
           default:
         }
         break;
       case 'PUT':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'PATCH':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       default:
     }

@@ -117,12 +117,18 @@ usersCtrl.insertSchedule);
 // FIXME Falta un middleware para validar que el cuerpo del request
 // FIXME Falta un middleware para validar que el param :userId es un
 // identificador valido, ejem: un numero en cierto rango
-router.put('/:userId', usersCtrl.updatePUT);
+router.put('/:userId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.updatePUT);
 
-router.patch('/:userId', usersCtrl.updatePATCH);
+router.patch('/:userId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.updatePATCH);
 
 // FIXME Falta un middleware para validar que el param :userId es un
 // identificador valido, ejem: un numero en cierto rango
-router.delete('/:userId', usersCtrl.del);
+router.delete('/:userId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+usersCtrl.del);
 
 module.exports = router;
