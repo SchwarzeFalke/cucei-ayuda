@@ -46,7 +46,11 @@ router.post('/', [(req, res, next) => {
         console.log(request);
     }
 }, middleWares.Auth.haveSession,
-middleWares.Auth.havePermission], buildingCtrl.insert);
+middleWares.Auth.havePermission,
+middleWares.building.validateLatitude,
+middleWares.building.validateLongitude,
+middleWares.building.validateBuildingId,
+middleWares.building.validateNumClass], buildingCtrl.insert);
 
 /**
  * [PUT /building/buildingId]
