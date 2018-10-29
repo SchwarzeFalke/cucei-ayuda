@@ -60,6 +60,7 @@ class Token {
           } else {
             answer = 'ACTIVE';
           }
+          await this.confirmed(results, query);
           await db.get('token', 'confirmation', query)
             .then((result) => {
               if (typeof result[0] === 'undefined') { // this helps to know if the
@@ -78,6 +79,20 @@ class Token {
         })
         .catch(e => reject(e));
     });
+  }
+
+  static async confirmed(token, query) {
+    const tok = await db.get('token', 'confirmation', query);
+    console.log(tok);
+    console.log(tok[0]);
+    let answer;
+    if (typeof tok[0] === 'undefined') { // this helps to know if the
+      // user has already confirm the email or not
+      answer = 'NON-ACTIVE';
+    } else if (tok[0].confirmation !== null) {
+      answer = ' | PLEASE CONFIRM EMAIL!';
+    }
+    return answer;
   }
 
   static async create(data) {

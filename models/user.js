@@ -116,12 +116,14 @@ class UserMdl {
             console.log('NO TIENE PERMISO DE HACER UN GET ALL DE TODOS LOS USUARIOS');
             break;
           case '/users/:userId':
-            if (data.user_id === url.user_id)
+            if (data.user_id === url.user_id) {
               console.log('TIENE PERMISO PARA VER TODA SU INFO, PUES SON SUS DATOS');
-            else
+            } else {
               console.log('NO TIENE PERMISO DE VER TODA LA INFO, PUES ES DE OTRO USUARIO QUE NO ES ÉL');
+            }
+            break;
           default:
-
+            break;
         }
         break;
       case 'DELETE':

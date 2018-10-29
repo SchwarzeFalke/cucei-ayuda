@@ -114,6 +114,16 @@ class Auth {
     }
   }
 
+  static validate(req, res, next) {
+    this.userId = req.body.user_id;
+    if (this.userId === undefined || req.body.password === undefined
+      || !(/^\d+$/.test(this.userId))) {
+      res.send('Escribe el id o el password');
+    } else {
+      next();
+    }
+  }
+
   /**
    * [login description: This is a method to log-in in the API. It only works if
    * the user already has a confirmed account. If the user is already logged_in,
@@ -230,6 +240,8 @@ class Auth {
    * @param  {Function} next [description]
    * @return {Promise}       [description]
    */
+
+
   static async haveSession(req, res, next) {
     // this method does not apply to the login, logout, registration and confirmation of email
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
@@ -246,35 +258,38 @@ class Auth {
         next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
         // Checks the headers looking for a token
-        const token = await Auth.getHeaderToken(req.headers.authorization);
-        await TokenMdl.get(token)
-          .then(async (result) => {
-            await TokenMdl.active(result).then((active) => { // takes the token and checks
-              // if it's active
-              if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
-                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                newResponse.response.message = newResponse.createMessage();
-                next(res.status(newResponse.response.status).send(newResponse.response));
+        const token = Auth.getHeaderToken(req.headers.authorization);
+        // se busca el token
+        let tok = await TokenMdl.get(token);
+        const active = await TokenMdl.active(tok);
+        if (active);
+        await TokenMdl.get(token).then(async (result) => {
+          await TokenMdl.active(result).then((active) => { // takes the token and checks
+            // if it's active
+            if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
+              newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+              newResponse.response.message = newResponse.createMessage();
+              next(res.status(newResponse.response.status).send(newResponse.response));
+            } else {
+              // If it's active, checks if its expiration time hasn't come
+              Auth.isActive(result);
+            }
+          });
+          await TokenMdl.active(result) // checks again after the expiration checkout
+            .then(async (active) => {
+              if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
+                req.session = {
+                  token: result[0].token,
+                  user: await UserMdl.get('*', result[0].user_id),
+                };
+                next();
               } else {
-                // If it's active, checks if its expiration time hasn't come
-                Auth.isActive(result);
+                newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+                newResponse.response.message = active;
+                next(res.status(newResponse.response.status).send(newResponse.response));
               }
             });
-            await TokenMdl.active(result) // checks again after the expiration checkout
-              .then(async (active) => {
-                if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
-                  req.session = {
-                    token: result[0].token,
-                    user: await UserMdl.get('*', result[0].user_id),
-                  };
-                  next();
-                } else {
-                  newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-                  newResponse.response.message = active;
-                  next(res.status(newResponse.response.status).send(newResponse.response));
-                }
-              });
-          });
+        });
       }
     }
   }
@@ -291,8 +306,11 @@ class Auth {
   static isActive(token) {
     const time = new Date();
     const tokenTime = new Date(token.expires);
+    console.log(time.getTime);
+    console.log(tokenTime.getTime());
+    console.log(time.getTime() > tokenTime.getTime());
     if (time.getTime() > tokenTime.getTime()) { // if the expiration time is lesser
-      // than the current time, it menas the token has expired
+      // than the current time, it means the token has expired
       TokenMdl.destroy(token.token);
     }
   }
