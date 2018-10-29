@@ -198,9 +198,6 @@ class DB {
         query += ` WHERE ${condition}`;
       }
       this.connection.query(query, table, (err, results) => {
-        if (results.affectedRows === 0 || results.changedRows === 0) {
-          reject(new Error('Doesnt exist'));
-        }
         if (err) {
           reject(err);
         }
