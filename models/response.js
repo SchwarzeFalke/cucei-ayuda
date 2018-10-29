@@ -5,6 +5,10 @@
  * @Last modified time: 2018-10-21T21:09:02-05:00
  */
 
+/**
+ * [ResMdl a model used for defining responses]
+ */
+
 class ResMdl {
   constructor() {
     this.response = {
@@ -46,6 +50,12 @@ class ResMdl {
       + ' at this:) ',
     };
   }
+
+  /**
+   * [createMessage method used for creating responses]
+   * @method createMessage
+   * @return {String}      [returns a string for the specified response code]
+   */
 
   createMessage() {
     let message = this.codeMessage[this.response.status];
@@ -144,6 +154,16 @@ class ResMdl {
 
     return message;
   }
+
+  /**
+ * [createResponse method used for creating a response]
+ * @method createResponse
+ * @param  {[Object]}     data   [an object that represents the data to be returned]
+ * @param  {String}       reason [the reason of the response, a String]
+ * @param  {String}       path   [the path of the request]
+ * @param  {String}       method [the method used for the request]
+ * @return {String}              [returns a string representing the response]
+ */
 
   createResponse(data, reason, path, method) {
     this.response.status = reason;

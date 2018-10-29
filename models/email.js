@@ -6,6 +6,10 @@
  */
 const db = require('../db'); // for database handling
 
+/**
+ * [EmailMdl model used for the email object]
+ */
+
 class EmailMdl {
   constructor(args) {
     if (args.email !== undefined) {
@@ -15,6 +19,14 @@ class EmailMdl {
       this.user_code = args.user_code;
     }
   }
+
+  /**
+ * [get method used for obtaining specified email
+ * on a user id condition]
+ * @method get
+ * @param  {Number}  id [represents the user id]
+ * @return {Promise}    [returns a specified email or emails]
+ */
 
   static async get(id) {
     return new Promise(async (resolve, reject) => {
@@ -29,6 +41,16 @@ class EmailMdl {
       return resolve(this.emails);
     });
   }
+
+  /**
+   * [insert method used for inserting into the DB
+   * a specified email, on a specified user]
+   * @method insert
+   * @param  {Number}  id        [represents the user id]
+   * @param  {String}  userEmail [represents the user Email]
+   * @return {Promise}           [returns a response composed of
+   *                              userID and Email]
+   */
 
   async insert(id, userEmail) {
     return new Promise(async (resolve, reject) => {
