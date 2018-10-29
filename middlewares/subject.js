@@ -10,8 +10,8 @@ const forbiddenJSON = {
 // FIXME Todos los metodos deben estar documentados
 
 class subjectM {
-  static validateNrc(req, res, next) {
-    const test = /^\d+$/;
+  static validateFloat(req, res, next) {
+    const test = /^\d+(\.\d+)+$/;
     try {
       if (req.body.nrc === undefined) {
         next();
