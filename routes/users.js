@@ -30,9 +30,9 @@ router.post('/register', middleWares.Auth.register);
 
 router.post('/confirmEmail', middleWares.Auth.confirm);
 
-router.post('/login', middleWares.Auth.login);
+router.post('/login', middleWares.Auth.validate, middleWares.Auth.login);
 
-router.get('/logout', middleWares.Auth.validate, middleWares.Auth.logout);
+router.get('/logout', middleWares.Auth.logout);
 
 // FIXME Falta un middleware para validar que el param :amount sea un numero valido
 router.get('/fakeData/:amount', (req, res) => {

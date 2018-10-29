@@ -115,9 +115,8 @@ class Auth {
   }
 
   static validate(req, res, next) {
-    this.userId = req.body.user_id;
-    if (this.userId === undefined || req.body.password === undefined
-      || !(/^\d+$/.test(this.userId))) {
+    if (req.body.user_id === undefined || req.body.password === undefined
+      || !(/^\d+$/.test(req.body.user_id))) {
       res.send('Escribe el id o el password');
     } else {
       next();
@@ -204,10 +203,16 @@ class Auth {
       const token = Auth.getHeaderToken(req.headers.authorization);
       await TokenMdl.get(token)
         .then(async (result) => {
-          TokenMdl.destroy(result[0].token);
-          newResponse.createResponse('Successfully log-out', 200, '/users', 'POST');
-          newResponse.response.message = newResponse.createMessage();
-          next(res.status(newResponse.response.status).send(newResponse.response));
+          if (result === undefined || result.length == 0) {
+            newResponse.createResponse('You are not logged in', 409, '/users', 'POST');
+            newResponse.response.message = newResponse.createMessage();
+            next(res.status(newResponse.response.status).send(newResponse.response));
+          } else {
+            TokenMdl.destroy(result[0].token);
+            newResponse.createResponse('Successfully log-out', 200, '/users', 'POST');
+            newResponse.response.message = newResponse.createMessage();
+            next(res.status(newResponse.response.status).send(newResponse.response));
+          }
         });
     }
   }
@@ -260,75 +265,58 @@ class Auth {
         // Checks the headers looking for a token
         const token = Auth.getHeaderToken(req.headers.authorization);
         // se busca el token
-        const tok = await TokenMdl.get(token);
-        const active = await TokenMdl.active(tok);
-        if (active === 'NON-ACTIVE') {
-          newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-          newResponse.response.message = newResponse.createMessage();
-          next(res.status(newResponse.response.status).send(newResponse.response));
-        } else {
-          Auth.isActive(tok);
+        try {
+          const tok = await TokenMdl.get(token);
+          if (tok === undefined || tok.length == 0) {
+            newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+            newResponse.response.message = newResponse.createMessage();
+            next(res.status(newResponse.response.status).send(newResponse.response));
+          } else {
+            const active = await TokenMdl.active(tok);
+            if (active === 'NON-ACTIVE') {
+              newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+              newResponse.response.message = newResponse.createMessage();
+              next(res.status(newResponse.response.status).send(newResponse.response));
+            } else if (Auth.isActive(tok)) {
+              req.session = {
+                token: tok[0].token,
+                user: await UserMdl.get('*', tok[0].user_id),
+              };
+              next();
+            } else {
+              newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+              newResponse.response.message = active;
+              next(res.status(newResponse.response.status).send(newResponse.response));
+            }
+          }
+        } catch (e) {
+          console.log(e);
         }
-
-        // await TokenMdl.get(token).then(async (result) => {
-        //   await TokenMdl.active(result).then(async (active) => { // takes the token and checks
-        //     // if it's active
-        //     if (active === 'NON-ACTIVE') { // if it's not active, it means the session has expired
-        //       newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-        //       newResponse.response.message = newResponse.createMessage();
-        //       next(res.status(newResponse.response.status).send(newResponse.response));
-        //     } else {
-        //       // If it's active, checks if its expiration time hasn't come
-        //       console.log(this);
-        //       //this.isActive(result);
-        //     }
-        //   });
-        const isActive = await TokenMdl.active(tok); // checks again after the expiration checkout
-        if (isActive === 'ACTIVE') { // if the token is active yet, then keep it on session
-          req.session = {
-            token: tok[0].token,
-            user: await UserMdl.get('*', tok[0].user_id),
-          };
-          next();
-        } else {
-          newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-          newResponse.response.message = active;
-          next(res.status(newResponse.response.status).send(newResponse.response));
-        }
-            // .then(async (active) => {
-            //   if (active === 'ACTIVE') { // if the token is active yet, then keep it on session
-            //     req.session = {
-            //       token: result[0].token,
-            //       user: await UserMdl.get('*', result[0].user_id),
-            //     };
-            //     next();
-            //   } else {
-            //     newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
-            //     newResponse.response.message = active;
-            //     next(res.status(newResponse.response.status).send(newResponse.response));
-            //   }
-            // });
-        //});
       }
     }
   }
 
   static havePermission(req, res, next) {
-    const user = new UserMdl(...req.session.user);
-    if (user.canDo(req.method, req.baseUrl, req.params)) {
-      next();
-    } else {
+    if (req.session === undefined || req.session.user === undefined) {
       res.send('NO tienes permiso man');
+    } else {
+      const user = new UserMdl(...req.session.user);
+      if (user.canDo(req.method, req.baseUrl, req.params)) {
+        next();
+      }
     }
   }
 
+// checks if the token hasn't expired
   static async isActive(token) {
     const time = new Date();
     const tokenTime = new Date(token[0].expires);
     if (time.getTime() > tokenTime.getTime()) { // if the expiration time is lesser
       // than the current time, it means the token has expired
-      TokenMdl.destroy(token[0].token);
+      await TokenMdl.destroy(token[0].token);
+      return false;
     }
+    return true;
   }
 
   static getHeaderToken(bearer) {
