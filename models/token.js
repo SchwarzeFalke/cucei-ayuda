@@ -44,7 +44,7 @@ class Token {
       .catch(e => console.error(`.catch(${e})`));
   }
 
-// regresar si esta activo o no, ningun otro dato
+  // regresar si esta activo o no, ningun otro dato
   static async active(args) {
     return new Promise(async (resolve, reject) => {
       let query;
@@ -127,11 +127,13 @@ class Token {
   static async destroy(token) {
     await db.logicalDel('token', `token = '${token}'`)
       .then((result) => {
-        if (result[0].affectedRows === undefined) {
-
-        } else if (result[0].affectedRows === 1) {
+        if (result.affectedRows === undefined) {
+          this.response = 'Cannot end session; token does not exist!';
+        } else if (result.affectedRows === 1) {
           this.response = 'Successfully ended session';
-        } else { this.response = 'Cannot end session; token does not exist!'; }
+        } else {
+          this.response = 'Cannot end session; token does not exist!';
+        }
         return this.response;
       });
   }

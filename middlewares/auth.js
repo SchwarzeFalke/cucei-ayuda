@@ -264,20 +264,23 @@ class Auth {
       } else {
         // Checks the headers looking for a token
         const token = Auth.getHeaderToken(req.headers.authorization);
-        // se busca el token
         try {
+          // se busca el token
           const tok = await TokenMdl.get(token);
+          // si el token no existe manda error.
           if (tok === undefined || tok.length == 0) {
             newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
             newResponse.response.message = newResponse.createMessage();
             next(res.status(newResponse.response.status).send(newResponse.response));
           } else {
+            // revisas si esta activo el token
             const active = await TokenMdl.active(tok);
+            // si no esta activo se manda respuesta de loggin
             if (active === 'NON-ACTIVE') {
               newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
               newResponse.response.message = newResponse.createMessage();
               next(res.status(newResponse.response.status).send(newResponse.response));
-            } else if (Auth.isActive(tok)) {
+            } else if (Auth.isActive(tok)) { // se revusa su el token esta activo
               req.session = {
                 token: tok[0].token,
                 user: await UserMdl.get('*', tok[0].user_id),
