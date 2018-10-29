@@ -282,6 +282,7 @@ class Auth {
                 token: tok[0].token,
                 user: await UserMdl.get('*', tok[0].user_id),
               };
+              console.log("antes del next");
               next();
             } else {
               newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
@@ -303,6 +304,8 @@ class Auth {
       const user = new UserMdl(...req.session.user);
       if (user.canDo(req.method, req.baseUrl, req.params)) {
         next();
+      } else {
+        res.send('NO tienes permiso man');
       }
     }
   }

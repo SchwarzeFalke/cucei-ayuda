@@ -127,7 +127,9 @@ class Token {
   static async destroy(token) {
     await db.logicalDel('token', `token = '${token}'`)
       .then((result) => {
-        if (result[0].affectedRows === 1) {
+        if (result[0].affectedRows === undefined) {
+
+        } else if (result[0].affectedRows === 1) {
           this.response = 'Successfully ended session';
         } else { this.response = 'Cannot end session; token does not exist!'; }
         return this.response;
