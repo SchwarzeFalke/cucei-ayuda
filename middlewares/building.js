@@ -1,4 +1,6 @@
-
+/**
+ * @author: JulioMariscal
+ */
 const { ResMdl } = require('../models');
 
 class BuildingMdw {
