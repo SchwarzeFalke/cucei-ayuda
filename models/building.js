@@ -7,6 +7,10 @@
 
 const db = require('../db');
 
+/**
+ * [BuildingMdl Controller used for buildings]
+ */
+
 class BuildingMdl {
   constructor(args) {
     this.building_id = args.building_id;
@@ -17,7 +21,12 @@ class BuildingMdl {
     this.exist = args.exist;
   }
 
-  // colums valid in table buildings
+  /**
+   * [params returns an array the contains the valido
+   * column names for the building table]
+   * @type {Array}
+   */
+
   static get validColumns() {
     const params = [
       'building_id',
@@ -30,7 +39,16 @@ class BuildingMdl {
     return params;
   }
 
-  // proccess result sent by database
+  /**
+ * [processResult Method used for processing items
+ * that are building objects]
+ * @method processResult
+ * @param  {Array}      data [is an array that represents different
+ *                  building objects, normally obtained form the DB]
+ * @return {Array}           [An array containing all the building objects
+ *                            normally from DB]
+ */
+
   static processResult(data) {
     this.result = [];
     data.forEach((res) => {
@@ -39,7 +57,13 @@ class BuildingMdl {
     return this.result;
   }
 
-  // valid if a specific id building exist
+  /**
+   * [validBuilding method used for validating a building id]
+   * @method validBuilding
+   * @param  {Number}      id [represents a building id]
+   * @return {Promise}        [returns diferent then undefined if found]
+   */
+
   static async validBuilding(id) {
     await db.get('building', 'building_id', `building_id = ${id}`)
       .then((results) => {
@@ -49,7 +73,13 @@ class BuildingMdl {
     return this.result;
   }
 
-  // request all data in table buildings
+  /**
+   * [getAll method used for obtaining all the buildings
+   * from the building table from the DB]
+   * @method getAll
+   * @return {Promise} [Returns an array containing all the building objects]
+   */
+
   static async getAll() {
     const condition = '';
     await db.get('building', '*', condition)
@@ -60,7 +90,18 @@ class BuildingMdl {
     return this.result;
   }
 
-  // request a specific data building
+  /**
+   * [get Method used to retrieve building form the DB
+   * on specified conditions and columns]
+   * @method get
+   * @param  {[String]}  columns    [A string array the represents the columns from the
+   *                                 building table]
+   * @param  {Number}  id          [Number representing the id form building]
+   * @param  {[String]}  condition [An array of strings that represents the specified conditions
+   *                                for obtaining buildings form the building table]
+   * @return {Promise}            [returns the specified building or buildings]
+   */
+
   static async get(columns, id, condition) {
     let query = `building_id = ${id}`;
     if (condition) {
@@ -74,7 +115,14 @@ class BuildingMdl {
     return this.result;
   }
 
-  // insert data a building in database
+  /**
+   * [save method used for saving a building object
+   * into the building table in the DB]
+   * @method save
+   * @return {Promise} [if diferent then undefined there were no problems
+   *                    saving into the DB]
+   */
+
   async save() {
     console.log(this);
     await db.insert('building', this)
@@ -86,7 +134,14 @@ class BuildingMdl {
     return this.result;
   }
 
-  // modify a specific building in database
+  /**
+   * [update method used for updating a building object
+   * from the DB on s specified id]
+   * @method update
+   * @param  {Number}  id [represents the id of a specified building]
+   * @return {Promise}    [if diferent then undefined, signifies it was succesfull]
+   */
+
   async update(id) {
     const condition = `building_id = ${id}`;
     await db.update('building', this, condition)
@@ -98,7 +153,14 @@ class BuildingMdl {
     return this.result;
   }
 
-  // logic detele a specific building
+  /**
+   * [logicalDel method used for deleting a specified building
+   * object from the DB logically, it makes exist = 0]
+   * @method logicalDel
+   * @param  {Number}   id [represents the id of a specified building]
+   * @return {Promise}     [if diferent then undefined, signifies it was succesfull]
+   */
+
   async logicalDel(id) {
     const condition = `building_id = ${id}`;
     await db.logicalDel('building', condition)

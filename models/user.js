@@ -104,8 +104,9 @@ class UserMdl {
   }
 
   canDo(method, url, data) {
-    let can = false;
-    let ret = false;
+    let can = false; // Variable para definir permisos de ADMIN
+    let ret = false; // Es la variable que se retorna, si tienes permisos
+    // Cambiala a ture, en caso de no tener permisos se cambia a false
     if (this.privilages === 'ADMIN') {
       can = true;
     }
@@ -158,6 +159,17 @@ class UserMdl {
               ret = true;
             } else {
               ret = false;
+            }
+            break;
+          case '/forum':
+            if (data.topicId && data.threadId && data.postId) {
+              // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
+            } else if (data.topicId && data.threadId) {
+              // Ruta --> '/:topicId/threads/:threadId'
+            } else if (data.topicId) {
+              // Ruta --> '/:topicId'
+            } else {
+              // Ruta --> '/forum'
             }
             break;
           default:
@@ -217,6 +229,17 @@ class UserMdl {
               ret = true;
             } else {
               ret = false;
+            }
+            break;
+          case '/forum':
+            if (data.topicId && data.threadId && data.postId) {
+              // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
+            } else if (data.topicId && data.threadId) {
+              // Ruta --> '/:topicId/threads/:threadId'
+            } else if (data.topicId) {
+              // Ruta --> '/:topicId'
+            } else {
+              // Ruta --> '/forum'
             }
             break;
           default:

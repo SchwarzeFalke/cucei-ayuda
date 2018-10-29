@@ -67,6 +67,15 @@ class PostMdl {
     return res;
   }
 
+  /**
+   * [find method used for obtaining a specefied thread
+   * on specefied conditions]
+   * @method find
+   * @param  {[Object]}  data     [an object that represents the specified conditions]
+   * @param  {Number}  threadId [represents threadId]
+   * @return {Promise}          [description]
+   */
+
   static async find(data, threadId) {
     let condition;
     let order;
