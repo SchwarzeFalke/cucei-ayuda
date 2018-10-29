@@ -101,17 +101,17 @@ class BuildingCrtl {
                     if (!exists) {
                         newBuilding.save()
                             .then((data) => {
-                                newResponse.createResponse(data, 200, '/buildings', 'GET');
+                                newResponse.createResponse(data, 200, '/buildings', 'POST');
                             });
                     } else {
-                        newResponse.createResponse('Nothing to show', 400, '/buildings', 'GET');
+                        newResponse.createResponse('Nothing to show', 400, '/buildings', 'POST');
                     }
                 });
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);
         } catch (e) {
-            newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+            newResponse.response('There is nothing to retrieve', 500, e, 'POST');
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);
@@ -133,17 +133,17 @@ class BuildingCrtl {
                     if (exists) {
                         modifyBuilding.update(req.params.buildingId)
                             .then((data) => {
-                                newResponse.createResponse(data, 200, '/buildings', 'GET');
+                                newResponse.createResponse(data, 200, '/buildings', 'PUT');
                             });
                     } else {
-                        newResponse.createResponse('Nothing to show', 404, '/buildings', 'GET');
+                        newResponse.createResponse('Nothing to show', 404, '/buildings', 'PUT');
                     }
                 });
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);
         } catch (e) {
-            newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+            newResponse.response('There is nothing to retrieve', 500, e, 'PUT');
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);
@@ -165,17 +165,17 @@ class BuildingCrtl {
                     if (exists) {
                         updateBuilding.logicalDel(req.params.buildingId)
                             .then((data) => {
-                                newResponse.createResponse(data, 200, '/buildings', 'GET');
+                                newResponse.createResponse(data, 200, '/buildings', 'DELETE');
                             });
                     } else {
-                        newResponse.createResponse('Nothing to show', 404, '/buildings', 'GET');
+                        newResponse.createResponse('Nothing to show', 404, '/buildings', 'DELETE');
                     }
                 });
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);
         } catch (e) {
-            newResponse.response('There is nothing to retrieve', 500, e, 'GET');
+            newResponse.response('There is nothing to retrieve', 500, e, 'DELETE');
             newResponse.response.message = newResponse.createMessage();
             this.response = newResponse;
             res.status(this.response.response.status).send(this.response.response);

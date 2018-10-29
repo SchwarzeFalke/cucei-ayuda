@@ -30,33 +30,6 @@ class Validator {
         }
         return false;
     }
-
-    /* static validateReq(req, res, next) {
-        const test = /^\d+$/;
-    } */
-
-    static validateRe(req, res, next) {
-        const test = /^\d+$/;
-        try {
-            if (req.body.nrc === undefined) {
-                // forbiddenJSON.message = 'Invalid Nrc';
-                // res.status(forbiddenJSON.status).send(forbiddenJSON);
-            }
-            if (test.test(req.body.nrc)) {
-                if (Number(req.body.nrc) < 1) {
-                    // forbiddenJSON.message = 'Invalid Nrc';
-                    // res.status(forbiddenJSON.status).send(forbiddenJSON);
-                } else {
-                    next();
-                }
-            } else {
-                // forbiddenJSON.message = 'Invalid Nrc';
-                // res.status(forbiddenJSON.status).send(forbiddenJSON);
-            }
-        } catch (e) {
-            console.log(`error in validate NRC ${e}`);
-        }
-    }
 }
 
 
