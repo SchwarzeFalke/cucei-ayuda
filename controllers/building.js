@@ -20,10 +20,10 @@ class BuildingCrtl {
     }
 
     /**
-     * [getAll description]
-     * @param  {[type]}  req [description]
-     * @param  {[type]}  res [description]
-     * @return {Promise}     [description]
+     * [getAll Return all the data from database via building model]
+     * @param  {Request Object} req     Request to the function, includes information in params
+     * @param  {Response Object} res    Response than will give the function
+     * @return {Promise}                Promise to return the data results
      */
     async getAll(req, res) {
         const newResponse = new ResMdl();
@@ -48,10 +48,10 @@ class BuildingCrtl {
     }
 
     /**
-     * [getBuild description]
-     * @param  {[type]}  req [description]
-     * @param  {[type]}  res [description]
-     * @return {Promise}     [description]
+     * [getBuild Returns specific data a building from database via user model ]
+     * @param  {Request Object} req     Request to the function, includes information in params
+     * @param  {Response Object} res    Response than will give the function
+     * @return {Promise}                Promise to return the data results
      */
     async getBuild(req, res) {
         const newResponse = new ResMdl();
@@ -87,10 +87,10 @@ class BuildingCrtl {
     }
 
     /**
-     * [insert description]
-     * @param  {[type]}  req [description]
-     * @param  {[type]}  res [description]
-     * @return {Promise}     [description]
+     * [insert Create a new building from database via building model]
+     * @param  {Request Object} req     Request to the function, includes information in params
+     * @param  {Response Object} res    Response than will give the function
+     * @return {Promise}                Promise to return the data results
      */
     async insert(req, res) {
         const newResponse = new ResMdl();
@@ -119,10 +119,10 @@ class BuildingCrtl {
     }
 
     /**
-     * [modify description]
-     * @param  {[type]}  req [description]
-     * @param  {[type]}  res [description]
-     * @return {Promise}     [description]
+     * [modify Modify specific data building from database]
+     * @param  {Request Object} req     Request to the function, includes information in params
+     * @param  {Response Object} res    Response than will give the function
+     * @return {Promise}                Promise to return the data results
      */
     async modify(req, res) {
         const newResponse = new ResMdl();
@@ -151,10 +151,10 @@ class BuildingCrtl {
     }
 
     /**
-     * [logDel description]
-     * @param  {[type]}  req [description]
-     * @param  {[type]}  res [description]
-     * @return {Promise}     [description]
+     * [logDel Logic detele specific data building from database via building model]
+     * @param  {Request Object} req     Request to the function, includes information in params
+     * @param  {Response Object} res    Response than will give the function
+     * @return {Promise}                Promise to return the data results
     */
     async logDel(req, res) {
         const newResponse = new ResMdl();

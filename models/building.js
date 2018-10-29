@@ -1,8 +1,5 @@
 /**
- * @Author: schwarze_falke
- * @Date:   2018-10-07T20:34:36-05:00
- * @Last modified by:   schwarze_falke
- * @Last modified time: 2018-10-07T22:16:29-05:00
+ * @author: JulioMariscal
  */
 
 const db = require('../db');
@@ -17,7 +14,10 @@ class BuildingMdl {
         this.exist = args.exist;
     }
 
-    // colums valid in table buildings
+    /**
+     * [result description: Returns all the valids columns for the building model]
+     * @type {Array}
+     */
     static get validColumns() {
         const params = [
             'building_id',
@@ -30,7 +30,12 @@ class BuildingMdl {
         return params;
     }
 
-    // proccess result sent by database
+    /**
+     * [processResult description: Processes all the raw data and return the
+     * requested data in a formatted way]
+     * @param  {[type]} data [description: the returned data row from database]
+     * @return {[type]}      [description: the formatted data]
+     */
     static processResult(data) {
         this.result = [];
         data.forEach((res) => {
@@ -39,7 +44,10 @@ class BuildingMdl {
         return this.result;
     }
 
-    // valid if a specific id building exist
+    /**
+   * validBuilding find building_id using an building_id]
+   * @param  {Int}  building_id [building_id to find a user]
+   */
     static async validBuilding(id) {
         await db.get('building', 'building_id', `building_id = ${id}`)
             .then((results) => {
@@ -49,7 +57,11 @@ class BuildingMdl {
         return this.result;
     }
 
-    // request all data in table buildings
+    /**
+     * [getAll description: Returns all building from database]
+     * @param  {string}  condition
+     * @return {Promise}           [description: Returns all the buildings]
+     */
     static async getAll() {
         const condition = '';
         await db.get('building', '*', condition)
@@ -60,7 +72,13 @@ class BuildingMdl {
         return this.result;
     }
 
-    // request a specific data building
+    /**
+     * [get description: Returns an specific building from the database]
+     * @param  {string}  columns   [description: Specifies which columns return]
+     * @param  {[type]}  id        [description: Specifies the building ID]
+     * @param  {string}  condition [description: Specifies a condition if it exists]
+     * @return {Promise}           [description: Return the requested data]
+     */
     static async get(columns, id, condition) {
         let query = `building_id = ${id}`;
         if (condition) {
@@ -74,9 +92,11 @@ class BuildingMdl {
         return this.result;
     }
 
-    // insert data a building in database
+    /**
+     * [save create data a building in database]
+     * @return {Promise}
+     */
     async save() {
-        console.log(this);
         await db.insert('building', this)
             .then((results) => {
                 this.result = results;
@@ -86,7 +106,11 @@ class BuildingMdl {
         return this.result;
     }
 
-    // modify a specific building in database
+    /**
+     * [update modify a specific building in database]
+     * @param  {[type]}  id [description: Specifies the building ID]
+     * @return {Promise}
+     */
     async update(id) {
         const condition = `building_id = ${id}`;
         await db.update('building', this, condition)
@@ -98,7 +122,11 @@ class BuildingMdl {
         return this.result;
     }
 
-    // logic detele a specific building
+    /**
+     * [logicalDel logic detele a specific building]
+     * @param  {[type]}  id [description: Specifies the building ID]
+     * @return {Promise}
+     */
     async logicalDel(id) {
         const condition = `building_id = ${id}`;
         await db.logicalDel('building', condition)
