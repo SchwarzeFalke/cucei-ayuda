@@ -1,5 +1,5 @@
 /**
- * @Author: brandonmdDiaz
+ * @author: brandonmdDiaz
  */
 
 const { Router } = require('express');
@@ -7,6 +7,7 @@ const { Router } = require('express');
 const { threadCtrl } = require('../controllers');
 const { topicCtrl } = require('../controllers');
 const { forumMid } = require('../middlewares');
+const middleWares = require('../middlewares');
 
 const router = Router();
 
@@ -15,27 +16,64 @@ const router = Router();
  */
 
 // FIXME para los casos de muchos middlewares, deberia ir uno por linea
-router.get('/', forumMid.noEmptySearch, topicCtrl.getAll);
-router.get('/:topicId', forumMid.validateNumberParams, topicCtrl.get);
-router.get('/:topicId/threads', [forumMid.noEmptySearch, forumMid.validateNumberParams], threadCtrl.getAll);
-router.get('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread], threadCtrl.get);
-router.get('/:topicId/threads/:threadId/posts', [forumMid.noEmptySearch,
-  forumMid.validateNumberParams, forumMid.validateNumberParamsThread], threadCtrl.getAllPosts);
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.noEmptySearch],
+topicCtrl.getAll);
+
+router.get('/:topicId', [forumMid.validateNumberParams,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+topicCtrl.get);
+
+router.get('/:topicId/threads', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.noEmptySearch,
+  forumMid.validateNumberParams],
+threadCtrl.getAll);
+
+router.get('/:topicId/threads/:threadId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread],
+threadCtrl.get);
+
+router.get('/:topicId/threads/:threadId/posts', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.noEmptySearch,
+  forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread],
+threadCtrl.getAllPosts);
+
 router.get('/:topicId/threads/:threadId/posts/:postId', [
-  forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
-  forumMid.validateNumberParamsPost], threadCtrl.getPost);
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.validateNumberParams,
+  forumMid.validateNumberParamsThread,
+  forumMid.validateNumberParamsPost],
+threadCtrl.getPost);
 
 /**
  * ALL POST methods for the forum
  */
 
-router.post('/', forumMid.noEmptyPostTopic, topicCtrl.create);
-router.post('/:topicId/threads', [forumMid.noEmptyPostThread,
-  forumMid.validateNumberParams], threadCtrl.create);
-router.post('/:topicId/threads/:threadId/posts', [forumMid.noEmptyPost,
+router.post('/', [forumMid.noEmptyPostTopic,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+topicCtrl.create);
+
+router.post('/:topicId/threads', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.noEmptyPostThread,
+  forumMid.validateNumberParams],
+threadCtrl.create);
+
+router.post('/:topicId/threads/:threadId/posts', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  forumMid.noEmptyPost,
   forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread], threadCtrl.createPost);
+  forumMid.validateNumberParamsThread],
+threadCtrl.createPost);
 
 /**
  * This are all the PUT methods for the forum page.
@@ -53,7 +91,7 @@ router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
 router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread, forumMid.validateNumberParamsPost,
   forumMid.noEmptyUP],
-  threadCtrl.updatePost);
+threadCtrl.updatePost);
 
 /**
  * delete routes

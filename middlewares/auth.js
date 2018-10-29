@@ -1,5 +1,5 @@
 /**
- * @Author: Todos
+ * @author: Todos
 */
 
 const bcrypt = require('bcrypt');
@@ -296,7 +296,7 @@ class Auth {
 
   static havePermission(req, res, next) {
     const user = new UserMdl(...req.session.user);
-    if (user.canDo(req.method, req.originalUrl)) {
+    if (user.canDo(req.method, req.baseUrl, req.params)) {
       next();
     } else {
       res.send('NO tienes permiso man');

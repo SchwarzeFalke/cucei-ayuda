@@ -19,10 +19,15 @@ const router = Router();
   */
 
 // GET /subject  Returns all subjects
-router.get('/', subjectCtrl.getAll);
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.getAll);
 
 // GET /subject/:subjectId    returns specific subject
-router.get('/:nrc', [middleWares.subjectM.validateNrcP, middleWares.Auth.haveSession], subjectCtrl.getSubject);
+router.get('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.getSubject);
 
 // GET /subject/:subjectId/subjects
 // Returns all subjects of a method
@@ -30,7 +35,8 @@ router.get('/:nrc', [middleWares.subjectM.validateNrcP, middleWares.Auth.haveSes
 
 // POST /subject
 
-router.post('/', [middleWares.subjectM.validateNrc,
+router.post('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
   middleWares.subjectM.validateName,
   middleWares.subjectM.validateFirstDay,
   middleWares.subjectM.validateSecDay,
@@ -43,6 +49,9 @@ router.post('/', [middleWares.subjectM.validateNrc,
 // PUT /subject/:subjectId
 // FIXME Falta validar el cuerpo del request
 router.put('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,
+  middleWares.subjectM.validateNrcP,
   middleWares.subjectM.validateNrc,
   middleWares.subjectM.validateName,
   middleWares.subjectM.validateFirstDay,
@@ -54,6 +63,9 @@ router.put('/:nrc', [middleWares.subjectM.validateNrcP,
   middleWares.subjectM.validateTeacher], subjectCtrl.update);
 
 // DELETE /subject/:subjectId
-router.delete('/:nrc', [middleWares.subjectM.validateNrcP], subjectCtrl.del);
+router.delete('/:nrc', [middleWares.subjectM.validateNrcP,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+subjectCtrl.del);
 
 module.exports = router;

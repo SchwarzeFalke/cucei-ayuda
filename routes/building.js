@@ -20,13 +20,15 @@ const router = Router();
  */
 
 // this method return all buildings
-router.get('/', middleWares.Auth.haveSession, middleWares.Auth.havePermission, buildingCtrl.getAll);
+router.get('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.getAll);
 
 /**
  * This get method need a middleware for validate
  * if id building is a int and return a building with id specific
  */
-router.get('/:buildingId', (req, res, next) => {
+router.get('/:buildingId', [(req, res, next) => {
   const request = middleWares.validator.code(req.params.buildingId);
   if (!request) {
     next();
@@ -34,27 +36,34 @@ router.get('/:buildingId', (req, res, next) => {
     res.send(request);
     console.log(request);
   }
-}, buildingCtrl.getBuild);
+}, middleWares.Auth.haveSession,
+middleWares.Auth.havePermission], buildingCtrl.getBuild);
 
 /**
  * This POST method for routes building
  * this method insert data in db
  */
 // FIXME Falta middleware para validar el cuerpo del request
-router.post('/', buildingCtrl.insert);
+router.post('/', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.insert);
 
 /**
  * This POST method for routes building
  * this method modify data in db
  */
 // FIXME Falta validar el param buildingId
-router.put('/:buildingId', buildingCtrl.modify);
+router.put('/:buildingId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.modify);
 
 /**
  * This POST method for routes building
  * this method logic delete data in db
  */
 // FIXME Falta validar el param buildingId
-router.delete('/:buildingId', buildingCtrl.logDel);
+router.delete('/:buildingId', [middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
+buildingCtrl.logDel);
 
 module.exports = router;

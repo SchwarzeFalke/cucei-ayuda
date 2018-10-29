@@ -104,8 +104,8 @@ class UserMdl {
   }
 
   canDo(method, url, data) {
-    console.log('entering canDo');
     let can = false;
+    let ret = false;
     if (this.privilages === 'ADMIN') {
       can = true;
     }
@@ -113,30 +113,139 @@ class UserMdl {
       case 'GET':
         switch (url) {
           case '/users':
-            console.log('NO TIENE PERMISO DE HACER UN GET ALL DE TODOS LOS USUARIOS');
-            break;
-          case '/users/:userId':
-            if (data.user_id === url.user_id) {
-              console.log('TIENE PERMISO PARA VER TODA SU INFO, PUES SON SUS DATOS');
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else if (can) {
+              ret = true;
             } else {
-              console.log('NO TIENE PERMISO DE VER TODA LA INFO, PUES ES DE OTRO USUARIO QUE NO ES ÉL');
+              ret = false;
             }
             break;
-          default:
+          case '/building':
+            ret = true;
             break;
+          case '/subject':
+            ret = true;
+            break;
+          case '/forum':
+            ret = true;
+            break;
+          default:
         }
         break;
       case 'DELETE':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'POST':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/forum':
+            ret = true;
+            break;
+          default:
+        }
         break;
       case 'PUT':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          case '/subject':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       case 'PATCH':
+        switch (url) {
+          case '/users':
+            if (data.userId) {
+              if (Number(this.user_code) === Number(data.userId)) {
+                ret = true;
+              }
+            } else {
+              ret = false;
+            }
+            break;
+          case '/building':
+            if (can) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+            break;
+          default:
+        }
         break;
       default:
     }
-    return can;
+    return ret;
   }
 
   /**
