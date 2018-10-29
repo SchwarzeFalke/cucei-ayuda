@@ -1,7 +1,7 @@
 /**
  * @Author: brandonmdiaz
  */
-
+const bcrypt = require('bcrypt');
 const { Router } = require('express');
 const mailer = require('../mail');
 const { ResetPassword } = require('../models');
@@ -59,11 +59,15 @@ router.post('/recover', async (req, res) => {
     // Obtenemos todos los datos del usuario
     let user = await UserMdl.get('*', this.userId);
     // cambiamos el password del usuario
+    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
+      req.body.password = hash;
+    });
+    console.log(req.body.password);
     user.password = req.body.password;
     // creamos un modelo con todos los datos del usuario
     user = new UserMdl(user);
     // modificamos el usuario
-    await user.update(this.userId);
+    await user.update(this.userId);// validar esta parte
     res.send('Modificado con exito');
   } else {
     res.send('token no existe');

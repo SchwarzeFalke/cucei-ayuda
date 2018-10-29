@@ -114,7 +114,10 @@ class Auth {
     }
   }
 
-  static validate(req, res, next) {
+/**
+ * [validates the login]
+ */
+  static validateLogin(req, res, next) {
     if (req.body.user_id === undefined || req.body.password === undefined
       || !(/^\d+$/.test(req.body.user_id))) {
       res.send('Escribe el id o el password');
@@ -235,6 +238,29 @@ class Auth {
       });
   }
 
+  /**
+  * validate that the confirm email has the correct body
+  */
+  static validateRegister(req, res, next) {
+    if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
+       || req.body.confirmation === undefined || req.body.user_code) {
+      res.send('Escribe el id o el password');
+    } else {
+      next();
+    }
+  }
+
+  /**
+ * validate that the confirm email has the correct body
+ */
+  static validateConfirmEmail(req, res, next) {
+    if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
+       || req.body.confirmation === undefined || req.body.user_code) {
+      res.send('Escribe el id o el password');
+    } else {
+      next();
+    }
+  }
   /**
    * [haveSession description: This is one of the most fundamentals method of this
    * middleware; allows to know at any time if the session is active. For every
