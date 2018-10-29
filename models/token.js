@@ -44,6 +44,7 @@ class Token {
       .catch(e => console.error(`.catch(${e})`));
   }
 
+// regresar si esta activo o no, ningun otro dato
   static async active(args) {
     return new Promise(async (resolve, reject) => {
       let query;
@@ -60,7 +61,6 @@ class Token {
           } else {
             answer = 'ACTIVE';
           }
-          await this.confirmed(results, query);
           await db.get('token', 'confirmation', query)
             .then((result) => {
               if (typeof result[0] === 'undefined') { // this helps to know if the
