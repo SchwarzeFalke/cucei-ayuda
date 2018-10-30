@@ -7,7 +7,22 @@
 
 const db = require('../db'); // for database handling
 
+/**
+ * [RoadMdl model used for road objects]
+ */
+
 class RoadMdl {
+  /**
+   * [getBuildings method used to obtain all building objects
+   * from the building table in // DEBUG: ]
+   * @method getBuildings
+   * @param  {String}     column    [specifies the columns to obtain
+   *                                from the database]
+   * @param  {String}     condition [specifies the condition on which to
+   *                                 obtain building objects]
+   * @return {Promise}              [returns building objects]
+   */
+
   static async getBuildings(column, condition) {
     return new Promise(async (resolve, reject) => {
       this.information = [];
@@ -21,6 +36,14 @@ class RoadMdl {
         .catch(e => reject(e));
     });
   }
+
+  /**
+   * [getRoad method used to obtain roads based on buildings]
+   * @method getRoad
+   * @param  {[Number]}  data [an array of numbers representing the
+   *                          building ids]
+   * @return {Promise}      [returns specified roads]
+   */
 
   static async getRoad(data) {
     return new Promise(async (resolve, reject) => {
