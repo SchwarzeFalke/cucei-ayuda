@@ -52,34 +52,38 @@ class Token {
       if (args.user) {
         query = `user_id = ${args.user}`;
       } else if (args.token) {
-        query = `token = ${args.token}`;
+        query = `token = '${args.token}'`;
       }
       console.log(query);
-      await db.get('token', '*', query)
-        .then(async (results) => {
-          console.log(results);
-          if ((typeof results[0] === 'undefined')) {
-            answer = 'NON-ACTIVE';
-          } else {
-            answer = 'ACTIVE';
-          }
-          await db.get('token', 'confirmation', query)
-            .then((result) => {
-              if (typeof result[0] === 'undefined') { // this helps to know if the
-                // user has already confirm the email or not
-                resolve('NON-ACTIVE');
-              } else if (result[0].confirmation !== null) {
-                answer += ' | PLEASE CONFIRM EMAIL!';
-                resolve(answer);
-              } else {
-                resolve(answer);
-              }
-            })
-            .catch((e) => {
-              reject(e);
-            });
-        })
-        .catch(e => reject(e));
+      try {
+        await db.get('token', '*', query)
+          .then(async (results) => {
+            console.log(results);
+            if ((typeof results[0] === 'undefined')) {
+              answer = 'NON-ACTIVE';
+            } else {
+              answer = 'ACTIVE';
+            }
+            await db.get('token', 'confirmation', query)
+              .then((result) => {
+                if (typeof result[0] === 'undefined') { // this helps to know if the
+                  // user has already confirm the email or not
+                  resolve('NON-ACTIVE');
+                } else if (result[0].confirmation !== null) {
+                  answer += ' | PLEASE CONFIRM EMAIL!';
+                  resolve(answer);
+                } else {
+                  resolve(answer);
+                }
+              })
+              .catch((e) => {
+                reject(e);
+              });
+          })
+          .catch(e => reject(e));
+      } catch (e) {
+        console.log(e);
+      }
     });
   }
 
