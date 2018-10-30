@@ -51,6 +51,36 @@ class UserCtrl {
     this.insertUser = this.insertUser.bind(this);
     this.insertSchedule = this.insertSchedule.bind(this);
     this.del = this.del.bind(this);
+    this.modifyJSON = {
+      status: 201,
+      response: null,
+      message: null,
+      data: null,
+    };
+    this.requestJSON = {
+      status: 200,
+      response: 'Ok',
+      message: null,
+      data: null,
+    };
+    this.forbiddenJSON = {
+      status: 403,
+      response: 'Forbidden',
+      message: null,
+      data: null,
+    };
+    this.badRequestJSON = {
+      status: 400,
+      response: 'Bad request',
+      message: null,
+      data: null,
+    };
+    this.notFoundJSON = {
+      status: 404,
+      response: 'Noy found',
+      message: null,
+      data: null,
+    };
   }
 
   /**

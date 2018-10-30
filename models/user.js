@@ -111,7 +111,7 @@ class UserMdl {
     let ret = false; // Es la variable que se retorna, si tienes permisos
     // Cambiala a ture, en caso de no tener permisos se cambia a false
     if (this.privilages === 'ADMIN') {
-      can = true;
+      return true;
     }
     switch (method) {
       case 'GET':
@@ -314,6 +314,7 @@ class UserMdl {
         break;
       default:
     }
+    console.log(ret);
     return ret;
   }
 
