@@ -65,7 +65,11 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        try {
+          resolve(JSON.parse(JSON.stringify(results)));
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }
@@ -99,7 +103,11 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        try {
+          resolve(JSON.parse(JSON.stringify(results)));
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }
@@ -136,7 +144,11 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        try {
+          resolve(JSON.parse(JSON.stringify(results)));
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }
@@ -170,7 +182,11 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        try {
+          resolve(JSON.parse(JSON.stringify(results)));
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }
@@ -202,7 +218,11 @@ class DB {
           reject(err);
         }
         this.connection.destroy();
-        resolve(JSON.parse(JSON.stringify(results)));
+        try {
+          resolve(JSON.parse(JSON.stringify(results)));
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }
