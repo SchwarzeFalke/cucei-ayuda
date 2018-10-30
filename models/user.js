@@ -220,15 +220,12 @@ class UserMdl {
             break;
           case '/topics':
             ret = true;
-            if (data.topicId && data.threadId && data.postId) {
-              // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
-              ret = true;
-            } else if (data.topicId && data.threadId) {
-              // Ruta --> '/:topicId/threads/:threadId'
+            if (data.topicId && data.threadId) {
+              // Ruta --> '/:topicId/threads/:threadId/posts/'
               ret = true;
             } else if (data.topicId) {
-              // Ruta --> '/:topicId'
-              ret = false;
+              // Ruta --> '/:topicId/threads/'
+              ret = true;
             } else {
               // Ruta --> '/forum'
               ret = false;
