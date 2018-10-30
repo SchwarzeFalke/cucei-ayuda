@@ -80,47 +80,81 @@ class Auth {
     const newResponse = new ResMdl();
     // This validates if there's a previous session, if it's true, don't do nothing
     // (does not register the user)
-    if (req.session !== undefined && req.session.token.length > 1) {
+    const existe = await UserMdl.get('exist', req.body.user_code);
+    if (existe.length === 0) {
+      try {
+        const newUser = new UserMdl({ ...req.body });
+        await newUser.save();
+        // Then, a confirmation token is generated
+        await Auth.generateToken(newUser, 'confirm')
+          .then((genToken) => {
+            const mailOptions = {
+              from: 'cuceiayuda@gmail.com',
+              to: `${newUser.email}`,
+              subject: 'Confirmation code',
+              html: `<p>Hello here! Here is your confirmation code: <b></b>${genToken.code}</p>`,
+            };
+            mailer.sendMail(mailOptions); // send an email with the confirmation info
+            newResponse.createResponse('Successfully sign up', 200, '/users', 'POST');
+            newResponse.response.message = 'Please check-out your email to confirm your registration...';
+            newResponse.response.token = genToken.hash;
+            newResponse.response.user = newUser.user_code;
+            next(res.status(newResponse.response.status).send(newResponse.response));
+          });
+      } catch (e) {
+        // If something happens, it will mean that the user already has an account,
+        // or there are similar information for a unique values
+        newResponse.createResponse(`There is an user with that information ${e}`,
+          400, '/users', 'POST');
+        newResponse.response.message = newResponse.createMessage();
+        next(res.status(newResponse.response.status).send(newResponse.response));
+      }
+    } else if (existe[0].exist === 1) {
+    // if (req.session !== undefined && req.session.token.length > 1) {
+    //   newResponse.createResponse('You already have an account', 400, '/users', 'POST');
+    //   newResponse.response.message = newResponse.createMessage();
+    //   next(res.status(newResponse.response.status).send(newResponse.response));
+    // }
       newResponse.createResponse('You already have an account', 400, '/users', 'POST');
-      newResponse.response.message = newResponse.createMessage();
-      next(res.status(newResponse.response.status).send(newResponse.response));
-    }
-    try {
-      const newUser = new UserMdl({ ...req.body });
-      await newUser.save();
-      // Then, a confirmation token is generated
-      await Auth.generateToken(newUser, 'confirm')
-        .then((genToken) => {
-          const mailOptions = {
-            from: 'cuceiayuda@gmail.com',
-            to: `${newUser.email}`,
-            subject: 'Confirmation code',
-            html: `<p>Hello here! Here is your confirmation code: <b></b>${genToken.code}</p>`,
-          };
-          mailer.sendMail(mailOptions); // send an email with the confirmation info
-          newResponse.createResponse('Successfully sign up', 200, '/users', 'POST');
-          newResponse.response.message = 'Please check-out your email to confirm your registration...';
-          newResponse.response.token = genToken.hash;
-          newResponse.response.user = newUser.user_code;
-          next(res.status(newResponse.response.status).send(newResponse.response));
-        });
-    } catch (e) {
-      // If something happens, it will mean that the user already has an account,
-      // or there are similar information for a unique values
-      newResponse.createResponse(`There is an user with that information ${e}`,
-        400, '/users', 'POST');
       newResponse.response.message = newResponse.createMessage();
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
   }
 
-/**
+  /**
  * [validates the login]
  */
   static validateLogin(req, res, next) {
     if (req.body.user_id === undefined || req.body.password === undefined
       || !(/^\d+$/.test(req.body.user_id))) {
       res.send('Escribe el id o el password');
+    } else {
+      next();
+    }
+  }
+
+  /**
+ * [validates the register]
+ */
+  static validateRegister(req, res, next) {
+    if (req.body.user_code === undefined || req.body.password === undefined
+      || !(/^\d+$/.test(req.body.user_code)) || req.body.name === undefined
+    || req.body.flastname === undefined || req.body.mlastname === undefined
+    || req.body.email === undefined || req.body.privilages === undefined) {
+      res.send('Algun campo es incorrecto');
+    } else {
+      next();
+    }
+  }
+
+  /**
+ * validate that the confirm email has the correct body
+ */
+  static validateConfirmEmail(req, res, next) {
+    if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
+      || req.body.confirmation === undefined
+      || !(/^\d+$/.test(req.body.confirmation))) {
+      res.send('Los campos son puras letras');
     } else {
       next();
     }
@@ -146,13 +180,18 @@ class Auth {
       next(res.status(newResponse.response.status).send(newResponse.response));
     }
     // Hash the password
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
-      req.body.password = hash;
-    });
+    req.body.password = await bcrypt.hash(`${req.body.password}`, process.env.SECRET);
+
     // Validates if the user and the password are correct
     const user = await UserMdl.get('*', `${req.body.user_id}`, { password: req.body.password });
     // if the info is not wrong, then generates the data for the token
-    if (user[0].user_code !== undefined) {
+    if (user === undefined || user.length === 0) {
+      // Something goes wrong, surely because of the user
+      newResponse.createResponse('Wrong password or user ID', 409, '/users', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      console.log('error');
+      next(res.status(newResponse.response.status).send(newResponse.response));
+    } else if (user[0].user_code !== undefined) {
       const data = {
         user: user[0].user_code,
         token: null,
@@ -238,29 +277,6 @@ class Auth {
       });
   }
 
-  /**
-  * validate that the confirm email has the correct body
-  */
-  static validateRegister(req, res, next) {
-    if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
-       || req.body.confirmation === undefined || req.body.user_code) {
-      res.send('Escribe el id o el password');
-    } else {
-      next();
-    }
-  }
-
-  /**
- * validate that the confirm email has the correct body
- */
-  static validateConfirmEmail(req, res, next) {
-    if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
-       || req.body.confirmation === undefined || req.body.user_code) {
-      res.send('Escribe el id o el password');
-    } else {
-      next();
-    }
-  }
   /**
    * [haveSession description: This is one of the most fundamentals method of this
    * middleware; allows to know at any time if the session is active. For every

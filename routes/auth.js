@@ -53,21 +53,21 @@ router.post('/recover', async (req, res) => {
   if (tokenStatus === 'ACTIVE') {
     // obtenemos el id del usuario
     try {
-      this.userId = await TokenMdl.get(token);
+      this.userId = await TokenMdl.get(token.token);
+      this.userId = this.userId[0].user_id;
+      // Obtenemos todos los datos del usuario
+      let user = await UserMdl.get('*', this.userId);
+      // cambiamos el password del usuario
+      req.body.password = await bcrypt.hash(`${req.body.password}`, process.env.SECRET);
+      user.password = req.body.password;
+      // creamos un modelo con todos los datos del usuario
+      user = new UserMdl(user);
+      // modificamos el usuario
+      await user.update(this.userId);// validar esta parte
+      res.send('Modificado con exito');
     } catch (e) {
       console.log(e);
     }
-    this.userId = this.userId[0].user_id;
-    // Obtenemos todos los datos del usuario
-    let user = await UserMdl.get('*', this.userId);
-    // cambiamos el password del usuario
-    req.body.password = await bcrypt.hash(`${req.body.password}`, process.env.SECRET);
-    user.password = req.body.password;
-    // creamos un modelo con todos los datos del usuario
-    user = new UserMdl(user);
-    // modificamos el usuario
-    await user.update(this.userId);// validar esta parte
-    res.send('Modificado con exito');
   } else {
     res.send('token no existe');
   }

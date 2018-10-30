@@ -26,9 +26,9 @@ const router = Router();
  GET /users/userId/posts
 */
 
-router.post('/register', middleWares.Auth.register);
+router.post('/register', middleWares.Auth.validateRegister, middleWares.Auth.register);
 
-router.post('/confirmEmail', middleWares.Auth.validateLogin, middleWares.Auth.confirm);
+router.post('/confirmEmail', middleWares.Auth.validateConfirmEmail, middleWares.Auth.confirm);
 
 router.post('/login', middleWares.Auth.validateLogin, middleWares.Auth.login);
 
