@@ -199,5 +199,16 @@ class ThreadMdl {
     });
     return data;
   }
+
+  static async getUserOfThread(threadId) {
+    try {
+      this.thread = await db.get('thread', ['user_code'], `thread_id = ${threadId}`);
+      this.thread = this.processData(this.thread);
+      this.userCode = this.thread[0].user_code;
+    } catch (e) {
+      console.error(`.catch(${e})`);
+    }
+    return this.userCode;
+  }
 }
 module.exports = ThreadMdl;

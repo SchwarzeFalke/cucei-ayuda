@@ -190,5 +190,17 @@ class PostMdl {
     }
     return this.result;
   }
+
+  static async getUserOfThread(postId) {
+    try {
+      this.post = await db.get('post', ['user_code'], `post_id = ${postId}`);
+      this.post = this.processData(this.post);
+      console.log(this.post);
+      this.userCode = this.post.userCode;
+    } catch (e) {
+      console.error(`.catch(${e})`);
+    }
+    return this.userCode;
+  }
 }
 module.exports = PostMdl;

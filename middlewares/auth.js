@@ -325,12 +325,12 @@ class Auth {
     }
   }
 
-  static havePermission(req, res, next) {
+  static async havePermission(req, res, next) {
     if (req.session === undefined || req.session.user === undefined) {
       res.send('NO tienes permiso man');
     } else {
       const user = new UserMdl(...req.session.user);
-      if (user.canDo(req.method, req.baseUrl, req.params)) {
+      if (await user.canDo(req.method, req.baseUrl, req.params)) {
         next();
       } else {
         res.send('NO tienes permiso man');
