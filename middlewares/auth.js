@@ -325,14 +325,14 @@ class Auth {
     }
   }
 
-  static havePermission(req, res, next) {
+  static async havePermission(req, res, next) {
     const newResponse = new ResMdl();
     if (req.session === undefined || req.session.user === undefined) {
       newResponse.createResponse('You dont have permissions', 401, req.baseUrl, req.method);
       res.status(newResponse.response.status).send(newResponse.response);
     } else {
       const user = new UserMdl(...req.session.user);
-      if (user.canDo(req.method, req.baseUrl, req.params)) {
+      if (await user.canDo(req.method, req.baseUrl, req.params)) {
         next();
       } else {
         newResponse.createResponse('You dont have permissions', 401, req.baseUrl, req.method);

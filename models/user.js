@@ -6,6 +6,9 @@
  */
 
 const bcrypt = require('bcrypt');
+
+const ThreadMdl = require('./thread');
+const PostMdl = require('./post');
 const db = require('../db'); // for database handling
 /**
  * Name: user.js | Type: Class | Description: User Model | @Author: Carlos Vara
@@ -103,7 +106,7 @@ class UserMdl {
     ];
   }
 
-  canDo(method, url, data) {
+  async canDo(method, url, data) {
     let can = false; // Variable para definir permisos de ADMIN
     let ret = false; // Es la variable que se retorna, si tienes permisos
     // Cambiala a ture, en caso de no tener permisos se cambia a false
@@ -130,7 +133,7 @@ class UserMdl {
           case '/subject':
             ret = true;
             break;
-          case '/forum':
+          case '/topics':
             ret = true;
             break;
           default:
@@ -161,15 +164,30 @@ class UserMdl {
               ret = false;
             }
             break;
-          case '/forum':
+          case '/topics':
+            ret = true;
             if (data.topicId && data.threadId && data.postId) {
               // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
+              const userPostId = await PostMdl.getUserOfPost(data.postId);
+              if (this.user_code === userPostId) {
+                ret = true;
+              } else {
+                ret = false;
+              }
             } else if (data.topicId && data.threadId) {
               // Ruta --> '/:topicId/threads/:threadId'
+              const userThreadId = await ThreadMdl.getUserOfThread(data.threadId);
+              if (this.user_code === userThreadId) {
+                ret = true;
+              } else {
+                ret = false;
+              }
             } else if (data.topicId) {
-              // Ruta --> '/:topicId'
+            // Ruta --> '/:topicId'
+              ret = false;
             } else {
-              // Ruta --> '/forum'
+            // Ruta --> '/forum'
+              ret = false;
             }
             break;
           default:
@@ -200,8 +218,21 @@ class UserMdl {
               ret = false;
             }
             break;
-          case '/forum':
+          case '/topics':
             ret = true;
+            if (data.topicId && data.threadId && data.postId) {
+              // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
+              ret = true;
+            } else if (data.topicId && data.threadId) {
+              // Ruta --> '/:topicId/threads/:threadId'
+              ret = true;
+            } else if (data.topicId) {
+              // Ruta --> '/:topicId'
+              ret = false;
+            } else {
+              // Ruta --> '/forum'
+              ret = false;
+            }
             break;
           default:
         }
@@ -231,15 +262,30 @@ class UserMdl {
               ret = false;
             }
             break;
-          case '/forum':
+          case '/topics':
+            ret = true;
             if (data.topicId && data.threadId && data.postId) {
               // Ruta --> '/:topicId/threads/:threadId/posts/:postId'
+              const userPostId = await PostMdl.getUserOfPost(data.postId);
+              if (this.user_code === userPostId) {
+                ret = true;
+              } else {
+                ret = false;
+              }
             } else if (data.topicId && data.threadId) {
               // Ruta --> '/:topicId/threads/:threadId'
+              const userThreadId = await ThreadMdl.getUserOfThread(data.threadId);
+              if (this.user_code === userThreadId) {
+                ret = true;
+              } else {
+                ret = false;
+              }
             } else if (data.topicId) {
               // Ruta --> '/:topicId'
+              ret = false;
             } else {
               // Ruta --> '/forum'
+              ret = false;
             }
             break;
           default:

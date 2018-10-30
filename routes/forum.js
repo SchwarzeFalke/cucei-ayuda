@@ -16,9 +16,10 @@ const router = Router();
  */
 
 // FIXME para los casos de muchos middlewares, deberia ir uno por linea
-router.get('/', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
-  forumMid.noEmptySearch],
+router.get('/', [
+  forumMid.noEmptySearch,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission,],
 topicCtrl.getAll);
 
 router.get('/:topicId', [forumMid.validateNumberParams,
@@ -26,31 +27,34 @@ router.get('/:topicId', [forumMid.validateNumberParams,
   middleWares.Auth.havePermission],
 topicCtrl.get);
 
-router.get('/:topicId/threads', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
+router.get('/:topicId/threads', [
   forumMid.noEmptySearch,
-  forumMid.validateNumberParams],
+  forumMid.validateNumberParams,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
 threadCtrl.getAll);
 
-router.get('/:topicId/threads/:threadId', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
+router.get('/:topicId/threads/:threadId', [
   forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread],
+  forumMid.validateNumberParamsThread,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
 threadCtrl.get);
 
-router.get('/:topicId/threads/:threadId/posts', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
+router.get('/:topicId/threads/:threadId/posts', [
   forumMid.noEmptySearch,
   forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread],
+  forumMid.validateNumberParamsThread,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
 threadCtrl.getAllPosts);
 
 router.get('/:topicId/threads/:threadId/posts/:postId', [
-  middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
   forumMid.validateNumberParams,
   forumMid.validateNumberParamsThread,
-  forumMid.validateNumberParamsPost],
+  forumMid.validateNumberParamsPost,
+  middleWares.Auth.haveSession,
+  middleWares.Auth.havePermission],
 threadCtrl.getPost);
 
 /**
@@ -63,16 +67,16 @@ router.post('/', [forumMid.noEmptyPostTopic,
 topicCtrl.create);
 
 router.post('/:topicId/threads', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
   forumMid.noEmptyPostThread,
-  forumMid.validateNumberParams],
+  forumMid.validateNumberParams,
+  middleWares.Auth.havePermission],
 threadCtrl.create);
 
 router.post('/:topicId/threads/:threadId/posts', [middleWares.Auth.haveSession,
-  middleWares.Auth.havePermission,
   forumMid.noEmptyPost,
   forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread],
+  forumMid.validateNumberParamsThread,
+  middleWares.Auth.havePermission],
 threadCtrl.createPost);
 
 /**
@@ -85,12 +89,17 @@ threadCtrl.createPost);
  */
 
 router.put('/:topicId', [forumMid.validateNumberParams,
-  forumMid.noEmptyUT], topicCtrl.modify);
+  forumMid.noEmptyUT,
+  middleWares.Auth.havePermission], topicCtrl.modify);
 router.put('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread, forumMid.noEmptyUTh], threadCtrl.modify);
+  forumMid.validateNumberParamsThread,
+  forumMid.noEmptyUTh,
+  middleWares.Auth.havePermission], threadCtrl.modify);
 router.put('/:topicId/threads/:threadId/posts/:postId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread, forumMid.validateNumberParamsPost,
-  forumMid.noEmptyUP],
+  forumMid.validateNumberParamsThread,
+  forumMid.validateNumberParamsPost,
+  forumMid.noEmptyUP,
+  middleWares.Auth.havePermission],
 threadCtrl.updatePost);
 
 /**
@@ -100,12 +109,17 @@ threadCtrl.updatePost);
  * DELETE /:topicId/threads/:threadId/posts/:postId
  */
 
-router.delete('/:topicId', [forumMid.validateNumberParams], topicCtrl.deleteAll);
+router.delete('/:topicId',
+  [forumMid.validateNumberParams,
+    middleWares.Auth.havePermission], topicCtrl.deleteAll);
 router.delete('/:topicId/threads/:threadId', [forumMid.validateNumberParams,
-  forumMid.validateNumberParamsThread], threadCtrl.delete);
+  forumMid.validateNumberParamsThread,
+  middleWares.Auth.havePermission], threadCtrl.delete);
 router.delete('/:topicId/threads/:threadId/posts/:postId',
-  [forumMid.validateNumberParams, forumMid.validateNumberParamsThread,
-    forumMid.validateNumberParamsPost], threadCtrl.deletePost);
+  [forumMid.validateNumberParams,
+    forumMid.validateNumberParamsThread,
+    forumMid.validateNumberParamsPost,
+    middleWares.Auth.havePermission], threadCtrl.deletePost);
 
 
 module.exports = router;
