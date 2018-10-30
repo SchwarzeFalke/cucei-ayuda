@@ -31,7 +31,7 @@ router.get('/password_reset', (req, res) => {
           const mailOptions = {
             to: `${userEmail}`,
             subject: 'Reset Password',
-            text: `/auth/recover/?q=${token}`,
+            text: `https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token}`,
             html: `<b>Recuperando contraseña, espera un segundo
             /auth/recover/?q=${token} </b>`,
           }; // fin mailOptions
