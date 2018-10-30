@@ -46,31 +46,31 @@ class DB {
     });
     return new Promise((resolve, reject) => {
       // const data = [columns, table];
-      let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
-      if (columns === '*') {
-        query = 'SELECT * FROM ??';
-      } else {
-        query = `SELECT ${columns} FROM ??`;
-      }
-      query += ' WHERE exist = TRUE';
-      if (condition) {
-        query += ` && ${condition}`;
-      }
-      if (order) {
-        query += order;
-      }
-      query += ';';
-      this.connection.query(query, table, (err, results) => {
-        if (err) {
-          reject(err);
+      try {
+        let query = 'SELECT ?? FROM ??'; // avoid logical deleted data
+        if (columns === '*') {
+          query = 'SELECT * FROM ??';
+        } else {
+          query = `SELECT ${columns} FROM ??`;
         }
-        this.connection.destroy();
-        try {
+        query += ' WHERE exist = TRUE';
+        if (condition) {
+          query += ` && ${condition}`;
+        }
+        if (order) {
+          query += order;
+        }
+        query += ';';
+        this.connection.query(query, table, (err, results) => {
+          if (err) {
+            reject(err);
+          }
+          this.connection.destroy();
           resolve(JSON.parse(JSON.stringify(results)));
-        } catch (e) {
-          reject(e);
-        }
-      });
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -93,22 +93,22 @@ class DB {
       database: process.env.DB_NAME,
     });
     return new Promise((resolve, reject) => {
-      let query = 'INSERT INTO ?? SET ?';
-      if (condition) {
-        query += `WHERE ${condition};`;
-      } else { query += ';'; }
-      this.connection.query(query, [table, data], (err, results) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-        }
-        this.connection.destroy();
-        try {
+      try {
+        let query = 'INSERT INTO ?? SET ?';
+        if (condition) {
+          query += `WHERE ${condition};`;
+        } else { query += ';'; }
+        this.connection.query(query, [table, data], (err, results) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          this.connection.destroy();
           resolve(JSON.parse(JSON.stringify(results)));
-        } catch (e) {
-          reject(e);
-        }
-      });
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -132,24 +132,24 @@ class DB {
       database: process.env.DB_NAME,
     });
     return new Promise((resolve, reject) => {
-      let query = 'UPDATE ?? SET ?';
-      if (condition) {
-        query += ` WHERE ${condition} && exist = 1;`;
-      } else {
-        query += ';';
-      }
-      this.connection.query(query, [table, data], (err, results) => {
-        if (err) {
-          console.log(err);
-          reject(err);
+      try {
+        let query = 'UPDATE ?? SET ?';
+        if (condition) {
+          query += ` WHERE ${condition} && exist = 1;`;
+        } else {
+          query += ';';
         }
-        this.connection.destroy();
-        try {
+        this.connection.query(query, [table, data], (err, results) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          this.connection.destroy();
           resolve(JSON.parse(JSON.stringify(results)));
-        } catch (e) {
-          reject(e);
-        }
-      });
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -171,23 +171,23 @@ class DB {
       database: process.env.DB_NAME,
     });
     return new Promise((resolve, reject) => {
-      let query = 'DELETE FROM ??';
-      if (condition) {
-        query += ` WHERE ${condition};`;
-      } else {
-        query += ';';
-      }
-      this.connection.query(query, table, (err, results) => {
-        if (err) {
-          reject(err);
+      try {
+        let query = 'DELETE FROM ??';
+        if (condition) {
+          query += ` WHERE ${condition};`;
+        } else {
+          query += ';';
         }
-        this.connection.destroy();
-        try {
+        this.connection.query(query, table, (err, results) => {
+          if (err) {
+            reject(err);
+          }
+          this.connection.destroy();
           resolve(JSON.parse(JSON.stringify(results)));
-        } catch (e) {
-          reject(e);
-        }
-      });
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
@@ -209,21 +209,21 @@ class DB {
       database: process.env.DB_NAME,
     });
     return new Promise((resolve, reject) => {
-      let query = 'UPDATE ?? SET exist = 0';
-      if (condition) {
-        query += ` WHERE ${condition}`;
-      }
-      this.connection.query(query, table, (err, results) => {
-        if (err) {
-          reject(err);
+      try {
+        let query = 'UPDATE ?? SET exist = 0';
+        if (condition) {
+          query += ` WHERE ${condition}`;
         }
-        this.connection.destroy();
-        try {
+        this.connection.query(query, table, (err, results) => {
+          if (err) {
+            reject(err);
+          }
+          this.connection.destroy();
           resolve(JSON.parse(JSON.stringify(results)));
-        } catch (e) {
-          reject(e);
-        }
-      });
+        });
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 }
