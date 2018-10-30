@@ -47,7 +47,9 @@ router.get('/password_reset', (req, res) => {
 
 router.post('/recover', async (req, res) => {
   try {
-    const token = req.query.q;
+    const token = {
+      token: req.query.q,
+    };
     const tokenStatus = await TokenMdl.active(token);
     if (tokenStatus === 'ACTIVE') {
       // obtenemos el id del usuario
