@@ -170,7 +170,7 @@ class ThreadCtrl {
     const thread = new ThreadMdl(req.body);
     try {
       this.data = await thread.modify(req.params.threadId, req.params.topicId);
-      if (this.topicModify === undefined) {
+      if (this.data === undefined) {
         this.badRequestJSON.message = 'One field is missings or data is wrong';
         res.status(400).send(this.badRequestJSON);
       } else {
