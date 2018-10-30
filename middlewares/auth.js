@@ -125,9 +125,13 @@ class Auth {
  * [validates the login]
  */
   static validateLogin(req, res, next) {
+    const newResponse = new ResMdl();
     if (req.body.user_id === undefined || req.body.password === undefined
       || !(/^\d+$/.test(req.body.user_id))) {
-      res.send('Escribe el id o el password');
+      newResponse.createResponse('You are missing the id or the password',
+        200, '/auth', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      res.status(newResponse.response.status).send(newResponse.response);
     } else {
       next();
     }
@@ -137,11 +141,14 @@ class Auth {
  * [validates the register]
  */
   static validateRegister(req, res, next) {
+    const newResponse = new ResMdl();
     if (req.body.user_code === undefined || req.body.password === undefined
       || !(/^\d+$/.test(req.body.user_code)) || req.body.name === undefined
     || req.body.flastname === undefined || req.body.mlastname === undefined
     || req.body.email === undefined || req.body.privilages === undefined) {
-      res.send('Algun campo es incorrecto');
+      newResponse.createResponse('You need to fill all the fields', 200, '/auth', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      res.status(newResponse.response.status).send(newResponse.response);
     } else {
       next();
     }
@@ -151,10 +158,13 @@ class Auth {
  * validate that the confirm email has the correct body
  */
   static validateConfirmEmail(req, res, next) {
+    const newResponse = new ResMdl();
     if (req.body.user_code === undefined || !(/^\d+$/.test(req.body.user_code))
       || req.body.confirmation === undefined
       || !(/^\d+$/.test(req.body.confirmation))) {
-      res.send('Los campos son puras letras');
+      newResponse.createResponse('Do not leave empty fields', 400, '/auth', 'POST');
+      newResponse.response.message = newResponse.createMessage();
+      res.status(newResponse.response.status).send(newResponse.response);
     } else {
       next();
     }
@@ -300,7 +310,7 @@ class Auth {
       const newResponse = new ResMdl();
       // If there's no token, then it means the user hasn't log in or sign up
       if (req.headers.authorization === undefined) {
-        newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+        newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
         newResponse.response.message = newResponse.createMessage();
         next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
@@ -311,7 +321,7 @@ class Auth {
           const tok = await TokenMdl.get(token);
           // si el token no existe manda error.
           if (tok === undefined || tok.length == 0) {
-            newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+            newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
             newResponse.response.message = newResponse.createMessage();
             next(res.status(newResponse.response.status).send(newResponse.response));
           } else {
@@ -319,7 +329,7 @@ class Auth {
             const active = await TokenMdl.active(tok);
             // si no esta activo se manda respuesta de loggin
             if (active === 'NON-ACTIVE') {
-              newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+              newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
               newResponse.response.message = newResponse.createMessage();
               next(res.status(newResponse.response.status).send(newResponse.response));
             } else if (Auth.isActive(tok)) { // se revusa su el token esta activo
@@ -329,7 +339,7 @@ class Auth {
               };
               next();
             } else {
-              newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
+              newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
               newResponse.response.message = active;
               next(res.status(newResponse.response.status).send(newResponse.response));
             }
