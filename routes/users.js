@@ -28,9 +28,9 @@ const router = Router();
 
 router.post('/register', middleWares.Auth.register);
 
-router.post('/confirmEmail', middleWares.Auth.confirm);
+router.post('/confirmEmail', middleWares.Auth.validateLogin, middleWares.Auth.confirm);
 
-router.post('/login', middleWares.Auth.validate, middleWares.Auth.login);
+router.post('/login', middleWares.Auth.validateLogin, middleWares.Auth.login);
 
 router.get('/logout', middleWares.Auth.logout);
 
