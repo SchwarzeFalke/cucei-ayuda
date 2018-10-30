@@ -311,7 +311,6 @@ class Auth {
                 token: tok[0].token,
                 user: await UserMdl.get('*', tok[0].user_id),
               };
-              console.log("antes del next");
               next();
             } else {
               newResponse.createResponse('You need to log in or sign up', 409, '/users', 'POST');
