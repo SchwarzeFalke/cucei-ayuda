@@ -54,8 +54,10 @@ class Token {
       } else if (args.token) {
         query = `token = ${args.token}`;
       }
+      console.log(query);
       await db.get('token', '*', query)
         .then(async (results) => {
+          console.log(results);
           if ((typeof results[0] === 'undefined')) {
             answer = 'NON-ACTIVE';
           } else {

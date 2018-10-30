@@ -46,23 +46,22 @@ router.get('/password_reset', (req, res) => {
 });
 
 router.post('/recover', async (req, res) => {
-  const token = req.query.q;
+  const token = {
+    token: req.query.q,
+  };
   const tokenStatus = await TokenMdl.active(token);
   if (tokenStatus === 'ACTIVE') {
     // obtenemos el id del usuario
     try {
       this.userId = await TokenMdl.get(token);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
     this.userId = this.userId[0].user_id;
     // Obtenemos todos los datos del usuario
     let user = await UserMdl.get('*', this.userId);
     // cambiamos el password del usuario
-    bcrypt.hash(`${req.body.password}`, process.env.SECRET, (err, hash) => {
-      req.body.password = hash;
-    });
-    console.log(req.body.password);
+    req.body.password = await bcrypt.hash(`${req.body.password}`, process.env.SECRET);
     user.password = req.body.password;
     // creamos un modelo con todos los datos del usuario
     user = new UserMdl(user);
