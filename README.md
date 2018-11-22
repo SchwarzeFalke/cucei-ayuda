@@ -86,8 +86,7 @@ For more information about the forum:
 ## POSTMAN
 
 ### Collection
-
-To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/26ad4e3449008ebf1c02)
+To get access to the API's Postman Collection, please visit [this link](https://www.getpostman.com/collections/00436e7f9afb3f27c314)
 
 ### API Documentation
 To see more documentation about the project, please visit [this link](https://documenter.getpostman.com/view/5136276/RWgryJ77)
