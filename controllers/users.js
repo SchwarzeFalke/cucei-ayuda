@@ -117,8 +117,10 @@ class UserCtrl {
       await UserMdl.validUser(req.params.userId)
         .then((exists) => {
           if (exists) {
+            console.log(req.params.userId);
             UserMdl.get('*', req.params.userId, req.query)
               .then((data) => {
+                console.log(data);
                 if (data.length >= 1) {
                   newResponse.createResponse(data, 200, '/users', 'GET');
                 } else {
@@ -147,7 +149,7 @@ class UserCtrl {
     const newResponse = new ResMdl();
     try {
       if (await UserMdl.validUser(req.params.userId)) {
-        const condition = `stud_id = ${req.params.userId}`;
+        const condition = `stud_code = ${req.params.userId}`;
         await RoadMdl.getBuildings('subject_id', condition)
           .then(async (buildings) => {
             await RoadMdl.getRoad(buildings)

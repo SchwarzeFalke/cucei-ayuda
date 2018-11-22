@@ -400,10 +400,10 @@ class UserMdl {
    */
   static async get(columns, id, condition) {
     let queryCondition = `user_code = ${id}`;
-    if (condition) {
+    if (condition !== undefined || condition.length > 0) {
       queryCondition += ` && ${UserMdl.processConditions(condition)}`;
     }
-
+    console.log(queryCondition);
     await db.get('user', columns, queryCondition)
       .then((results) => {
         this.result = results;

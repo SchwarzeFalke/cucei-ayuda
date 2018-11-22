@@ -33,7 +33,7 @@ router.get('/password_reset', (req, res) => {
             subject: 'Reset Password',
             text: `https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token}`,
             html: `<b>Recuperando contraseña, espera un segundo
-            /auth/recover/?q=${token} </b>`,
+            https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token} </b>`,
           }; // fin mailOptions
           mailer.sendMail(mailOptions);
           newResponse.createResponse('Message sent to email', 200, '/auth', 'GET');
