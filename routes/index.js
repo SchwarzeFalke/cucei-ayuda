@@ -27,13 +27,24 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 router.use(auth.haveSession);
 
-router.get('/', (req, res) => res.send('Welcome to QCInf!'));
+router.get('/', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.send('Welcome to QCInf!');
+});
 
-router.use('/users', usersRouter);
-router.use('/subject', subjectRouter);
-router.use('/topics', forumRouter);
+router.use('/users', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+}, usersRouter);
+router.use('/subject', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+}, subjectRouter);
+router.use('/topics', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+}, forumRouter);
 router.use('/map', mapRouter);
-router.use('/building', buildingRouter);
+router.use('/building', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+}, buildingRouter);
 router.use('/auth', authRouter);
 
 module.exports = router;
