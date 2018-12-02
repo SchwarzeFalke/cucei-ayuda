@@ -305,14 +305,13 @@ class Auth {
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
       || req.path === '/auth/password_reset' || req.path === '/auth/recover/'
     || req.path === '/users/confirmEmail' || req.path === '/topics/'
-    || req.path === '/topics' || req.baseUrl === '/topics' || req.baseUrl === '/topics'
-  || req.params.topicId || req.params.threadId || req.params.postId) {
+    || req.path === '/topics' || req.baseUrl === '/topics' || req.baseUrl === '/topics') {
       next();
     } else {
       const newResponse = new ResMdl();
       // If there's no token, then it means the user hasn't log in or sign up
       if (req.headers.authorization === undefined) {
-        newResponse.createResponse(`You need to log in or sign up1 ${req.baseUrl} `, 401, '/users', 'POST');
+        newResponse.createResponse(`You need to log in or sign up1 ${req.baseUrl} ${req.path} `, 401, '/users', 'POST');
         newResponse.response.message = newResponse.createMessage();
         next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
