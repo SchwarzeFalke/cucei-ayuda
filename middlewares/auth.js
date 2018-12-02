@@ -304,7 +304,7 @@ class Auth {
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
       || req.path === '/auth/password_reset' || req.path === '/auth/recover/'
-    || req.path === '/users/confirmEmail' || req.path === '/topics/', req.path === '/topics') {
+    || req.path === '/users/confirmEmail' || req.path === '/topics/' || req.path === '/topics') {
       next();
     } else {
       const newResponse = new ResMdl();
