@@ -310,7 +310,7 @@ class Auth {
       const newResponse = new ResMdl();
       // If there's no token, then it means the user hasn't log in or sign up
       if (req.headers.authorization === undefined) {
-        newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
+        newResponse.createResponse('You need to log in or sign up1', 401, '/users', 'POST');
         newResponse.response.message = newResponse.createMessage();
         next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
@@ -321,7 +321,7 @@ class Auth {
           const tok = await TokenMdl.get(token);
           // si el token no existe manda error.
           if (tok === undefined || tok.length == 0) {
-            newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
+            newResponse.createResponse('You need to log in or sign up2', 401, '/users', 'POST');
             newResponse.response.message = newResponse.createMessage();
             next(res.status(newResponse.response.status).send(newResponse.response));
           } else {
@@ -329,7 +329,7 @@ class Auth {
             const active = await TokenMdl.active(tok);
             // si no esta activo se manda respuesta de loggin
             if (active === 'NON-ACTIVE') {
-              newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
+              newResponse.createResponse('You need to log in or sign up3', 401, '/users', 'POST');
               newResponse.response.message = newResponse.createMessage();
               next(res.status(newResponse.response.status).send(newResponse.response));
             } else if (Auth.isActive(tok)) { // se revusa su el token esta activo
@@ -339,7 +339,7 @@ class Auth {
               };
               next();
             } else {
-              newResponse.createResponse('You need to log in or sign up', 401, '/users', 'POST');
+              newResponse.createResponse('You need to log in or sign up4', 401, '/users', 'POST');
               newResponse.response.message = active;
               next(res.status(newResponse.response.status).send(newResponse.response));
             }
@@ -357,14 +357,14 @@ class Auth {
       next();
     } else {
       if (req.session === undefined || req.session.user === undefined) {
-        newResponse.createResponse('You dont have permissions1', 401, req.baseUrl, req.method);
+        newResponse.createResponse('You dont have permissions', 401, req.baseUrl, req.method);
         res.status(newResponse.response.status).send(newResponse.response);
       } else {
         const user = new UserMdl(...req.session.user);
         if (await user.canDo(req.method, req.baseUrl, req.params)) {
           next();
         } else {
-          newResponse.createResponse('You dont have permissions2', 401, req.baseUrl, req.method);
+          newResponse.createResponse('You dont have permissions', 401, req.baseUrl, req.method);
           res.status(newResponse.response.status).send(newResponse.response);
         }
       }
