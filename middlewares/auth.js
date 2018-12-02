@@ -305,7 +305,8 @@ class Auth {
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
       || req.path === '/auth/password_reset' || req.path === '/auth/recover/'
     || req.path === '/users/confirmEmail' || req.path === '/topics/'
-    || req.path === '/topics' || req.baseUrl === '/topics' || req.baseUrl === '/topics') {
+    || req.path === '/topics' || req.baseUrl === '/topics' || req.baseUrl === '/topics'
+  || req.params.topicId || req.params.threadId || req.params.postId) {
       next();
     } else {
       const newResponse = new ResMdl();
