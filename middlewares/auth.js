@@ -312,7 +312,7 @@ class Auth {
       const newResponse = new ResMdl();
       // If there's no token, then it means the user hasn't log in or sign up
       if (req.headers.authorization === undefined) {
-        newResponse.createResponse(`You need to log in or sign up1 ${req.params} ${req.baseUrl} `, 401, '/users', 'POST');
+        newResponse.createResponse(`You need to log in or sign up1 ${req.params.threadId} ${req.params.postId} ${req.params.topicId} ${req.baseUrl} `, 401, '/users', 'POST');
         newResponse.response.message = newResponse.createMessage();
         next(res.status(newResponse.response.status).send(newResponse.response));
       } else {
