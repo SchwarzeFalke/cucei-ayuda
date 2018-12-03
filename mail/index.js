@@ -6,10 +6,11 @@
  */
 const nodemailer = require('nodemailer');
 
+// FIXME esta clase y sus metodos deben estar documentados
 class MailSender {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: 'gmail', // FIXME el servicio deberia tomarse de la configuacion de environment
       secure: false,
       auth: {
         user: process.env.MAIL_USER,
@@ -18,7 +19,7 @@ class MailSender {
     });
 
     this.mailOptions = {
-      from: '"Cucei Ayuda" <cuceiayuda@gmail.com>',
+      from: '"Cucei Ayuda" <cuceiayuda@gmail.com>', // FIXME el sender deberia tomarse de la configuacion de environment
     };
   }
 

@@ -8,6 +8,8 @@
 
 const db = require('../db'); // for database handling
 
+// FIXME Esta clase y sus metodos deben estar documentados
+
 class Token {
   constructor(args) {
     this.token = args.token;
