@@ -31,11 +31,11 @@ router.get('/password_reset', (req, res) => {
           const mailOptions = {
             to: `${userEmail}`,
             subject: 'Reset Password',
-            text: `https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token}`,
+            text: `https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token}`, // FIXME las urls no deben estar hardcodeadas, lo ideal es tomarlas de configuraciones de env
             html: `<b>Recuperando contraseña, espera un segundo
             https://cucei-ayuda.herokuapp.com/auth/recover/?q=${token} </b>`,
           }; // fin mailOptions
-          mailer.sendMail(mailOptions);
+          mailer.sendMail(mailOptions); // FIXME el envio de correos deberia ser asincrono
           newResponse.createResponse('Message sent to email', 200, '/auth', 'GET');
           newResponse.response.message = newResponse.createMessage();
           res.status(newResponse.response.status).send(newResponse.response);

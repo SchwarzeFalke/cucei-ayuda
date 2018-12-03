@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const mailer = require('../mail');
 const { UserMdl, TokenMdl, ResMdl } = require('../models'); // for model handling
 
-// FIXME Todos los metodos deben estar documentados
+// FIXME Todos los metodos deben estar documentados realmente, no solo con los placeholders
 
 class Auth {
   /**
@@ -300,6 +300,7 @@ class Auth {
 
 
   static async haveSession(req, res, next) {
+    // FIXME esta condicion es enorme y horrible, minimo meter en un arreglo de configuracion las rutas que se quieren evitar y validar contra que no este en el arreglo y listo
     // this method does not apply to the login, logout, registration and confirmation of email
     if (req.path === '/' || req.path === '/users/login' || req.path === '/users/logout'
       || req.path === '/users/register' || req.path === '/users/confirmEmail'
@@ -358,6 +359,7 @@ class Auth {
     if(req.baseUrl === '/topics') {
       next();
     } else {
+      // FIXME en teoria ya paso por el middlware de validacion haveSession por lo que esta valdiacion es innecesaria
       if (req.session === undefined || req.session.user === undefined) {
         newResponse.createResponse('You dont have permissions', 401, req.baseUrl, req.method);
         res.status(newResponse.response.status).send(newResponse.response);
